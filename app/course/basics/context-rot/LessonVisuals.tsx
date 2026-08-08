@@ -25,18 +25,20 @@ const recipeConversation = [
 export function RecipeChatVisual() {
   return (
     <div className="recipe-chat-visual">
-      <div className="visual-window-bar"><span><i /><i /><i /></span><b>Recipe planning</b><small>Illustrative conversation</small></div>
       <div className="recipe-chat-intro">
-        <span>Original instruction</span>
-        <b>Use what I already have, keep it vegetarian, and plan for two.</b>
+        <span>Recipe planning</span>
+        <b>Original request: use what I already have, keep it vegetarian, and plan for two.</b>
         <div>{["chickpeas", "spinach", "peppers", "lemon", "rice", "yoghurt"].map((ingredient) => <small key={ingredient}>{ingredient}</small>)}</div>
       </div>
       <div className="recipe-chat-scroll">
-        {recipeConversation.map((message, index) => (
-          <article className={`${message.role} ${index >= 9 ? "drifting" : ""}`} key={message.turn}>
-            <header><span>{message.role === "user" ? "You" : "Assistant"}</span><small>Turn {message.turn}</small></header>
-            <p>{message.text}</p>
-            <footer>{message.ingredients}</footer>
+        {recipeConversation.map((message) => (
+          <article className={message.role} key={message.turn}>
+            <div className="recipe-chat-avatar" aria-hidden="true">{message.role === "user" ? "U" : "AI"}</div>
+            <div className="recipe-chat-message">
+              <header><span>{message.role === "user" ? "You" : "Assistant"}</span><small>Turn {message.turn}</small></header>
+              <p>{message.text}</p>
+              <footer>{message.ingredients}</footer>
+            </div>
           </article>
         ))}
       </div>

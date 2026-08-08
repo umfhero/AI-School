@@ -188,13 +188,13 @@ export default function LessonClient() {
 
             <section id="what-research-shows">
               <p className="reading-kicker">Section 2</p>
-              <h2>A large context window and reliable recall are different things.</h2>
-              <p>A context window sets how much text a model can receive in one request, while the answer still depends on how well the model finds and uses the relevant part. Chroma tested this with LongMemEval, where models answered questions from either a focused prompt of about 300 tokens or a full chat history of about 113,000 tokens.</p>
+              <h2>More context can make a simple task less reliable.</h2>
+              <p>Chroma tested whether leading models could copy a sequence of repeated words exactly. The task stayed simple while the input grew longer: reproduce the text, including one deliberately different word, without changing anything.</p>
               <figure className="research-figure">
-                <Image src="/context-rot-longmemeval-claude.png" alt="Chroma bar chart comparing Claude performance on focused prompts and full long chat histories, with focused prompts scoring higher for every tested model." width={1200} height={600} />
-                <figcaption><span>Published research figure</span><p>Every Claude model in this test scored higher with the focused input than with the full history.</p><a href="https://www.trychroma.com/research/context-rot#longmemeval" target="_blank" rel="noreferrer">Chroma, Context Rot ↗</a></figcaption>
+                <Image src="/context-rot-repeated-words.png" alt="Chroma line chart showing normalized Levenshtein scores falling as input length grows for Claude Sonnet 4, GPT-4.1, Qwen3-32B and Gemini 2.5 Flash on the Repeated Words task." width={1200} height={790} />
+                <figcaption><span>Repeated Words</span><p>All four models became less accurate as the sequence grew, despite the instruction itself staying the same.</p><a href="https://www.trychroma.com/research/context-rot#repeated-words" target="_blank" rel="noreferrer">Chroma, Context Rot ↗</a></figcaption>
               </figure>
-              <p>The graph measures a controlled question-answering task rather than recipe planning, so it does not predict a fixed point where a conversation fails. It does support the practical lesson that carrying an entire history can make a simple job less reliable than supplying the smaller part that the job needs.</p>
+              <p>The score uses normalized Levenshtein distance: higher means the model&apos;s output stayed closer to the text it was asked to copy. This is a controlled copying test, not a prediction of when a recipe chat will fail. It shows the underlying problem clearly: being able to receive more context does not mean using all of it with the same reliability.</p>
               <div className={`inline-task context-task observation ${completedTasks.includes("compare") ? "complete" : ""}`}>
                 <div className="task-heading"><span>TASK 02 · COMPARE THE WORKFLOWS</span><b>{completedTasks.includes("compare") ? "COMPLETE ✓" : "2 MINUTES"}</b></div>
                 <h3>Follow where the original ingredients live in each workflow.</h3>

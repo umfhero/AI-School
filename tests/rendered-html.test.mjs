@@ -25,7 +25,8 @@ test("server-renders the context rot lesson workspace", async () => {
   const html = await response.text();
   assert.match(html, /Context rot\./i);
   assert.match(html, /One topic slowly becomes one crowded chat/i);
-  assert.match(html, /LongMemEval/i);
+  assert.match(html, /Repeated Words/i);
+  assert.match(html, /context-rot-repeated-words\.png/i);
   assert.match(html, /overview\.md/i);
   assert.match(html, /Course contents/i);
   assert.match(html, /TASK 01 · FIND THE DRIFT/i);

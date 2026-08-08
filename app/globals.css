@@ -1103,24 +1103,31 @@ button,a { font:inherit; }
 .visual-window-bar i:nth-child(3) { background: #57d7a3; }
 .visual-window-bar b { color: #dbe3ef; font: 700 .66rem monospace; }
 .visual-window-bar small { margin-left: auto; color: #72819b; font: 600 .55rem monospace; }
-.recipe-chat-visual { display: flex; flex-direction: column; height: 100%; min-height: 670px; }
-.recipe-chat-intro { padding: 17px; border: 1px solid #42526c; background: #121d31; }
-.recipe-chat-intro > span { color: #9fb7fa; font: 700 .55rem monospace; text-transform: uppercase; letter-spacing: .08em; }
-.recipe-chat-intro > b { display: block; margin: 9px 0 13px; color: #f3f6fb; font-size: .76rem; line-height: 1.45; }
-.recipe-chat-intro > div { display: flex; flex-wrap: wrap; gap: 6px; }
-.recipe-chat-intro small { padding: 4px 6px; border: 1px solid #4d6288; background: #182743; color: #cbd7eb; font: 600 .53rem monospace; }
-.recipe-chat-scroll { min-height: 0; flex: 1; overflow-y: auto; padding: 19px 14px 34px; border-left: 1px solid #42526c; border-right: 1px solid #42526c; background: rgba(6,12,24,.92); scrollbar-color: #4a5f80 #071020; }
-.recipe-chat-scroll article { width: 88%; margin-bottom: 13px; padding: 12px 13px 10px; border: 1px solid #394962; background: #101a2c; }
-.recipe-chat-scroll article.user { margin-left: auto; border-color: #385a9f; background: #122243; }
-.recipe-chat-scroll article.drifting { border-color: #7d4a49; background: #21171e; }
-.recipe-chat-scroll article header { display: flex; justify-content: space-between; color: #8fa5c8; font: 700 .54rem monospace; }
-.recipe-chat-scroll article p { margin: 9px 0; color: #d5deeb; font-size: .69rem; line-height: 1.55; }
-.recipe-chat-scroll article footer { padding-top: 8px; border-top: 1px solid #283751; color: #6fd3a5; font: 700 .52rem monospace; }
-.recipe-chat-scroll article.drifting footer { color: #ff8b7d; }
-.recipe-chat-status { min-height: 50px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px; padding: 9px 13px; border: 1px solid #42526c; background: #0b1426; }
-.recipe-chat-status span { color: #8291a8; font: 600 .51rem monospace; }
-.recipe-chat-status i { height: 4px; background: linear-gradient(90deg,#5bd29f,#e8ca50 45%,#fa6f62); }
-.recipe-chat-status b { grid-column: 1 / -1; color: #b6c2d3; font-size: .59rem; text-align: center; }
+.context-visual-stage.chat-stage,
+.context-visual-stage:has(> .recipe-chat-visual) { padding: 0; overflow: hidden; }
+.context-visual-stage.chat-stage > *,
+.context-visual-stage:has(> .recipe-chat-visual) > * { width: 100%; max-width: none; margin: 0; }
+.recipe-chat-visual { display: flex; flex-direction: column; height: 100%; min-height: 670px; background: #0b1020; }
+.recipe-chat-intro { position: relative; z-index: 2; padding: 18px clamp(18px,3vw,34px); border-bottom: 1px solid #29364b; background: rgba(13,21,38,.98); box-shadow: 0 8px 22px rgba(2,6,16,.18); }
+.recipe-chat-intro > span { color: #aebded; font: 700 .72rem monospace; text-transform: uppercase; letter-spacing: .08em; }
+.recipe-chat-intro > b { display: block; max-width: 720px; margin: 8px 0 13px; color: #f3f6fb; font-size: clamp(.94rem,1.35vw,1.08rem); line-height: 1.55; }
+.recipe-chat-intro > div { display: flex; flex-wrap: wrap; gap: 7px; }
+.recipe-chat-intro small { padding: 5px 9px; border: 1px solid #405370; border-radius: 999px; background: #172238; color: #cbd7eb; font: 600 .7rem monospace; }
+.recipe-chat-scroll { min-height: 0; flex: 1; overflow-y: auto; padding: 28px clamp(16px,4vw,48px) 44px; background: #0b1020; scrollbar-color: #4a5f80 #071020; }
+.recipe-chat-scroll article { width: 100%; max-width: 780px; margin: 0 auto 24px; display: flex; align-items: flex-start; gap: 11px; }
+.recipe-chat-scroll article.user { flex-direction: row-reverse; }
+.recipe-chat-avatar { width: 32px; height: 32px; flex: 0 0 32px; display: grid; place-items: center; border: 1px solid #43536d; border-radius: 50%; background: #141e30; color: #b8c7df; font: 700 .68rem monospace; }
+.recipe-chat-scroll article.user .recipe-chat-avatar { border-color: #526ca8; background: #263a6c; color: #fff; }
+.recipe-chat-message { min-width: 0; max-width: min(82%,680px); padding: 14px 16px 13px; border: 1px solid #344258; border-radius: 6px 18px 18px 18px; background: #151d2c; box-shadow: 0 8px 22px rgba(0,0,0,.12); }
+.recipe-chat-scroll article.user .recipe-chat-message { border-color: #435d9b; border-radius: 18px 6px 18px 18px; background: #22345f; }
+.recipe-chat-scroll article header { display: flex; justify-content: space-between; gap: 18px; color: #a9b7ce; font: 700 .72rem monospace; }
+.recipe-chat-scroll article header small { color: #77869e; font-size: .67rem; }
+.recipe-chat-scroll article p { margin: 9px 0 11px; color: #eef2f7; font-size: clamp(.94rem,1.35vw,1.04rem); line-height: 1.62; }
+.recipe-chat-scroll article footer { padding-top: 9px; border-top: 1px solid rgba(132,151,180,.22); color: #9eb0c9; font: 600 .69rem monospace; }
+.recipe-chat-status { min-height: 62px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; padding: 10px clamp(18px,3vw,34px); border-top: 1px solid #29364b; background: #0d1526; }
+.recipe-chat-status span { color: #91a0b7; font: 600 .67rem monospace; }
+.recipe-chat-status i { height: 3px; border-radius: 3px; background: linear-gradient(90deg,#6f8de6,#9d7fd4); }
+.recipe-chat-status b { grid-column: 1 / -1; color: #c6d0de; font-size: .74rem; text-align: center; }
 
 .workflow-comparison { min-height: 660px; border: 1px solid #43526b; background: #0a1325; box-shadow: 10px 10px 0 rgba(56,189,248,.1); }
 .diagram-heading { min-height: 72px; padding: 15px 17px; display: flex; flex-direction: column; justify-content: center; gap: 6px; border-bottom: 1px solid #3c4b64; }
@@ -1234,7 +1241,18 @@ button,a { font:inherit; }
   .editor-shell { grid-template-columns: 1fr; }
   .editor-tree { display: none; }
   .context-visual-stage { padding: 13px; }
+  .context-visual-stage.chat-stage,
+  .context-visual-stage:has(> .recipe-chat-visual) { padding: 0; }
   .recipe-chat-visual { min-height: 360px; }
+  .recipe-chat-intro { padding: 14px 15px; }
+  .recipe-chat-intro > b { font-size: .9rem; }
+  .recipe-chat-intro small { font-size: .62rem; }
+  .recipe-chat-scroll { padding: 20px 12px 32px; }
+  .recipe-chat-scroll article { gap: 8px; margin-bottom: 20px; }
+  .recipe-chat-avatar { width: 28px; height: 28px; flex-basis: 28px; font-size: .6rem; }
+  .recipe-chat-message { max-width: calc(100% - 36px); padding: 12px 13px; }
+  .recipe-chat-scroll article p { font-size: .91rem; line-height: 1.55; }
+  .recipe-chat-status { padding-inline: 13px; }
   .workflow-comparison,.overview-workspace-visual { min-height: 0; }
   .workflow-columns { min-height: 0; }
 }
