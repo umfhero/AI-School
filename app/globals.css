@@ -216,14 +216,25 @@ button,a { font:inherit; }
 
 .home-page .auth-sign-in,
 .home-page .auth-user {
-  border-color: rgba(11,17,32,.22);
-  border-radius: 6px;
-  background: rgba(11,17,32,.03);
+  color: #0b1130;
+  border: 2px solid #0b1130;
+  border-radius: 5px;
+  background: #ffffff;
+  box-shadow: 3px 3px 0 #0b1130;
+  transition: transform .08s ease, box-shadow .08s ease;
 }
 .home-page .auth-sign-in:hover,
-.home-page .auth-sign-in:focus-visible { border-color: var(--home-blue); }
-.home-page .auth-sign-in > span { border-radius: 3px; }
-.home-page .auth-user > span { border-radius: 4px; }
+.home-page .auth-sign-in:focus-visible,
+.home-page .auth-user:hover,
+.home-page .auth-user:focus-within {
+  border-color: #0b1130;
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 #0b1130;
+}
+.home-page .auth-sign-in > span { background: var(--home-blue); color: #fff; border-radius: 3px; }
+.home-page .auth-user > span { background: var(--home-violet); color: #fff; border-radius: 4px; }
+.home-page .auth-user button { color: #5c6478; border-left-color: rgba(11,17,32,.18); }
+.home-page .auth-user button:hover { color: #0b1130; }
 
 .home-page .home-hero {
   width: min(1280px, calc(100% - 40px));
