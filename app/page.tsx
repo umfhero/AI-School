@@ -186,6 +186,7 @@ export default function Home() {
       <CourseProgress />
 
       <section className="proof-section" id="proof">
+        <PixelSpark className="corner-spark" />
         <div className="proof-statement">
           <div>
             <p className="section-kicker"><span /> Why I made this</p>
@@ -207,6 +208,7 @@ export default function Home() {
       </section>
 
       <section className="home-final">
+        <PixelSpark className="corner-spark" />
         <div className="final-icon" aria-hidden="true"><PixelSpark /></div>
         <p>Lesson 01.1 is ready</p>
         <h2>Your AI did not get worse.<br /><em>Your chat got messy.</em></h2>
@@ -214,6 +216,7 @@ export default function Home() {
       </section>
 
       <footer className="home-footer">
+        <PixelSpark className="corner-spark" />
         <Brand />
         <p>Free lessons for building substantial projects with AI.</p>
         <a href="#top">Back to top ↑</a>
