@@ -1,6 +1,7 @@
+/* eslint-disable @next/next/no-html-link-for-pages -- Native navigation is required by the deployed Vinext Worker router. */
+
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import CourseProgress from "./components/CourseProgress";
 import SiteHeader from "./components/SiteHeader";
 import { PixelArrow, PixelSpark, PixelCheck, PixelMascot } from "./components/PixelIcons";
@@ -13,10 +14,10 @@ export const metadata: Metadata = {
 
 function Brand() {
   return (
-    <Link className="site-brand" href="/" aria-label="AI school home">
+    <a className="site-brand" href="/" aria-label="AI school home">
       <Image src="/ai-workflows-icon.png" alt="" width={34} height={34} priority />
       <b>AI school</b>
-    </Link>
+    </a>
   );
 }
 
