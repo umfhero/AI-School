@@ -90,19 +90,18 @@ export default function Home() {
       </section>
 
       <section className="proof-section" id="proof">
-        <div className="proof-intro">
-          <p className="section-kicker"><span /> Why learn from me</p>
-          <h2>Theory that became<br /><em>real-world work.</em></h2>
-          <p>
-            I wrote a first-class dissertation on deterministic AI, received a university award for the work,
-            and that path led to an AI role at Cloudflare. This is the practical course I wish had existed when I started.
-          </p>
-        </div>
-        <div className="proof-stats">
-          <article><span>01 / RESEARCH</span><strong>First</strong><p>Dissertation grade for research into deterministic AI systems.</p></article>
-          <article><span>02 / RECOGNITION</span><strong>Award</strong><p>University recognition for the research and its result.</p></article>
-          <article><span>03 / OUTCOME</span><strong>Cloudflare</strong><p>The work helped turn academic research into a real AI role.</p></article>
-          <article className="free-stat"><span>04 / PROMISE</span><strong>Free</strong><p>No paid chapter waiting at the end. Learn the entire workflow.</p></article>
+        <div className="proof-statement">
+          <div>
+            <p className="section-kicker"><span /> Why I made this</p>
+            <h2>I learnt the theory, then used it to get the job.</h2>
+            <p>
+              I wrote a first-class dissertation on deterministic AI, received a university award for the work,
+              and that path led to an AI role at Cloudflare. This course is the practical version of what I wish had existed when I started.
+            </p>
+          </div>
+          <div className="cloudflare-mark" title="Cloudflare">
+            <Image src="/cloudflare-logo.png" alt="Cloudflare" width={512} height={173} />
+          </div>
         </div>
       </section>
 
