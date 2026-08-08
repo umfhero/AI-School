@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent, type KeyboardEvent as ReactKeyboardEvent } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import AuthButton from "../../../components/AuthButton";
 import { LessonVisualContent, type LessonVisual } from "./LessonVisuals";
@@ -223,7 +222,7 @@ export default function LessonClient() {
         {!visualOpen ? <button className="reopen-visual" type="button" onClick={() => setVisualOpen(true)}><span>Open side view</span><b>{visualLabels[activeVisual]}</b></button> : null}
       </div>
 
-      <nav className="lesson-bottom" aria-label="Lesson navigation"><Link className="lesson-home-back" href="/"><span aria-hidden="true">←</span><b>Back to home</b></Link><div><span>CHAPTER 01 · THE BASICS</span><b>{completedTasks.length} of 3 tasks complete</b></div><button className="lesson-next" disabled={completedTasks.length < 3} title={completedTasks.length < 3 ? "Complete the three tasks to unlock the next lesson" : undefined}>Next lesson <span aria-hidden="true">→</span></button></nav>
+      <nav className="lesson-bottom" aria-label="Lesson navigation"><a className="lesson-home-back" href="/"><span aria-hidden="true">←</span><b>Back to home</b></a><div><span>CHAPTER 01 · THE BASICS</span><b>{completedTasks.length} of 3 tasks complete</b></div><button className="lesson-next" disabled={completedTasks.length < 3} title={completedTasks.length < 3 ? "Complete the three tasks to unlock the next lesson" : undefined}>Next lesson <span aria-hidden="true">→</span></button></nav>
     </main>
   );
 }
