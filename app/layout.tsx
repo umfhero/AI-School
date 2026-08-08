@@ -9,13 +9,14 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     metadataBase: new URL(`${protocol}://${host}`),
-    title: "AI Free Course | Build serious projects with AI",
+    title: "AI workflow course | Build serious projects with AI",
     description: "A free visual course that takes you from messy chats to agents, skills and working AI systems.",
     openGraph: { title: "Build serious projects with AI, properly.", description: "A free course covering project memory, models, agents, skills and parallel workflows.", images: ["/og-home.png"] },
     twitter: { card: "summary_large_image", title: "Build serious projects with AI, properly.", images: ["/og-home.png"] },
     manifest: "/site.webmanifest",
     icons: {
       icon: [
+        { url: "/favicon.svg", type: "image/svg+xml" },
         { url: "/favicon-16.png", sizes: "16x16", type: "image/png" },
         { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
         { url: "/icon-96.png", sizes: "96x96", type: "image/png" },

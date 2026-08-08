@@ -4,6 +4,7 @@
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import Image from "next/image";
 import AuthButton from "../../../components/AuthButton";
+import { LessonCelebration } from "./LessonCelebration";
 import { LessonVisualContent, OverviewWorkspaceVisual, type LessonVisual } from "./LessonVisuals";
 
 const projectSetupPrompt = `You are setting up durable project context for this workspace.
@@ -57,6 +58,7 @@ export default function LessonClient() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [visualOpen, setVisualOpen] = useState(false);
   const [activeVisual, setActiveVisual] = useState<LessonVisual | null>(null);
+  const [celebrationKey, setCelebrationKey] = useState(0);
   const [visualWidth, setVisualWidth] = useState(620);
   const resizing = useRef(false);
 
@@ -102,6 +104,8 @@ export default function LessonClient() {
     const next = [...completedTasks, task];
     setCompletedTasks(next);
     if (signedIn) void saveProgress(next);
+    setVisualOpen(false);
+    setCelebrationKey((key) => key + 1);
   }
 
   async function saveProgress(tasks: string[]) {
@@ -149,10 +153,11 @@ export default function LessonClient() {
 
   return (
     <main className="lesson-page">
+      <LessonCelebration trigger={celebrationKey} />
       <header className="lesson-header">
         <div className="lesson-header-left">
           <button className="sidebar-toggle" type="button" onClick={() => setSidebarOpen((open) => !open)} aria-expanded={sidebarOpen} aria-controls="course-contents"><span aria-hidden="true">{sidebarOpen ? "×" : "☰"}</span><b>{sidebarOpen ? "Hide contents" : "Show contents"}</b></button>
-          <div className="lesson-brand"><b>AI Free Course</b></div>
+          <div className="lesson-brand"><b>AI workflow course</b></div>
         </div>
         <div className="lesson-crumb"><span>Chapter 01 · The basics</span><span>/</span><b>Context rot</b></div>
         <div className="lesson-account"><div className="lesson-progress"><span><i style={{ width: `${Math.max(4, progress)}%` }} /></span><b>{completedTasks.length} / 3 tasks</b></div><AuthButton returnTo="/course/basics/context-rot" compact /></div>
@@ -160,7 +165,7 @@ export default function LessonClient() {
 
       <div className={`lesson-workspace ${sidebarOpen ? "" : "sidebar-closed"} ${visualOpen ? "" : "visual-closed"}`} style={workspaceStyle}>
         <aside className="course-sidebar" id="course-contents" aria-label="Course contents">
-          <div className="course-side-head"><p>AI Free Course</p><h2>Course contents</h2><div><span style={{ width: `${Math.max(4, progress)}%` }} /><small>{progress}% of this lesson</small></div></div>
+          <div className="course-side-head"><p>AI workflow course</p><h2>Course contents</h2><div><span style={{ width: `${Math.max(4, progress)}%` }} /><small>{progress}% of this lesson</small></div></div>
           <nav>
             {courseChapters.map((chapter, chapterIndex) => (
               <div className={`side-chapter ${chapterIndex === 0 ? "current" : ""}`} key={chapter.title}>

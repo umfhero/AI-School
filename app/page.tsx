@@ -5,16 +5,16 @@ import AuthButton from "./components/AuthButton";
 import CourseProgress from "./components/CourseProgress";
 
 export const metadata: Metadata = {
-  title: "AI Free Course | Build properly with AI",
+  title: "AI school | Build properly with AI",
   description:
     "A free, visual course that takes you from your first AI project to agents, skills and parallel workflows.",
 };
 
 function Brand() {
   return (
-    <Link className="site-brand" href="/" aria-label="AI Free Course home">
+    <Link className="site-brand" href="/" aria-label="AI school home">
       <Image src="/ai-workflows-icon.png" alt="" width={34} height={34} priority />
-      <b>AI Free Course</b>
+      <b>AI school</b>
     </Link>
   );
 }
@@ -37,7 +37,7 @@ export default function Home() {
         <div className="home-hero-copy">
           <h1>Build serious projects with AI, <em>properly.</em></h1>
           <p>
-            Learn the workflow behind substantial AI work—from project memory and model choice to agents,
+            Learn the workflow behind substantial AI work from project memory and model choice to agents,
             reusable skills and parallel execution. No technical background required.
           </p>
           <div className="hero-actions">
