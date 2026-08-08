@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { PixelArrow } from "./PixelIcons";
 
 type ProgressResponse = {
   user: { name: string } | null;
@@ -45,7 +46,7 @@ export default function CourseProgress() {
     return (
       <section className="home-progress home-progress-message" aria-label="Course progress">
         <div><span>YOUR COURSE PROGRESS</span><b>Pick up where you left off on any device.</b></div>
-        <a href="/api/auth/google/start?returnTo=%2F">Sign in with Google to track progress →</a>
+        <a href="/api/auth/google/start?returnTo=%2F">Sign in with Google to track progress <PixelArrow /></a>
       </section>
     );
   }
@@ -70,7 +71,7 @@ export default function CourseProgress() {
         <strong>Chapter 1 of 6 · The basics</strong>
         <p>{lessonComplete ? "Lesson 1 complete · Your project brain is next" : `Lesson 1 of 24 · Context rot · ${completedTasks} of 3 tasks`}</p>
       </div>
-      <a className="home-progress-continue" href="/course/basics/context-rot">{completedTasks ? "Continue learning" : "Start lesson one"} <span aria-hidden="true">→</span></a>
+      <a className="home-progress-continue" href="/course/basics/context-rot">{completedTasks ? "Continue learning" : "Start lesson one"} <PixelArrow /></a>
     </section>
   );
 }

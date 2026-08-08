@@ -91,7 +91,7 @@ This is a technical pattern (thin grid lines), not a colour-to-colour wash, so i
 
 ## Pixel-art icons
 
-Hand-authored inline SVG components in `app/page.tsx` (`PixelArrow`, `PixelSpark`, `PixelCheck`, `PixelMascot`), built as a grid of `<rect>` elements on a small `viewBox` (7×7 to 8×9), rendered with `shapeRendering="crispEdges"` so they stay blocky rather than antialiased:
+Hand-authored inline SVG components in `app/components/PixelIcons.tsx` (`PixelArrow`, `PixelSpark`, `PixelCheck`, `PixelMascot`), built as a grid of `<rect>` elements on a small `viewBox` (7×7 to 8×9), rendered with `shapeRendering="crispEdges"` so they stay blocky rather than antialiased. Import from that shared file rather than redefining an icon locally — it's already used by the homepage, `CourseProgress.tsx` and the profile page. `PixelArrow` points right by default; rotate it with a CSS `transform` (e.g. `rotate(-90deg)` for up, `rotate(180deg)` for left) rather than drawing a new direction:
 
 ```tsx
 function PixelArrow({ className = "" }: { className?: string }) {
@@ -141,4 +141,6 @@ No hyphens, en dashes or em dashes anywhere in visible homepage text (including 
 
 ## Rollout
 
-This has only been applied to the homepage. `/profile` and the course/lesson pages currently use a separate, older soft-light theme (see `app/profile/profile.module.css` and the `.course-sidebar`/`.lesson-reading` rules in `globals.css`) and were deliberately left untouched. When extending this pixel-art treatment to them, reuse the palette and border/shadow/icon patterns above rather than introducing new values.
+Applied so far: the homepage, and `/profile` (`app/profile/profile.module.css` and `ProfileClient.tsx`, as of 8 August 2026 — same palette, hard-shadow/border formulas and pixel-icon swaps as the homepage, translated into that page's CSS module).
+
+The course/lesson pages (`.course-sidebar`/`.lesson-reading` and related rules in `globals.css`) still use the separate, older soft-light theme and were deliberately left untouched. When extending this pixel-art treatment to them, reuse the palette and border/shadow/icon patterns above rather than introducing new values.

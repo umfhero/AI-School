@@ -588,6 +588,8 @@ button,a { font:inherit; }
 }
 .home-page .home-footer p { color:#7d8499; }
 .home-page .home-footer > a:last-child { color:#5c6478; text-decoration:none; }
+.home-page .back-to-top { display: inline-flex; align-items: center; gap: 8px; }
+.home-page .pixel-arrow-up { transform: rotate(-90deg); }
 .home-page .home-footer .corner-spark { position: absolute; top: 14px; right: 24px; color: var(--home-pink); opacity: .7; }
 
 @media (max-width: 760px) {
@@ -886,7 +888,7 @@ button,a { font:inherit; }
 .home-progress-message div { display: flex; flex-direction: column; gap: 7px; }
 .home-progress-message b { color: #151a33; font-size: .86rem; }
 .home-progress-message > p { margin: 0; color: #5c6478; }
-.home-progress-message > a { color: #3561dc; font-size: .72rem; text-underline-offset: 5px; }
+.home-progress-message > a { display: inline-flex; align-items: center; gap: 8px; color: #3561dc; font-size: .72rem; text-underline-offset: 5px; }
 .home-progress-loading { grid-template-columns: 160px 1fr 280px; }
 .home-progress-loading span {
   height: 38px;
