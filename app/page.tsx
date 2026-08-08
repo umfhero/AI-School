@@ -196,7 +196,7 @@ export default function Home() {
               and that path led to an AI role at Cloudflare. This course is the practical version of what I wish had existed when I started.
             </p>
             <p>
-              Since 2023 I&rsquo;ve spent thousands of pounds testing and running AI, building and using dozens of skills until I landed on a
+              Since 2023 I&rsquo;ve spent hundreds of pounds testing and running AI, building and using dozens of skills until I landed on a
               workflow that just works. I&rsquo;m sharing all of it for free and open source, and I want nothing back for it, except that
               if it helps you, you pass it on to someone else who might enjoy or learn from it too.
             </p>
