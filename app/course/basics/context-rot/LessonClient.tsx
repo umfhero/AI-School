@@ -35,6 +35,12 @@ const visualLabels: Record<LessonVisual, string> = {
   workspace: "overview.md workspace",
 };
 
+const visualTaskLabels: Record<LessonVisual, string> = {
+  chat: "Task 01",
+  workflow: "Task 02",
+  workspace: "Task 03",
+};
+
 export default function LessonClient() {
   const [copied, setCopied] = useState(false);
   const [openChapter, setOpenChapter] = useState(0);
@@ -43,8 +49,9 @@ export default function LessonClient() {
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [visualOpen, setVisualOpen] = useState(true);
-  const [activeVisual, setActiveVisual] = useState<LessonVisual>("chat");
+  const [visualOpen, setVisualOpen] = useState(false);
+  const [activeVisual, setActiveVisual] = useState<LessonVisual | null>(null);
+  const [startedTasks, setStartedTasks] = useState<string[]>([]);
   const [visualWidth, setVisualWidth] = useState(620);
   const resizing = useRef(false);
 
@@ -76,7 +83,8 @@ export default function LessonClient() {
     return () => window.cancelAnimationFrame(frame);
   }, []);
 
-  function showVisual(visual: LessonVisual) {
+  function startTask(task: string, visual: LessonVisual) {
+    setStartedTasks((tasks) => tasks.includes(task) ? tasks : [...tasks, task]);
     setActiveVisual(visual);
     setVisualOpen(true);
   }
@@ -168,14 +176,13 @@ export default function LessonClient() {
               <h2>One topic slowly becomes one crowded chat.</h2>
               <p>A recipe conversation can begin with a useful list of ingredients and a clear request, then grow into portion changes, lunch ideas and a shopping list. Each reply feels connected to the same topic, so keeping it all in one place seems sensible.</p>
               <p>The earlier ingredient list can remain inside the context window while the model uses it less consistently, because later instructions and similar details compete for the same answer. People often describe this as the model forgetting, although the practical problem is unreliable use of information that still exists somewhere in a long input.</p>
-              <button className="open-visual-button" type="button" onClick={() => showVisual("chat")}><span>Open the side view</span><b>Read the long recipe chat</b><i aria-hidden="true">→</i></button>
-
               <div className={`inline-task context-task ${completedTasks.includes("diagnose") ? "complete" : ""}`}>
                 <div className="task-heading"><span>TASK 01 · FIND THE DRIFT</span><b>{completedTasks.includes("diagnose") ? "COMPLETE ✓" : "3 MINUTES"}</b></div>
                 <h3>Read the conversation and find the first reply that breaks the original brief.</h3>
                 <p>The original brief asks for vegetarian meals for two people that use chickpeas, spinach, peppers, lemon, rice and yoghurt first.</p>
-                <div className="answer-list"><button onClick={() => setQuizAnswer("a")}>Turn 04, when the assistant changes the cooking method.</button><button onClick={() => { setQuizAnswer("b"); completeTask("diagnose"); }}>Turn 10, when the assistant buys a new meal and adds breakfast food.</button><button onClick={() => setQuizAnswer("c")}>Turn 16, when the assistant suggests couscous and halloumi.</button></div>
-                {quizAnswer ? <p className={`task-feedback ${quizAnswer === "b" ? "right" : "wrong"}`}>{quizAnswer === "b" ? "Turn 10 is the first clear drift, because it ignores the pantry and also breaks the instruction about breakfast food." : "The conversation has already drifted before that point, so compare the reply with the original instruction at the top of the side view."}</p> : null}
+                <button className="start-task-button" type="button" onClick={() => startTask("diagnose", "chat")}>{completedTasks.includes("diagnose") ? "Review task visual" : startedTasks.includes("diagnose") ? "Open task visual" : "Start task"}<span aria-hidden="true">→</span></button>
+                {startedTasks.includes("diagnose") || completedTasks.includes("diagnose") ? <><div className="answer-list"><button onClick={() => setQuizAnswer("a")}>Turn 04, when the assistant changes the cooking method.</button><button onClick={() => { setQuizAnswer("b"); completeTask("diagnose"); }}>Turn 10, when the assistant buys a new meal and adds breakfast food.</button><button onClick={() => setQuizAnswer("c")}>Turn 16, when the assistant suggests couscous and halloumi.</button></div>
+                {quizAnswer ? <p className={`task-feedback ${quizAnswer === "b" ? "right" : "wrong"}`}>{quizAnswer === "b" ? "Turn 10 is the first clear drift, because it ignores the pantry and also breaks the instruction about breakfast food." : "The conversation has already drifted before that point, so compare the reply with the original instruction at the top of the side view."}</p> : null}</> : <p className="task-start-note">Start the task to open its recipe conversation and reveal the answer choices.</p>}
               </div>
             </section>
 
@@ -188,13 +195,12 @@ export default function LessonClient() {
                 <figcaption><span>Published research figure</span><p>Every Claude model in this test scored higher with the focused input than with the full history.</p><a href="https://www.trychroma.com/research/context-rot#longmemeval" target="_blank" rel="noreferrer">Chroma, Context Rot ↗</a></figcaption>
               </figure>
               <p>The graph measures a controlled question-answering task rather than recipe planning, so it does not predict a fixed point where a conversation fails. It does support the practical lesson that carrying an entire history can make a simple job less reliable than supplying the smaller part that the job needs.</p>
-              <button className="open-visual-button" type="button" onClick={() => showVisual("workflow")}><span>Open the side view</span><b>Compare both workflows</b><i aria-hidden="true">→</i></button>
-
               <div className={`inline-task context-task observation ${completedTasks.includes("compare") ? "complete" : ""}`}>
                 <div className="task-heading"><span>TASK 02 · COMPARE THE WORKFLOWS</span><b>{completedTasks.includes("compare") ? "COMPLETE ✓" : "2 MINUTES"}</b></div>
                 <h3>Follow where the original ingredients live in each workflow.</h3>
                 <p>In the growing chat, those facts sit above every later job. In the focused workflow, the facts live in one source of truth and each new chat receives the part it needs.</p>
-                <button className="task-complete-button" onClick={() => { showVisual("workflow"); completeTask("compare"); }}>{completedTasks.includes("compare") ? "Comparison complete" : "I have compared both workflows"}</button>
+                <button className="start-task-button" type="button" onClick={() => startTask("compare", "workflow")}>{completedTasks.includes("compare") ? "Review task visual" : startedTasks.includes("compare") ? "Open task visual" : "Start task"}<span aria-hidden="true">→</span></button>
+                {startedTasks.includes("compare") || completedTasks.includes("compare") ? <button className="task-complete-button" onClick={() => completeTask("compare")}>{completedTasks.includes("compare") ? "Comparison complete" : "I have compared both workflows"}</button> : <p className="task-start-note">Start the task to open the two-workflow comparison.</p>}
               </div>
             </section>
 
@@ -204,14 +210,13 @@ export default function LessonClient() {
               <p>An overview.md file is a short record of the facts that should survive between chats, including the goal, current state, settled decisions and the next job. It gives the project a memory that you can read and edit directly, instead of asking one conversation to hold the current version of every fact.</p>
               <p>The clean chat becomes useful when you give it that current record at the start. For the recipe example, a new chat can begin with <code>@overview.md please suggest a recipe</code>, which supplies the pantry list and rules without the older lunch discussion or abandoned shopping ideas.</p>
               <p>Use a separate clean chat for each proper job, then update overview.md when a fact or decision changes. The next task begins from the edited file, while completed chat history can stay closed.</p>
-              <button className="open-visual-button" type="button" onClick={() => showVisual("workspace")}><span>Open the side view</span><b>See overview.md in a clean workspace</b><i aria-hidden="true">→</i></button>
-
               <div className="lesson-template"><div><span>overview.md</span><button onClick={copyTemplate}>{copied ? "Copied" : "Copy template"}</button></div><pre><code>{template}</code></pre></div>
               <div className={`inline-task context-task build-task ${completedTasks.includes("build") ? "complete" : ""}`}>
                 <div className="task-heading"><span>TASK 03 · MAKE THE FILE</span><b>{completedTasks.includes("build") ? "COMPLETE ✓" : "5 MINUTES"}</b></div>
                 <h3>Create overview.md for a project you already have.</h3>
                 <ul><li>Write the project goal and the current state as facts.</li><li>Record decisions that the next chat must keep.</li><li>Give the next chat one specific job, then start that job in a clean chat with the file attached.</li></ul>
-                <button className="task-complete-button" onClick={() => { showVisual("workspace"); completeTask("build"); }}>{completedTasks.includes("build") ? "Task complete" : "I have made the file"}</button>
+                <button className="start-task-button" type="button" onClick={() => startTask("build", "workspace")}>{completedTasks.includes("build") ? "Review task visual" : startedTasks.includes("build") ? "Open task visual" : "Start task"}<span aria-hidden="true">→</span></button>
+                {startedTasks.includes("build") || completedTasks.includes("build") ? <button className="task-complete-button" onClick={() => completeTask("build")}>{completedTasks.includes("build") ? "Task complete" : "I have made the file"}</button> : <p className="task-start-note">Start the task to open the clean overview.md workspace.</p>}
               </div>
             </section>
 
@@ -223,12 +228,12 @@ export default function LessonClient() {
 
         {/* A focusable ARIA separator supports pointer dragging and keyboard resizing. */}
         {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex */}
-        {visualOpen ? <div className="lesson-resize-handle" role="separator" aria-label="Resize the lesson visual" aria-orientation="vertical" aria-valuemin={380} aria-valuemax={860} aria-valuenow={visualWidth} tabIndex={0} onPointerDown={beginResize} onPointerMove={resizeVisual} onPointerUp={endResize} onPointerCancel={endResize} onKeyDown={resizeWithKeyboard}><span aria-hidden="true">⋮</span></div> : null}
-        {visualOpen ? <aside className="lesson-visual context-visual" aria-label={`${visualLabels[activeVisual]} visual`}>
-          <div className="visual-switcher"><div><span>Side view</span><b>{visualLabels[activeVisual]}</b></div><nav aria-label="Choose lesson visual">{(Object.keys(visualLabels) as LessonVisual[]).map((visual) => <button className={activeVisual === visual ? "active" : ""} type="button" onClick={() => setActiveVisual(visual)} key={visual}>{visualLabels[visual]}</button>)}</nav><button className="close-visual" type="button" onClick={() => setVisualOpen(false)} aria-label="Close side view">×</button></div>
+        {visualOpen && activeVisual ? <div className="lesson-resize-handle" role="separator" aria-label="Resize the lesson visual" aria-orientation="vertical" aria-valuemin={380} aria-valuemax={860} aria-valuenow={visualWidth} tabIndex={0} onPointerDown={beginResize} onPointerMove={resizeVisual} onPointerUp={endResize} onPointerCancel={endResize} onKeyDown={resizeWithKeyboard}><span aria-hidden="true">⋮</span></div> : null}
+        {visualOpen && activeVisual ? <aside className="lesson-visual context-visual" aria-label={`${visualLabels[activeVisual]} visual`}>
+          <div className="visual-switcher task-visual-header"><div><span>Side view</span><b>{visualLabels[activeVisual]}</b></div><span className="task-visual-context">{visualTaskLabels[activeVisual]}</span><button className="close-visual" type="button" onClick={() => setVisualOpen(false)} aria-label="Close side view">×</button></div>
           <div className="context-visual-stage"><LessonVisualContent visual={activeVisual} /></div>
         </aside> : null}
-        {!visualOpen ? <button className="reopen-visual" type="button" onClick={() => setVisualOpen(true)}><span>Open side view</span><b>{visualLabels[activeVisual]}</b></button> : null}
+        {!visualOpen && activeVisual ? <button className="reopen-visual" type="button" onClick={() => setVisualOpen(true)}><span>Resume task visual</span><b>{visualLabels[activeVisual]}</b></button> : null}
       </div>
 
       <nav className="lesson-bottom" aria-label="Lesson navigation"><a className="lesson-home-back" href="/"><span aria-hidden="true">←</span><b>Back to home</b></a><div><span>CHAPTER 01 · THE BASICS</span><b>{completedTasks.length} of 3 tasks complete</b></div><button className="lesson-next" disabled={completedTasks.length < 3} title={completedTasks.length < 3 ? "Complete the three tasks to unlock the next lesson" : undefined}>Next lesson <span aria-hidden="true">→</span></button></nav>

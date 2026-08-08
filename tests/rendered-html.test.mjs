@@ -29,9 +29,11 @@ test("server-renders the context rot lesson workspace", async () => {
   assert.match(html, /overview\.md/i);
   assert.match(html, /Course contents/i);
   assert.match(html, /TASK 01 · FIND THE DRIFT/i);
+  assert.match(html, /Start task/i);
   assert.match(html, /please suggest a recipe/i);
   assert.match(html, /Next lesson/i);
   assert.match(html, /(?:class="lesson-home-back"[^>]*href="\/"|href="\/"[^>]*class="lesson-home-back")/i);
   assert.doesNotMatch(html, /KEEP THIS STRAIGHT/i);
   assert.doesNotMatch(html, /LESSON 01\.1/i);
+  assert.doesNotMatch(html, /Illustrative conversation/i);
 });
