@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useState, type CSSProperties } from "react";
+
 export type LessonVisual = "chat" | "workflow" | "workspace";
 
 const recipeConversation = [
@@ -47,35 +51,114 @@ export function RecipeChatVisual() {
   );
 }
 
+const contextSteps = [
+  { title: "Pantry and rules", detail: "Vegetarian · two people · use what is already there", attention: 100 },
+  { title: "Dinner revisions", detail: "Faster cooking · exact quantities · mild spice", attention: 82 },
+  { title: "Lunch and shopping", detail: "A second job enters the same conversation", attention: 61 },
+  { title: "Budget changes", detail: "New ingredients and price limits compete", attention: 39 },
+  { title: "Formatting request", detail: "The original pantry is now far above", attention: 22 },
+];
+
+const focusedChats = [
+  { title: "Plan dinners", detail: "Pantry + dietary rules" },
+  { title: "Adjust portions", detail: "Recipe + serving size" },
+  { title: "Write shopping list", detail: "Final meals only" },
+  { title: "Lower the cost", detail: "Budget + current plan" },
+];
+
+type WorkflowMode = "single" | "project";
+
 export function WorkflowDiagramVisual() {
+  const [mode, setMode] = useState<WorkflowMode>("single");
+  const [step, setStep] = useState(0);
+  const [playing, setPlaying] = useState(true);
+  const finalStep = contextSteps.length - 1;
+  const current = contextSteps[step];
+
+  useEffect(() => {
+    if (!playing) return;
+    const timer = window.setInterval(() => {
+      setStep((value) => {
+        if (value >= finalStep) {
+          setPlaying(false);
+          return value;
+        }
+        return value + 1;
+      });
+    }, 1700);
+    return () => window.clearInterval(timer);
+  }, [playing, finalStep]);
+
+  function chooseMode(nextMode: WorkflowMode) {
+    setMode(nextMode);
+    setStep(0);
+    setPlaying(true);
+  }
+
+  function togglePlayback() {
+    if (playing) {
+      setPlaying(false);
+      return;
+    }
+    if (step === finalStep) setStep(0);
+    setPlaying(true);
+  }
+
   return (
-    <div className="workflow-comparison">
-      <div className="diagram-heading"><span>Two ways to carry context</span><b>The same information, organised differently</b></div>
-      <div className="workflow-columns">
-        <section className="overloaded-flow">
-          <header><span>01</span><h3>One growing chat</h3></header>
-          <div className="context-stream">
-            <div className="context-block old"><small>Turn 01</small><b>Ingredients and rules</b></div>
-            <div className="context-arrow">↓</div>
-            <div className="context-block ageing"><small>Turn 09</small><b>Lunch and shopping</b></div>
-            <div className="context-arrow">↓</div>
-            <div className="context-block"><small>Turn 14</small><b>Prices and formatting</b></div>
-            <div className="context-arrow">↓</div>
-            <div className="single-chat-box"><span>CHAT</span><b>Every job and every correction</b><p>Earlier facts remain in the input, but they sit among more competing material.</p></div>
+    <div className={`workflow-comparison interactive-workflow ${mode}`}>
+      <header className="workflow-demo-head">
+        <div><span>Interactive context map</span><b>Watch the same project handled in two ways</b></div>
+        <div className="workflow-mode-switch" role="tablist" aria-label="Choose a context workflow">
+          <button type="button" role="tab" aria-selected={mode === "single"} className={mode === "single" ? "active" : ""} onClick={() => chooseMode("single")}><span>01</span>One chat</button>
+          <button type="button" role="tab" aria-selected={mode === "project"} className={mode === "project" ? "active" : ""} onClick={() => chooseMode("project")}><span>02</span>Project context</button>
+        </div>
+      </header>
+
+      <div className="workflow-live-area">
+        {mode === "single" ? <section className="single-context-scene" aria-label="One growing chat context animation">
+          <div className="workflow-explanation">
+            <span>ONE GROWING CHAT · STEP {step + 1}</span>
+            <h3>{current.title}</h3>
+            <p>{current.detail}</p>
+            <div className="attention-readout"><div><span>Original brief in focus</span><b>{current.attention}%</b></div><i><span style={{ width: `${current.attention}%` }} /></i></div>
+            <p className="workflow-note">Nothing has been deleted. The first instructions are competing with every later request.</p>
           </div>
-        </section>
-        <section className="focused-flow">
-          <header><span>02</span><h3>Saved context and clean chats</h3></header>
-          <div className="truth-box"><span>SOURCE OF TRUTH</span><b>Project or overview.md</b><p>Ingredients, serving size, preferences and current decisions stay here.</p></div>
-          <div className="branch-line" aria-hidden="true"><i /><i /><i /></div>
-          <div className="focused-chat-list">
-            <div><small>Clean chat 01</small><b>Plan four dinners</b><span>Only the relevant context</span></div>
-            <div><small>Clean chat 02</small><b>Adjust the portions</b><span>Only the relevant context</span></div>
-            <div><small>Clean chat 03</small><b>Write the shopping list</b><span>Only the relevant context</span></div>
+          <div className="single-context-canvas" style={{ "--attention": `${current.attention}%` } as CSSProperties}>
+            <div className="context-packet-stream">
+              {contextSteps.map((item, index) => <div className={`context-packet ${index <= step ? "visible" : ""} ${index === 0 && step >= 3 ? "fading" : ""} ${index === step ? "current" : ""}`} key={item.title}><small>{String(index + 1).padStart(2, "0")}</small><b>{item.title}</b></div>)}
+            </div>
+            <div className="context-flow-arrow" aria-hidden="true"><i /><span>CONTEXT</span></div>
+            <div className="single-context-core">
+              <div className="context-orbit" aria-hidden="true"><i /><i /><i /></div>
+              <span>ONE CHAT</span>
+              <strong>{step + 1} {step === 0 ? "job" : "jobs"} sharing one context</strong>
+              <p>The model must retrieve the right facts before it can answer the current request.</p>
+              <div><i style={{ width: `${current.attention}%` }} /><span>Useful attention</span></div>
+            </div>
           </div>
-          <p className="context-update-note"><b>Update separately</b> When a decision changes, update the source of truth before starting the next job.</p>
-        </section>
+        </section> : <section className="project-context-scene" aria-label="Project context with multiple focused chats animation">
+          <div className="workflow-explanation">
+            <span>PROJECT CONTEXT · CHAT {Math.min(step + 1, focusedChats.length)}</span>
+            <h3>One source of truth, then a clean chat for each job.</h3>
+            <p>The stable facts live outside the conversation. Each chat receives only the context its task needs.</p>
+            <div className="attention-readout healthy"><div><span>Relevant context in focus</span><b>100%</b></div><i><span /></i></div>
+            <p className="workflow-note">When a decision changes, update the project context separately before opening the next chat.</p>
+          </div>
+          <div className="project-context-canvas">
+            <div className="project-context-hub"><span>SOURCE OF TRUTH</span><strong>overview.md</strong><p>Pantry · vegetarian · two people · current decisions</p><div><i />Always current</div></div>
+            <div className="project-branch" aria-hidden="true"><i /><i /><i /><i /></div>
+            <div className="project-chat-grid">
+              {focusedChats.map((chat, index) => <div className={`project-chat-node ${index <= step ? "visible" : ""} ${index === Math.min(step, focusedChats.length - 1) ? "current" : ""}`} key={chat.title}><small>CLEAN CHAT {String(index + 1).padStart(2, "0")}</small><b>{chat.title}</b><p>{chat.detail}</p><span><i />Focused</span></div>)}
+            </div>
+          </div>
+        </section>}
       </div>
+
+      <footer className="workflow-playback">
+        <button type="button" onClick={togglePlayback}>{playing ? "Pause" : step === finalStep ? "Replay" : "Play"}<span aria-hidden="true">{playing ? "Ⅱ" : "▶"}</span></button>
+        <label><span>{mode === "single" ? "Add requests to the chat" : "Open focused chats"}</span><input type="range" min="0" max={finalStep} value={step} onChange={(event) => { setPlaying(false); setStep(Number(event.target.value)); }} /></label>
+        <b aria-live="polite">{String(step + 1).padStart(2, "0")} / {String(contextSteps.length).padStart(2, "0")}</b>
+      </footer>
     </div>
   );
 }
