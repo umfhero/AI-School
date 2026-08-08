@@ -106,6 +106,7 @@ button,a { font:inherit; }
 .auth-loading { width:82px; height:38px; display:block; border:1px solid #35445d; background:linear-gradient(90deg,#0e182c,#192640,#0e182c); background-size:200% 100%; animation:auth-shimmer 1.2s linear infinite; }
 .auth-user { min-height:38px; display:flex; align-items:center; gap:8px; padding:5px 6px; border:1px solid #40506b; background:#0e182c; }
 .auth-user > span { width:26px; height:26px; display:grid; place-items:center; background:var(--acid); color:var(--navy); font:900 .65rem monospace; }
+.auth-user .auth-avatar { flex:0 0 auto; background-position:center; background-size:cover; background-repeat:no-repeat; }
 .auth-user b { max-width:105px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:.68rem; }
 .auth-user button { border:0; border-left:1px solid #40506b; background:transparent; color:#9eabc0; padding:4px 6px; cursor:pointer; font-size:.6rem; }
 .auth-sign-in.compact { min-height:30px; padding:5px 8px; }

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-type User = { name: string; email: string };
+type User = { name: string; email: string; pictureUrl: string | null };
 
 export default function AuthButton({ returnTo = "/", compact = false }: { returnTo?: string; compact?: boolean }) {
   const [user, setUser] = useState<User | null>(null);
@@ -31,5 +31,6 @@ export default function AuthButton({ returnTo = "/", compact = false }: { return
   }
 
   const initial = user.name.trim().charAt(0).toUpperCase() || user.email.charAt(0).toUpperCase();
-  return <div className={`auth-user ${compact ? "compact" : ""}`} title={user.email}><span aria-hidden="true">{initial}</span><b>{user.name}</b><button type="button" onClick={signOut}>Sign out</button></div>;
+  const avatarStyle = user.pictureUrl ? { backgroundImage: `url(${user.pictureUrl})` } : undefined;
+  return <div className={`auth-user ${compact ? "compact" : ""}`} title={`${user.name} · ${user.email}`}><span className="auth-avatar" style={avatarStyle} aria-hidden="true">{user.pictureUrl ? null : initial}</span><b>{user.name}</b><button type="button" onClick={signOut}>Sign out</button></div>;
 }
