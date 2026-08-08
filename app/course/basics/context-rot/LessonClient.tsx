@@ -4,21 +4,7 @@
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import Image from "next/image";
 import AuthButton from "../../../components/AuthButton";
-import { LessonVisualContent, type LessonVisual } from "./LessonVisuals";
-
-const template = `# [Project name]
-
-## Goal
-[What are you making, and who is it for?]
-
-## What exists
-[Pages, files, decisions and links]
-
-## Current task
-[One thing the next chat should do]
-
-## Rules
-[Style, tools, limits and things to avoid]`;
+import { LessonVisualContent, OverviewWorkspaceVisual, type LessonVisual } from "./LessonVisuals";
 
 const courseChapters = [
   { title: "The basics", lessons: ["Context rot", "Your project brain", "Files and handovers", "A clean first workflow"] },
@@ -42,7 +28,6 @@ const visualTaskLabels: Record<LessonVisual, string> = {
 };
 
 export default function LessonClient() {
-  const [copied, setCopied] = useState(false);
   const [openChapter, setOpenChapter] = useState(0);
   const [quizAnswer, setQuizAnswer] = useState<string | null>(null);
   const [completedTasks, setCompletedTasks] = useState<string[]>([]);
@@ -112,12 +97,6 @@ export default function LessonClient() {
     } catch {
       setSaveStatus("error");
     }
-  }
-
-  async function copyTemplate() {
-    await navigator.clipboard.writeText(template);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1600);
   }
 
   function beginResize(event: ReactPointerEvent<HTMLDivElement>) {
@@ -216,7 +195,7 @@ export default function LessonClient() {
               <p>An overview.md file is a short record of the facts that should survive between chats, including the goal, current state, settled decisions and the next job. It gives the project a memory that you can read and edit directly, instead of asking one conversation to hold the current version of every fact.</p>
               <p>The clean chat becomes useful when you give it that current record at the start. For the recipe example, a new chat can begin with <code>@overview.md please suggest a recipe</code>, which supplies the pantry list and rules without the older lunch discussion or abandoned shopping ideas.</p>
               <p>Use a separate clean chat for each proper job, then update overview.md when a fact or decision changes. The next task begins from the edited file, while completed chat history can stay closed.</p>
-              <div className="lesson-template"><div><span>overview.md</span><button onClick={copyTemplate}>{copied ? "Copied" : "Copy template"}</button></div><pre><code>{template}</code></pre></div>
+              <div className="section-coding-workspace"><OverviewWorkspaceVisual /></div>
               <div className={`inline-task context-task build-task ${completedTasks.includes("build") ? "complete" : ""}`}>
                 <div className="task-heading"><span>TASK 03 · MAKE THE FILE</span><b>{completedTasks.includes("build") ? "COMPLETE ✓" : "5 MINUTES"}</b></div>
                 <h3>Create overview.md for a project you already have.</h3>
