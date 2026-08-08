@@ -168,7 +168,7 @@ export default function LessonClient() {
           <div className="lesson-reading-inner context-rot-reading">
             <p className={`progress-save-state ${signedIn ? "connected" : ""}`}>{signedIn ? (saveStatus === "saving" ? "Saving progress…" : saveStatus === "error" ? "Your progress could not be saved yet, while the lesson remains open." : "You are signed in, so task progress saves automatically.") : signedIn === false ? "Sign in above when you want this progress saved across devices." : "Your saved progress is being checked."}</p>
             <h1>Context rot.</h1>
-            <p className="lesson-lede">An average user opens ChatGPT, Claude or Gemini and starts typing about one topic, because the chat looks like a place where the model knows the subject and remembers everything said before. The same thread then gathers new requests, corrections and side jobs, until the information that mattered at the start becomes harder for the model to use consistently.</p>
+            <p className="lesson-lede">An average user opens <a className="lesson-reference-link" href="https://chatgpt.com/" target="_blank" rel="noreferrer">ChatGPT</a>, <a className="lesson-reference-link" href="https://claude.ai/" target="_blank" rel="noreferrer">Claude</a> or <a className="lesson-reference-link" href="https://gemini.google.com/" target="_blank" rel="noreferrer">Gemini</a> and starts typing about one topic, because the chat looks like a place where the model knows the subject and remembers everything said before. The same thread then gathers new requests, corrections and side jobs, until the information that mattered at the start becomes harder for the model to use consistently.</p>
             <div className="lesson-rule" />
 
             <section id="one-growing-chat">
@@ -191,8 +191,12 @@ export default function LessonClient() {
               <h2>More context can make a simple task less reliable.</h2>
               <p>Chroma tested whether leading models could copy a sequence of repeated words exactly. The task stayed simple while the input grew longer: reproduce the text, including one deliberately different word, without changing anything.</p>
               <figure className="research-figure">
-                <Image src="/context-rot-repeated-words.png" alt="Chroma line chart showing normalized Levenshtein scores falling as input length grows for Claude Sonnet 4, GPT-4.1, Qwen3-32B and Gemini 2.5 Flash on the Repeated Words task." width={1200} height={790} />
+                <a className="research-image-link" href="https://www.trychroma.com/research/context-rot" target="_blank" rel="noreferrer" aria-label="Open the original Context Rot research figure on Chroma">
+                  <Image src="/context-rot-repeated-words.png" alt="Chroma line chart showing normalized Levenshtein scores falling as input length grows for Claude Sonnet 4, GPT-4.1, Qwen3-32B and Gemini 2.5 Flash on the Repeated Words task." width={1200} height={790} />
+                  <span>Open original figure ↗</span>
+                </a>
                 <figcaption><span>Repeated Words</span><p>All four models became less accurate as the sequence grew, despite the instruction itself staying the same.</p><a href="https://www.trychroma.com/research/context-rot#repeated-words" target="_blank" rel="noreferrer">Chroma, Context Rot ↗</a></figcaption>
+                <div className="research-model-links"><span>Models shown</span><a href="https://www.anthropic.com/claude/sonnet" target="_blank" rel="noreferrer">Claude Sonnet 4 ↗</a><a href="https://openai.com/index/gpt-4-1/" target="_blank" rel="noreferrer">GPT-4.1 ↗</a><a href="https://qwenlm.github.io/blog/qwen3/" target="_blank" rel="noreferrer">Qwen3-32B ↗</a><a href="https://deepmind.google/models/gemini/flash/" target="_blank" rel="noreferrer">Gemini 2.5 Flash ↗</a></div>
               </figure>
               <p>The score uses normalized Levenshtein distance: higher means the model&apos;s output stayed closer to the text it was asked to copy. This is a controlled copying test, not a prediction of when a recipe chat will fail. It shows the underlying problem clearly: being able to receive more context does not mean using all of it with the same reliability.</p>
               <div className={`inline-task context-task observation ${completedTasks.includes("compare") ? "complete" : ""}`}>

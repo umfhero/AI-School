@@ -27,6 +27,10 @@ test("server-renders the context rot lesson workspace", async () => {
   assert.match(html, /One topic slowly becomes one crowded chat/i);
   assert.match(html, /Repeated Words/i);
   assert.match(html, /context-rot-repeated-words\.png/i);
+  assert.match(html, /href="https:\/\/chatgpt\.com\//i);
+  assert.match(html, /href="https:\/\/claude\.ai\//i);
+  assert.match(html, /href="https:\/\/gemini\.google\.com\//i);
+  assert.match(html, /Open original figure/i);
   assert.match(html, /overview\.md/i);
   assert.match(html, /Course contents/i);
   assert.match(html, /TASK 01 · FIND THE DRIFT/i);

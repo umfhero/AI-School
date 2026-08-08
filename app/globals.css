@@ -1003,6 +1003,8 @@ button,a { font:inherit; }
   font-size: clamp(4rem, 6vw, 7rem);
 }
 .context-rot-reading .lesson-lede { max-width: 780px; font-size: 1.18rem; line-height: 1.72; }
+.lesson-reference-link { color: #244ab2; font-weight: 700; text-decoration: underline; text-decoration-color: rgba(36,74,178,.35); text-underline-offset: 3px; }
+.lesson-reference-link:hover,.lesson-reference-link:focus-visible { color: #17358d; text-decoration-color: currentColor; }
 .context-rot-reading .lesson-rule { margin: 52px 0 80px; }
 .context-rot-reading section { scroll-margin-top: 30px; }
 .context-rot-reading section > p:not(.reading-kicker) { max-width: 750px; font-size: .98rem; line-height: 1.82; }
@@ -1035,11 +1037,19 @@ button,a { font:inherit; }
 .start-task-button + .answer-list { margin-top: 3px; }
 .start-task-button + .task-complete-button { display: block; margin-top: 2px; }
 .research-figure { margin: 32px 0 30px; border: 1px solid #aab4c3; background: #fff; }
-.research-figure img { display: block; width: 100%; height: auto; }
+.research-image-link { position: relative; display: block; overflow: hidden; }
+.research-figure img { display: block; width: 100%; height: auto; transition: transform .2s ease; }
+.research-image-link > span { position: absolute; right: 12px; bottom: 12px; padding: 7px 10px; border: 1px solid rgba(255,255,255,.72); background: rgba(13,22,40,.88); color: #fff; font-size: .66rem; font-weight: 800; }
+.research-image-link:hover img,.research-image-link:focus-visible img { transform: scale(1.008); }
+.research-image-link:focus-visible { outline: 3px solid rgba(53,97,220,.28); outline-offset: -3px; }
 .research-figure figcaption { display: grid; grid-template-columns: 150px 1fr auto; align-items: center; gap: 17px; padding: 15px 17px; border-top: 1px solid #c5ccd7; }
 .research-figure figcaption span { color: #3157bc; font: 800 .59rem monospace; text-transform: uppercase; letter-spacing: .06em; }
 .research-figure figcaption p { margin: 0; color: #4c586d; font-size: .72rem; line-height: 1.5; }
 .research-figure figcaption a { color: #244ab2; font-size: .69rem; font-weight: 800; white-space: nowrap; }
+.research-model-links { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; padding: 12px 17px; border-top: 1px solid #d7dce4; background: #f7f8fa; }
+.research-model-links span { color: #69768b; font: 800 .58rem monospace; text-transform: uppercase; letter-spacing: .06em; }
+.research-model-links a { color: #244ab2; font-size: .7rem; font-weight: 750; text-decoration: none; }
+.research-model-links a:hover,.research-model-links a:focus-visible { text-decoration: underline; text-underline-offset: 3px; }
 
 .lesson-resize-handle {
   position: relative;
