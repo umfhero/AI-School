@@ -14,8 +14,9 @@ test("server-renders the course home page", async () => {
   const html = await response.text();
   assert.match(html, /Build serious projects with AI/i);
   assert.match(html, /Cloudflare/i);
-  assert.match(html, /The basics/i);
-  assert.match(html, /Fleets and parallel work/i);
+  assert.match(html, /AI Free Course/i);
+  assert.match(html, /Start chapter one/i);
+  assert.doesNotMatch(html, /Your route/i);
 });
 
 test("server-renders the context rot lesson workspace", async () => {

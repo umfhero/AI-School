@@ -4,62 +4,16 @@ import Link from "next/link";
 import AuthButton from "./components/AuthButton";
 
 export const metadata: Metadata = {
-  title: "AI Workflows | A free course for building properly with AI",
+  title: "AI Free Course | Build properly with AI",
   description:
     "A free, visual course that takes you from your first AI project to agents, skills and parallel workflows.",
 };
 
-const chapters = [
-  {
-    number: "01",
-    title: "The basics",
-    summary: "Give your AI work structure that survives beyond a single chat.",
-    lessons: ["Context rot", "Your project brain", "Files and handovers", "A clean first workflow"],
-    href: "/course/basics/context-rot",
-    accent: "cyan",
-  },
-  {
-    number: "02",
-    title: "Pick the right model",
-    summary: "Choose GPT, Claude or Gemini for the job, then test the choice.",
-    lessons: ["What models change", "Speed, cost and reasoning", "Context windows", "A simple model test"],
-    accent: "blue",
-  },
-  {
-    number: "03",
-    title: "Build with an agent",
-    summary: "Turn a clear brief into working output while staying in control.",
-    lessons: ["Write the task brief", "Let the agent inspect", "Make the change", "Review the result"],
-    accent: "violet",
-  },
-  {
-    number: "04",
-    title: "Skills and repeatable work",
-    summary: "Package your best instructions so quality becomes repeatable.",
-    lessons: ["What a skill is", "Write your first skill", "Use templates well", "Improve from results"],
-    accent: "pink",
-  },
-  {
-    number: "05",
-    title: "Fleets and parallel work",
-    summary: "Divide larger projects cleanly and bring the work back together.",
-    lessons: ["When parallel helps", "Divide the jobs", "Clean handovers", "Merge without chaos"],
-    accent: "orange",
-  },
-  {
-    number: "06",
-    title: "Ship it properly",
-    summary: "Verify the work, record decisions and move it into the real world.",
-    lessons: ["Verification", "Source control", "Deployment", "Maintenance"],
-    accent: "mint",
-  },
-];
-
 function Brand() {
   return (
-    <Link className="site-brand" href="/" aria-label="AI Workflows home">
+    <Link className="site-brand" href="/" aria-label="AI Free Course home">
       <Image src="/ai-workflows-icon.png" alt="" width={34} height={34} priority />
-      <b>AI Workflows</b>
+      <b>AI Free Course</b>
     </Link>
   );
 }
@@ -69,10 +23,6 @@ export default function Home() {
     <main className="home-page" id="top">
       <nav className="home-nav" aria-label="Main navigation">
         <Brand />
-        <div className="home-nav-links">
-          <a href="#proof">Why this course</a>
-          <a href="#course">Course map</a>
-        </div>
         <div className="home-nav-actions">
           <AuthButton />
           <a className="nav-cta" href="/course/basics/context-rot">
@@ -84,7 +34,6 @@ export default function Home() {
       <section className="home-hero">
         <div className="hero-ambient" aria-hidden="true" />
         <div className="home-hero-copy">
-          <div className="free-pill"><span aria-hidden="true" /> Complete course · completely free</div>
           <h1>Build serious projects with AI, <em>properly.</em></h1>
           <p>
             Learn the workflow behind substantial AI work—from project memory and model choice to agents,
@@ -94,7 +43,6 @@ export default function Home() {
             <a className="button-primary" href="/course/basics/context-rot">
               Start chapter one <span aria-hidden="true">→</span>
             </a>
-            <a className="button-quiet" href="#course">Explore the course</a>
           </div>
           <div className="course-facts" aria-label="Course facts">
             <span><b>6</b><small>chapters</small></span>
@@ -158,40 +106,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="course-section" id="course">
-        <div className="course-heading">
-          <div><p className="section-kicker"><span /> Your route</p><h2>One complete workflow.<br /><em>Six clear chapters.</em></h2></div>
-          <p>Each chapter teaches one layer, gives you something to do, and saves your progress when you sign in.</p>
-        </div>
-        <div className="course-track" aria-label="Six chapter course route">
-          <span className="track-fill" />
-          {chapters.map((chapter, index) => <i className={index === 0 ? "active" : ""} key={chapter.number}><b>{chapter.number}</b></i>)}
-        </div>
-        <div className="chapter-grid">
-          {chapters.map((chapter, chapterIndex) => {
-            const content = (
-              <>
-                <div className="chapter-top">
-                  <span className="chapter-number">CHAPTER {chapter.number}</span>
-                  <span className="chapter-state">{chapterIndex === 0 ? "START HERE" : "COMING NEXT"}</span>
-                </div>
-                <h3>{chapter.title}</h3>
-                <p className="chapter-summary">{chapter.summary}</p>
-                <ol>{chapter.lessons.map((lesson, index) => <li key={lesson}><span>{String(index + 1).padStart(2, "0")}</span>{lesson}</li>)}</ol>
-                <div className="chapter-foot"><span>4 lessons · practical tasks</span><span>{chapterIndex === 0 ? "Open chapter →" : "View route"}</span></div>
-              </>
-            );
-            return chapter.href ? (
-              <a href={chapter.href} className={`chapter-card ${chapter.accent}`} key={chapter.number}>{content}</a>
-            ) : (
-              <article className={`chapter-card ${chapter.accent}`} key={chapter.number}>{content}</article>
-            );
-          })}
-        </div>
-      </section>
-
       <section className="home-final">
-        <div className="final-icon" aria-hidden="true"><Image src="/ai-workflows-icon.png" alt="" width={76} height={76} /></div>
         <p>Lesson 01.1 is ready</p>
         <h2>Your AI did not get worse.<br /><em>Your chat got messy.</em></h2>
         <a className="button-primary light" href="/course/basics/context-rot">Start the free course <span aria-hidden="true">→</span></a>

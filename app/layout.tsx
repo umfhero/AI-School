@@ -9,7 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     metadataBase: new URL(`${protocol}://${host}`),
-    title: "AI Workflows | Build serious projects with AI",
+    title: "AI Free Course | Build serious projects with AI",
     description: "A free visual course that takes you from messy chats to agents, skills and working AI systems.",
     openGraph: { title: "Build serious projects with AI, properly.", description: "A free course covering project memory, models, agents, skills and parallel workflows.", images: ["/og-home.png"] },
     twitter: { card: "summary_large_image", title: "Build serious projects with AI, properly.", images: ["/og-home.png"] },
