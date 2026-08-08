@@ -5,7 +5,7 @@ import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as R
 import Image from "next/image";
 import AuthButton from "../../../components/AuthButton";
 import { LessonCelebration } from "./LessonCelebration";
-import { LessonVisualContent, OverviewWorkspaceVisual, type LessonVisual } from "./LessonVisuals";
+import { LessonVisualContent, type LessonVisual } from "./LessonVisuals";
 
 const projectSetupPrompt = `You are setting up durable project context for this workspace.
 
@@ -230,7 +230,6 @@ export default function LessonClient() {
               <p>An overview.md file is a short record of the facts that should survive between chats, including the goal, current state, settled decisions and the next job. It gives the project a memory that you can read and edit directly, instead of asking one conversation to hold the current version of every fact.</p>
               <p>The clean chat becomes useful when you give it that current record at the start. For the recipe example, a new chat can begin with <code>@overview.md please suggest a recipe</code>, which supplies the pantry list and rules without the older lunch discussion or abandoned shopping ideas.</p>
               <p>Use a separate clean chat for each proper job, then update overview.md when a fact or decision changes. The next task begins from the edited file, while completed chat history can stay closed.</p>
-              <div className="section-coding-workspace"><OverviewWorkspaceVisual /></div>
               <div className="project-setup-guide">
                 <div className="project-setup-steps"><span>SET UP THE FILE ONCE</span><h3>Ask your AI to make the first version from the project it can see.</h3><ol><li><b>Open a new chat in the project folder.</b><span>Give it access to the files, documentation and current task notes.</span></li><li><b>Copy the prompt below.</b><span>It tells the AI to inspect the evidence before it writes overview.md.</span></li><li><b>Review the file before the next task.</b><span>Correct missing facts, then keep the tracker current as the work changes.</span></li></ol></div>
                 <div className="project-setup-prompt"><header><div><span>PROJECT SETUP PROMPT</span><b>Paste this into your AI at the start of a project.</b></div><button type="button" onClick={copyProjectSetupPrompt}>{copied ? "Copied" : "Copy prompt"}</button></header><pre><code>{projectSetupPrompt}</code></pre></div>
