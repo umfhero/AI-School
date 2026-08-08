@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import AuthButton from "../../../components/AuthButton";
+import { LessonVisualContent, type LessonVisual } from "./LessonVisuals";
 
 const template = `# [Project name]
 
@@ -27,52 +29,11 @@ const courseChapters = [
   { title: "Ship it properly", lessons: ["Verification", "Source control", "Deployment", "Maintaining the system"] },
 ];
 
-function AttentionChart({ stable = false }: { stable?: boolean }) {
-  return (
-    <figure className={`proper-chart ${stable ? "chart-stable" : "chart-decline"}`}>
-      <figcaption><b>{stable ? "Focused work" : "One growing chat"}</b><span>{stable ? "Useful attention stays near the job" : "Useful attention competes with more noise"}</span></figcaption>
-      <div className="chart-key"><i /> Useful attention <small>Illustrative pattern, not a benchmark score</small></div>
-      <div className="chart-area">
-        <div className="y-label">Useful attention</div>
-        <div className="y-ticks"><span>High</span><span>Medium</span><span>Low</span></div>
-        <div className="plot">
-          <div className="grid-line grid-1" /><div className="grid-line grid-2" /><div className="grid-line grid-3" />
-          <div className="data-segment seg-1" /><div className="data-segment seg-2" /><div className="data-segment seg-3" /><div className="data-segment seg-4" />
-          <i className="data-point point-1" /><i className="data-point point-2" /><i className="data-point point-3" /><i className="data-point point-4" /><i className="data-point point-5" />
-        </div>
-        <div className="x-ticks"><span>{stable ? "Task 1" : "Start"}</span><span>{stable ? "Task 2" : "+ changes"}</span><span>{stable ? "Task 3" : "+ fixes"}</span><span>{stable ? "Task 4" : "+ new page"}</span><span>{stable ? "Task 5" : "+ old work"}</span></div>
-        <div className="x-label">{stable ? "Separate focused jobs" : "More turns and unrelated context"}</div>
-      </div>
-    </figure>
-  );
-}
-
-function BadProjectVisual() {
-  return (
-    <div className="bad-project-wrap">
-      <div className="visual-title"><span><i className="status-red" /> BAD PROJECT</span><b>shop-redesign</b><small>47 messages · 9 loose files</small></div>
-      <div className="bad-project-window">
-        <aside>
-          <p>PROJECT</p>
-          <div className="tree"><b>▾ shop-redesign</b><span>▾ app</span><span className="indent">page.tsx</span><span className="indent">old-page.tsx</span><span className="indent">page-final.tsx</span><span>▾ notes</span><span className="indent warn-file">ideas.txt</span><span className="indent warn-file">changes-final.txt</span><span>logo-old.png</span><span>brief-v2.docx</span></div>
-        </aside>
-        <div className="bad-project-main">
-          <div className="visual-tabs"><span>page-final.tsx</span><span>chat</span></div>
-          <div className="warning-banner"><b>NO SOURCE OF TRUTH</b><span>The project goal and current decisions only exist in the chat.</span></div>
-          <div className="project-mess">
-            <div className="mess-card one"><small>Message 06</small><b>Use the blue logo</b></div>
-            <div className="mess-card two"><small>Message 19</small><b>Go back to green</b></div>
-            <div className="mess-card three"><small>Message 31</small><b>Keep the old homepage</b></div>
-            <div className="mess-card four"><small>Message 44</small><b>Why is the old logo back?</b></div>
-            <div className="missing-file"><span>?</span><b>overview.md</b><small>missing</small></div>
-          </div>
-          <div className="visual-terminal"><span>PROBLEM</span><p>Agent is using an old decision from message 06.</p></div>
-        </div>
-      </div>
-      <div className="visual-diagnosis"><div><span>01</span><p><b>No project memory</b>The important facts are trapped in one long conversation.</p></div><div><span>02</span><p><b>No task boundary</b>Design, copy and bug fixes are mixed together.</p></div><div><span>03</span><p><b>No handover</b>The next chat will either inherit the mess or lose the work.</p></div></div>
-    </div>
-  );
-}
+const visualLabels: Record<LessonVisual, string> = {
+  chat: "Long recipe chat",
+  workflow: "Workflow comparison",
+  workspace: "overview.md workspace",
+};
 
 export default function LessonClient() {
   const [copied, setCopied] = useState(false);
@@ -82,8 +43,13 @@ export default function LessonClient() {
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [visualOpen, setVisualOpen] = useState(true);
+  const [activeVisual, setActiveVisual] = useState<LessonVisual>("chat");
+  const [visualWidth, setVisualWidth] = useState(620);
+  const resizing = useRef(false);
 
   const progress = Math.round((completedTasks.length / 3) * 100);
+  const workspaceStyle = { "--visual-width": `${visualWidth}px` } as CSSProperties;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -101,6 +67,11 @@ export default function LessonClient() {
       });
     return () => controller.abort();
   }, []);
+
+  function showVisual(visual: LessonVisual) {
+    setActiveVisual(visual);
+    setVisualOpen(true);
+  }
 
   function completeTask(task: string) {
     if (completedTasks.includes(task)) return;
@@ -131,50 +102,127 @@ export default function LessonClient() {
     window.setTimeout(() => setCopied(false), 1600);
   }
 
+  function beginResize(event: ReactPointerEvent<HTMLDivElement>) {
+    resizing.current = true;
+    event.currentTarget.setPointerCapture(event.pointerId);
+  }
+
+  function resizeVisual(event: ReactPointerEvent<HTMLDivElement>) {
+    if (!resizing.current) return;
+    setVisualWidth(Math.min(860, Math.max(380, window.innerWidth - event.clientX)));
+  }
+
+  function endResize(event: ReactPointerEvent<HTMLDivElement>) {
+    resizing.current = false;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+  }
+
+  function resizeWithKeyboard(event: ReactKeyboardEvent<HTMLDivElement>) {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    event.preventDefault();
+    setVisualWidth((width) => Math.min(860, Math.max(380, width + (event.key === "ArrowLeft" ? 30 : -30))));
+  }
+
   return (
     <main className="lesson-page">
-      <header className="lesson-header"><div className="lesson-header-left"><button className="sidebar-toggle" type="button" onClick={() => setSidebarOpen((open) => !open)} aria-expanded={sidebarOpen} aria-controls="course-contents"><span aria-hidden="true">{sidebarOpen ? "×" : "☰"}</span><b>{sidebarOpen ? "Hide contents" : "Show contents"}</b></button><div className="lesson-brand"><b>AI Free Course</b></div></div><div className="lesson-crumb"><span>Chapter 01 · The basics</span><span>/</span><b>Context rot</b></div><div className="lesson-account"><div className="lesson-progress"><span><i style={{ width: `${Math.max(4, progress)}%` }} /></span><b>{completedTasks.length} / 3 tasks</b></div><AuthButton returnTo="/course/basics/context-rot" compact /></div></header>
-      <div className={`lesson-workspace ${sidebarOpen ? "" : "sidebar-closed"}`}>
+      <header className="lesson-header">
+        <div className="lesson-header-left">
+          <button className="sidebar-toggle" type="button" onClick={() => setSidebarOpen((open) => !open)} aria-expanded={sidebarOpen} aria-controls="course-contents"><span aria-hidden="true">{sidebarOpen ? "×" : "☰"}</span><b>{sidebarOpen ? "Hide contents" : "Show contents"}</b></button>
+          <div className="lesson-brand"><b>AI Free Course</b></div>
+        </div>
+        <div className="lesson-crumb"><span>Chapter 01 · The basics</span><span>/</span><b>Context rot</b></div>
+        <div className="lesson-account"><div className="lesson-progress"><span><i style={{ width: `${Math.max(4, progress)}%` }} /></span><b>{completedTasks.length} / 3 tasks</b></div><AuthButton returnTo="/course/basics/context-rot" compact /></div>
+      </header>
+
+      <div className={`lesson-workspace ${sidebarOpen ? "" : "sidebar-closed"} ${visualOpen ? "" : "visual-closed"}`} style={workspaceStyle}>
         <aside className="course-sidebar" id="course-contents" aria-label="Course contents">
           <div className="course-side-head"><p>AI Free Course</p><h2>Course contents</h2><div><span style={{ width: `${Math.max(4, progress)}%` }} /><small>{progress}% of this lesson</small></div></div>
           <nav>
-            {courseChapters.map((chapter, chapterIndex) => <div className={`side-chapter ${chapterIndex === 0 ? "current" : ""}`} key={chapter.title}>
-              <button onClick={() => setOpenChapter(openChapter === chapterIndex ? -1 : chapterIndex)} aria-expanded={openChapter === chapterIndex}><span>{String(chapterIndex + 1).padStart(2, "0")}</span><b>{chapter.title}</b><i aria-hidden="true">{openChapter === chapterIndex ? "−" : "+"}</i></button>
-              {openChapter === chapterIndex ? <ol>{chapter.lessons.map((lesson, lessonIndex) => <li className={chapterIndex === 0 && lessonIndex === 0 ? "active" : ""} key={lesson}><span>{chapterIndex === 0 && lessonIndex === 0 ? "●" : "○"}</span><div><small>Lesson {chapterIndex + 1}.{lessonIndex + 1}</small><b>{lesson}</b></div>{chapterIndex > 0 ? <i>LOCKED</i> : null}</li>)}</ol> : null}
-            </div>)}
+            {courseChapters.map((chapter, chapterIndex) => (
+              <div className={`side-chapter ${chapterIndex === 0 ? "current" : ""}`} key={chapter.title}>
+                <button onClick={() => setOpenChapter(openChapter === chapterIndex ? -1 : chapterIndex)} aria-expanded={openChapter === chapterIndex}><span>{String(chapterIndex + 1).padStart(2, "0")}</span><b>{chapter.title}</b><i aria-hidden="true">{openChapter === chapterIndex ? "−" : "+"}</i></button>
+                {openChapter === chapterIndex ? <ol>{chapter.lessons.map((lesson, lessonIndex) => <li className={chapterIndex === 0 && lessonIndex === 0 ? "active" : ""} key={lesson}><span>{chapterIndex === 0 && lessonIndex === 0 ? "●" : "○"}</span><div><small>Lesson {chapterIndex + 1}.{lessonIndex + 1}</small><b>{lesson}</b></div>{chapterIndex > 0 ? <i>LOCKED</i> : null}</li>)}</ol> : null}
+              </div>
+            ))}
           </nav>
           <div className="chapter-project"><span>CHAPTER PROJECT</span><b>Build your project brain</b><p>Unlocks after all four lessons.</p><small>0 / 4 lessons</small></div>
         </aside>
+
         <article className="lesson-reading">
-          <div className="lesson-reading-inner">
-            <div className="lesson-meta"><span>LESSON 01.1</span><span>8 MINUTES</span><span>BEGINNER</span></div>
-            <p className={`progress-save-state ${signedIn ? "connected" : ""}`}>{signedIn ? (saveStatus === "saving" ? "Saving progress…" : saveStatus === "error" ? "Could not save just now — your lesson stays open." : "Signed in · progress saves automatically") : signedIn === false ? "Sign in above to save your progress across devices." : "Checking saved progress…"}</p>
-            <h1>Your AI did not get worse. <em>Your chat got messy.</em></h1>
-            <p className="lesson-lede">A large context window means a model can read a lot. It does not mean every old instruction, correction and decision receives equal attention.</p>
-            <aside className="objectives-card"><div><span aria-hidden="true">◎</span><h2>Learning objectives</h2></div><p>After this lesson, you will be able to:</p><ul><li>Explain why a long chat can become less reliable.</li><li>Separate project memory from conversation history.</li><li>Use one focused chat for one proper job.</li></ul></aside>
+          <div className="lesson-reading-inner context-rot-reading">
+            <p className={`progress-save-state ${signedIn ? "connected" : ""}`}>{signedIn ? (saveStatus === "saving" ? "Saving progress…" : saveStatus === "error" ? "Your progress could not be saved yet, while the lesson remains open." : "You are signed in, so task progress saves automatically.") : signedIn === false ? "Sign in above when you want this progress saved across devices." : "Your saved progress is being checked."}</p>
+            <h1>Context rot.</h1>
+            <p className="lesson-lede">An average user opens ChatGPT, Claude or Gemini and starts typing about one topic, because the chat looks like a place where the model knows the subject and remembers everything said before. The same thread then gathers new requests, corrections and side jobs, until the information that mattered at the start becomes harder for the model to use consistently.</p>
             <div className="lesson-rule" />
 
-            <section id="the-problem"><p className="reading-kicker">Section 1 · The problem</p><h2>A chat is a whiteboard, not the whole office.</h2><p>Every prompt, reply, correction and pasted file becomes part of the context the model sees. This is useful at first, but a chat can slowly collect old decisions and unrelated work until the current task has to compete with all of it.</p><p>The model has not literally become less intelligent. Its answer can become less reliable because the input is noisier, and research shows that models can use information unevenly when the relevant detail sits inside a long context.</p>
-              <aside className="lesson-note"><span>KEEP THIS STRAIGHT</span><p>Starting a new chat is not magic. If the useful project facts only exist in the old chat, the clean chat has no way to know them.</p></aside>
-              <div className={`inline-task ${completedTasks.includes("diagnose") ? "complete" : ""}`}><div className="task-heading"><span>TASK 01 · QUICK CHECK</span><b>{completedTasks.includes("diagnose") ? "COMPLETE ✓" : "1 MINUTE"}</b></div><h3>Which setup is most likely to cause trouble?</h3><div className="answer-list"><button onClick={() => setQuizAnswer("a")}>A. One chat for each focused job, with a shared overview.md.</button><button onClick={() => { setQuizAnswer("b"); completeTask("diagnose"); }}>B. One chat containing the design, research, copy, bug fixes and old decisions.</button><button onClick={() => setQuizAnswer("c")}>C. A new chat supplied with the current project file and relevant code.</button></div>{quizAnswer ? <p className={`task-feedback ${quizAnswer === "b" ? "right" : "wrong"}`}>{quizAnswer === "b" ? "Correct. The current job has to compete with every earlier instruction and detour." : "Not quite. This setup keeps the context close to the current job, so try another answer."}</p> : null}</div>
+            <section id="one-growing-chat">
+              <p className="reading-kicker">Section 1</p>
+              <h2>One topic slowly becomes one crowded chat.</h2>
+              <p>A recipe conversation can begin with a useful list of ingredients and a clear request, then grow into portion changes, lunch ideas and a shopping list. Each reply feels connected to the same topic, so keeping it all in one place seems sensible.</p>
+              <p>The earlier ingredient list can remain inside the context window while the model uses it less consistently, because later instructions and similar details compete for the same answer. People often describe this as the model forgetting, although the practical problem is unreliable use of information that still exists somewhere in a long input.</p>
+              <button className="open-visual-button" type="button" onClick={() => showVisual("chat")}><span>Open the side view</span><b>Read the long recipe chat</b><i aria-hidden="true">→</i></button>
+
+              <div className={`inline-task context-task ${completedTasks.includes("diagnose") ? "complete" : ""}`}>
+                <div className="task-heading"><span>TASK 01 · FIND THE DRIFT</span><b>{completedTasks.includes("diagnose") ? "COMPLETE ✓" : "3 MINUTES"}</b></div>
+                <h3>Read the conversation and find the first reply that breaks the original brief.</h3>
+                <p>The original brief asks for vegetarian meals for two people that use chickpeas, spinach, peppers, lemon, rice and yoghurt first.</p>
+                <div className="answer-list"><button onClick={() => setQuizAnswer("a")}>Turn 04, when the assistant changes the cooking method.</button><button onClick={() => { setQuizAnswer("b"); completeTask("diagnose"); }}>Turn 10, when the assistant buys a new meal and adds breakfast food.</button><button onClick={() => setQuizAnswer("c")}>Turn 16, when the assistant suggests couscous and halloumi.</button></div>
+                {quizAnswer ? <p className={`task-feedback ${quizAnswer === "b" ? "right" : "wrong"}`}>{quizAnswer === "b" ? "Turn 10 is the first clear drift, because it ignores the pantry and also breaks the instruction about breakfast food." : "The conversation has already drifted before that point, so compare the reply with the original instruction at the top of the side view."}</p> : null}
+              </div>
             </section>
 
-            <section id="what-changes"><p className="reading-kicker">Section 2 · What changes</p><h2>The shape of the input affects the work.</h2><p>In one growing chat, the early goal sits beside colour changes, abandoned ideas and later corrections. The line below shows the teaching pattern clearly: as unrelated context grows, useful attention can become less dependable.</p><AttentionChart />
-              <p>A focused workflow looks different because each task begins with a small source of truth. The model still receives context, but it is the context for this job.</p><AttentionChart stable />
-              <div className={`inline-task observation ${completedTasks.includes("compare") ? "complete" : ""}`}><div className="task-heading"><span>TASK 02 · READ THE CHART</span><b>{completedTasks.includes("compare") ? "COMPLETE ✓" : "2 MINUTES"}</b></div><h3>Write down the difference in one sentence.</h3><p>The point is not that attention reaches zero. The point is that focused jobs keep the useful material closer to the task.</p><button className="task-complete-button" onClick={() => completeTask("compare")}>{completedTasks.includes("compare") ? "Marked complete" : "I have written my sentence"}</button></div>
+            <section id="what-research-shows">
+              <p className="reading-kicker">Section 2</p>
+              <h2>A large context window and reliable recall are different things.</h2>
+              <p>A context window sets how much text a model can receive in one request, while the answer still depends on how well the model finds and uses the relevant part. Chroma tested this with LongMemEval, where models answered questions from either a focused prompt of about 300 tokens or a full chat history of about 113,000 tokens.</p>
+              <figure className="research-figure">
+                <Image src="/context-rot-longmemeval-claude.png" alt="Chroma bar chart comparing Claude performance on focused prompts and full long chat histories, with focused prompts scoring higher for every tested model." width={1200} height={600} />
+                <figcaption><span>Published research figure</span><p>Every Claude model in this test scored higher with the focused input than with the full history.</p><a href="https://www.trychroma.com/research/context-rot#longmemeval" target="_blank" rel="noreferrer">Chroma, Context Rot ↗</a></figcaption>
+              </figure>
+              <p>The graph measures a controlled question-answering task rather than recipe planning, so it does not predict a fixed point where a conversation fails. It does support the practical lesson that carrying an entire history can make a simple job less reliable than supplying the smaller part that the job needs.</p>
+              <button className="open-visual-button" type="button" onClick={() => showVisual("workflow")}><span>Open the side view</span><b>Compare both workflows</b><i aria-hidden="true">→</i></button>
+
+              <div className={`inline-task context-task observation ${completedTasks.includes("compare") ? "complete" : ""}`}>
+                <div className="task-heading"><span>TASK 02 · COMPARE THE WORKFLOWS</span><b>{completedTasks.includes("compare") ? "COMPLETE ✓" : "2 MINUTES"}</b></div>
+                <h3>Follow where the original ingredients live in each workflow.</h3>
+                <p>In the growing chat, those facts sit above every later job. In the focused workflow, the facts live in one source of truth and each new chat receives the part it needs.</p>
+                <button className="task-complete-button" onClick={() => { showVisual("workflow"); completeTask("compare"); }}>{completedTasks.includes("compare") ? "Comparison complete" : "I have compared both workflows"}</button>
+              </div>
             </section>
 
-            <section id="the-workflow"><p className="reading-kicker">Section 3 · The workflow</p><h2>Keep the memory, then lose the clutter.</h2><ol className="lesson-steps"><li><span>01</span><div><b>Keep the source of truth outside the chat.</b><p>Store the project goal, current state, settled decisions and next task in a small overview.md file.</p></div></li><li><span>02</span><div><b>Give one chat one proper job.</b><p>Use it to plan a feature, write a page, fix a bug or review a change, then finish that job.</p></div></li><li><span>03</span><div><b>Leave a factual handover.</b><p>Record what changed, what remains and which files matter before you move on.</p></div></li><li><span>04</span><div><b>Start the next job clean.</b><p>Bring overview.md and only the files that the new task needs.</p></div></li></ol></section>
+            <section id="source-of-truth">
+              <p className="reading-kicker">Section 3</p>
+              <h2>Move the useful context into overview.md.</h2>
+              <p>An overview.md file is a short record of the facts that should survive between chats, including the goal, current state, settled decisions and the next job. It gives the project a memory that you can read and edit directly, instead of asking one conversation to hold the current version of every fact.</p>
+              <p>The clean chat becomes useful when you give it that current record at the start. For the recipe example, a new chat can begin with <code>@overview.md please suggest a recipe</code>, which supplies the pantry list and rules without the older lunch discussion or abandoned shopping ideas.</p>
+              <p>Use a separate clean chat for each proper job, then update overview.md when a fact or decision changes. The next task begins from the edited file, while completed chat history can stay closed.</p>
+              <button className="open-visual-button" type="button" onClick={() => showVisual("workspace")}><span>Open the side view</span><b>See overview.md in a clean workspace</b><i aria-hidden="true">→</i></button>
 
-            <section id="try-it"><p className="reading-kicker">Section 4 · Try it now</p><h2>Make the file your next chat needs.</h2><p>Copy this into a new overview.md file, then replace the square brackets with your own project details.</p><div className="lesson-template"><div><span>overview.md</span><button onClick={copyTemplate}>{copied ? "Copied" : "Copy template"}</button></div><pre><code>{template}</code></pre></div><div className={`inline-task build-task ${completedTasks.includes("build") ? "complete" : ""}`}><div className="task-heading"><span>TASK 03 · MAKE THE FILE</span><b>{completedTasks.includes("build") ? "COMPLETE ✓" : "5 MINUTES"}</b></div><h3>Complete your own overview.md.</h3><ul><li>State what you are making and who it is for.</li><li>Record the pages, files and decisions that already exist.</li><li>Give the next chat one exact job.</li></ul><button className="task-complete-button" onClick={() => completeTask("build")}>{completedTasks.includes("build") ? "Task complete" : "I have made the file"}</button></div></section>
+              <div className="lesson-template"><div><span>overview.md</span><button onClick={copyTemplate}>{copied ? "Copied" : "Copy template"}</button></div><pre><code>{template}</code></pre></div>
+              <div className={`inline-task context-task build-task ${completedTasks.includes("build") ? "complete" : ""}`}>
+                <div className="task-heading"><span>TASK 03 · MAKE THE FILE</span><b>{completedTasks.includes("build") ? "COMPLETE ✓" : "5 MINUTES"}</b></div>
+                <h3>Create overview.md for a project you already have.</h3>
+                <ul><li>Write the project goal and the current state as facts.</li><li>Record decisions that the next chat must keep.</li><li>Give the next chat one specific job, then start that job in a clean chat with the file attached.</li></ul>
+                <button className="task-complete-button" onClick={() => { showVisual("workspace"); completeTask("build"); }}>{completedTasks.includes("build") ? "Task complete" : "I have made the file"}</button>
+              </div>
+            </section>
 
-            {completedTasks.length === 3 ? <section className="lesson-complete-card"><span>LESSON COMPLETE</span><h2>You have separated project memory from chat history.</h2><p>{signedIn ? "Your progress is saved to your account and will be here on any device." : "Sign in with Google to save this lesson to your account and continue on another device."}</p></section> : null}
+            {completedTasks.length === 3 ? <section className="lesson-complete-card"><span>LESSON COMPLETE</span><h2>You have moved project memory outside the chat.</h2><p>{signedIn ? "Your account now holds the completed tasks, so this lesson will remain complete on another device." : "You can sign in with Google to keep the completed tasks when you continue on another device."}</p></section> : null}
 
-            <section className="lesson-sources"><p className="reading-kicker">Sources</p><h2>Read the work behind the lesson.</h2><a href="https://research.trychroma.com/context-rot" target="_blank" rel="noreferrer"><b>Chroma Research</b><span>Context Rot ↗</span></a><a href="https://arxiv.org/abs/2307.03172" target="_blank" rel="noreferrer"><b>Liu et al.</b><span>Lost in the Middle ↗</span></a><a href="https://arxiv.org/abs/2311.04325" target="_blank" rel="noreferrer"><b>Hsieh et al.</b><span>RULER ↗</span></a></section>
+            <section className="lesson-sources"><p className="reading-kicker">Sources</p><h2>The research used in this lesson.</h2><a href="https://www.trychroma.com/research/context-rot" target="_blank" rel="noreferrer"><b>Chroma Research</b><span>Context Rot ↗</span></a><a href="https://arxiv.org/abs/2307.03172" target="_blank" rel="noreferrer"><b>Liu et al.</b><span>Lost in the Middle ↗</span></a></section>
           </div>
         </article>
-        <aside className="lesson-visual" aria-label="Visual example of a poorly organised AI project"><BadProjectVisual /></aside>
+
+        {/* A focusable ARIA separator supports pointer dragging and keyboard resizing. */}
+        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex */}
+        {visualOpen ? <div className="lesson-resize-handle" role="separator" aria-label="Resize the lesson visual" aria-orientation="vertical" aria-valuemin={380} aria-valuemax={860} aria-valuenow={visualWidth} tabIndex={0} onPointerDown={beginResize} onPointerMove={resizeVisual} onPointerUp={endResize} onPointerCancel={endResize} onKeyDown={resizeWithKeyboard}><span aria-hidden="true">⋮</span></div> : null}
+        {visualOpen ? <aside className="lesson-visual context-visual" aria-label={`${visualLabels[activeVisual]} visual`}>
+          <div className="visual-switcher"><div><span>Side view</span><b>{visualLabels[activeVisual]}</b></div><nav aria-label="Choose lesson visual">{(Object.keys(visualLabels) as LessonVisual[]).map((visual) => <button className={activeVisual === visual ? "active" : ""} type="button" onClick={() => setActiveVisual(visual)} key={visual}>{visualLabels[visual]}</button>)}</nav><button className="close-visual" type="button" onClick={() => setVisualOpen(false)} aria-label="Close side view">×</button></div>
+          <div className="context-visual-stage"><LessonVisualContent visual={activeVisual} /></div>
+        </aside> : null}
+        {!visualOpen ? <button className="reopen-visual" type="button" onClick={() => setVisualOpen(true)}><span>Open side view</span><b>{visualLabels[activeVisual]}</b></button> : null}
       </div>
+
       <nav className="lesson-bottom" aria-label="Lesson navigation"><Link className="lesson-home-back" href="/"><span aria-hidden="true">←</span><b>Back to home</b></Link><div><span>CHAPTER 01 · THE BASICS</span><b>{completedTasks.length} of 3 tasks complete</b></div><button className="lesson-next" disabled={completedTasks.length < 3} title={completedTasks.length < 3 ? "Complete the three tasks to unlock the next lesson" : undefined}>Next lesson <span aria-hidden="true">→</span></button></nav>
     </main>
   );
