@@ -68,6 +68,14 @@ export default function LessonClient() {
     return () => controller.abort();
   }, []);
 
+  useEffect(() => {
+    const phoneLayout = window.matchMedia("(max-width: 920px)");
+    const frame = window.requestAnimationFrame(() => {
+      if (phoneLayout.matches) setSidebarOpen(false);
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
+
   function showVisual(visual: LessonVisual) {
     setActiveVisual(visual);
     setVisualOpen(true);
