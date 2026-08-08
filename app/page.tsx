@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import AuthButton from "./components/AuthButton";
 import CourseProgress from "./components/CourseProgress";
+import SiteHeader from "./components/SiteHeader";
 import { PixelArrow, PixelSpark, PixelCheck, PixelMascot } from "./components/PixelIcons";
 
 export const metadata: Metadata = {
@@ -23,15 +23,7 @@ function Brand() {
 export default function Home() {
   return (
     <main className="home-page" id="top">
-      <nav className="home-nav" aria-label="Main navigation">
-        <Brand />
-        <div className="home-nav-actions">
-          <AuthButton />
-          <a className="nav-cta" href="/course/basics/context-rot">
-            Start learning <PixelArrow />
-          </a>
-        </div>
-      </nav>
+      <SiteHeader />
 
       <section className="home-hero">
         <div className="hero-ambient" aria-hidden="true" />

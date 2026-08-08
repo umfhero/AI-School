@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-:root { --navy:#050a19; --navy-2:#0c1428; --panel:#111c33; --line:#2a3853; --ink:#0b1020; --paper:#f7f8fc; --white:#fff; --acid:#b8f52c; --blue:#38bdf8; --orange:#ff8b3d; --violet:#9d7cff; --pink:#ff66a8; --mint:#43e6b0; --muted:#8996ae; }
+:root { --navy:#050a19; --navy-2:#0c1428; --panel:#111c33; --line:#2a3853; --ink:#0b1020; --paper:#f7f8fc; --white:#fff; --acid:#b8f52c; --blue:#38bdf8; --orange:#ff8b3d; --violet:#9d7cff; --pink:#ff66a8; --mint:#43e6b0; --muted:#8996ae; --home-bg: #f6f7fb; --home-panel: rgba(255, 255, 255, .8); --home-panel-solid: #ffffff; --home-line: rgba(11, 17, 32, .08); --home-muted: #5c6478; --home-cyan: #1f9db8; --home-blue: #3561dc; --home-violet: #6258e9; --home-pink: #c2469e; --home-gutter: clamp(24px, 4.5vw, 88px); }
 * { box-sizing:border-box; }
 html { scroll-behavior:smooth; }
 body { margin:0; background:var(--navy); color:var(--white); font-family:Arial, Helvetica, sans-serif; }
@@ -138,24 +138,18 @@ button,a { font:inherit; }
 
 /* Luminous homepage */
 .home-page {
-  --home-bg: #f6f7fb;
-  --home-panel: rgba(255, 255, 255, .8);
-  --home-panel-solid: #ffffff;
-  --home-line: rgba(11, 17, 32, .08);
-  --home-muted: #5c6478;
-  --home-cyan: #1f9db8;
-  --home-blue: #3561dc;
-  --home-violet: #6258e9;
-  --home-pink: #c2469e;
   min-height: 100vh;
   color: #0b1130;
   background: var(--home-bg);
   overflow: hidden;
 }
 
-.home-page .pixel-icon { shape-rendering: crispEdges; }
+.home-page .pixel-icon,
+.home-nav .pixel-icon { shape-rendering: crispEdges; }
 
-.home-page .home-nav {
+/* Shared site header (SiteHeader.tsx) — used on the homepage and profile page, not scoped to
+   .home-page so it works identically wherever it's mounted. */
+.home-nav {
   width: min(1280px, calc(100% - 40px));
   height: 72px;
   margin: 16px auto 0;
@@ -167,30 +161,30 @@ button,a { font:inherit; }
   background: #ffffff;
 }
 
-.home-page .site-brand {
+.site-brand {
   gap: 9px;
   letter-spacing: -.025em;
 }
 
-.home-page .site-brand img {
+.site-brand img {
   width: 34px;
   height: 34px;
   object-fit: contain;
   filter: drop-shadow(0 0 12px rgba(98, 116, 233, .22));
 }
 
-.home-page .site-brand b { font-size: .95rem; }
-.home-page .home-nav-links { gap: 8px; }
-.home-page .home-nav-links a {
+.site-brand b { font-size: .95rem; }
+.home-nav-links { gap: 8px; }
+.home-nav-links a {
   padding: 9px 12px;
   color: #4c5573;
   font-size: .76rem;
   border-radius: 10px;
   transition: color .2s, background .2s;
 }
-.home-page .home-nav-links a:hover { color: #0b1130; background: rgba(11,17,32,.05); }
+.home-nav-links a:hover { color: #0b1130; background: rgba(11,17,32,.05); }
 
-.home-page .nav-cta {
+.nav-cta {
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -204,18 +198,18 @@ button,a { font:inherit; }
   letter-spacing: -.01em;
   transition: transform .08s ease, box-shadow .08s ease;
 }
-.home-page .nav-cta:hover,
-.home-page .nav-cta:focus-visible {
+.nav-cta:hover,
+.nav-cta:focus-visible {
   transform: translate(1px, 1px);
   box-shadow: 2px 2px 0 #0b1130;
 }
-.home-page .nav-cta:active {
+.nav-cta:active {
   transform: translate(3px, 3px);
   box-shadow: 0 0 0 #0b1130;
 }
 
-.home-page .auth-sign-in,
-.home-page .auth-user {
+.home-nav .auth-sign-in,
+.home-nav .auth-user {
   color: #0b1130;
   border: 2px solid #0b1130;
   border-radius: 5px;
@@ -223,18 +217,18 @@ button,a { font:inherit; }
   box-shadow: 3px 3px 0 #0b1130;
   transition: transform .08s ease, box-shadow .08s ease;
 }
-.home-page .auth-sign-in:hover,
-.home-page .auth-sign-in:focus-visible,
-.home-page .auth-user:hover,
-.home-page .auth-user:focus-within {
+.home-nav .auth-sign-in:hover,
+.home-nav .auth-sign-in:focus-visible,
+.home-nav .auth-user:hover,
+.home-nav .auth-user:focus-within {
   border-color: #0b1130;
   transform: translate(1px, 1px);
   box-shadow: 2px 2px 0 #0b1130;
 }
-.home-page .auth-sign-in > span { background: var(--home-blue); color: #fff; border-radius: 3px; }
-.home-page .auth-user > span { background: var(--home-violet); color: #fff; border-radius: 4px; }
-.home-page .auth-user button { color: #5c6478; border-left-color: rgba(11,17,32,.18); }
-.home-page .auth-user button:hover { color: #0b1130; }
+.home-nav .auth-sign-in > span { background: var(--home-blue); color: #fff; border-radius: 3px; }
+.home-nav .auth-user > span { background: var(--home-violet); color: #fff; border-radius: 4px; }
+.home-nav .auth-user button { color: #5c6478; border-left-color: rgba(11,17,32,.18); }
+.home-nav .auth-user button:hover { color: #0b1130; }
 
 .home-page .home-hero {
   width: min(1280px, calc(100% - 40px));
@@ -615,8 +609,8 @@ button,a { font:inherit; }
 }
 
 @media (max-width: 760px) {
-  .home-page .home-nav { width: calc(100% - 24px); margin-top: 10px; }
-  .home-page .home-nav-links { display:none; }
+  .home-nav { width: calc(100% - 24px); margin-top: 10px; }
+  .home-nav-links { display:none; }
   .home-page .home-hero,
   .home-page .proof-section,
   .home-page .course-section { width:calc(100% - 24px); padding-left:4px; padding-right:4px; }
@@ -785,8 +779,7 @@ button,a { font:inherit; }
 }
 
 /* Full-width homepage and account progress */
-.home-page { --home-gutter: clamp(24px, 4.5vw, 88px); }
-.home-page .home-nav {
+.home-nav {
   width: 100%;
   margin: 0;
   padding-left: var(--home-gutter);
@@ -928,7 +921,7 @@ button,a { font:inherit; }
 }
 
 @media (max-width: 760px) {
-  .home-page .home-nav { width: 100%; margin: 0; }
+  .home-nav { width: 100%; margin: 0; }
   .home-page .home-hero,
   .home-page .proof-section,
   .home-page .home-final,

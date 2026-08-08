@@ -3,6 +3,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import styles from "./profile.module.css";
+import SiteHeader from "../components/SiteHeader";
 import { PixelArrow, PixelSpark } from "../components/PixelIcons";
 
 type User = { name: string; email: string; pictureUrl: string | null };
@@ -86,12 +87,13 @@ export default function ProfileClient() {
   for (let date = new Date(); activity[localDateKey(date)] > 0; date.setDate(date.getDate() - 1)) dayStreak += 1;
   const initial = useMemo(() => progress?.user?.name?.trim().charAt(0).toUpperCase() || "A", [progress?.user?.name]);
 
-  if (isLoading) return <main className={styles.page}><div className={styles.loading}>Loading your learning profile…</div></main>;
-  if (!progress?.user) return <main className={styles.page}><section className={styles.signedOut}><p className={styles.eyebrow}>YOUR AI SCHOOL</p><h1>Your learning profile is waiting.</h1><p>Sign in to keep your course progress and build a daily learning streak.</p><a href="/api/auth/google/start?returnTo=%2Fprofile">Sign in with Google <PixelArrow /></a><a href="/">Back to AI school</a></section></main>;
+  if (isLoading) return <main className={styles.page}><SiteHeader /><div className={styles.loading}>Loading your learning profile…</div></main>;
+  if (!progress?.user) return <main className={styles.page}><SiteHeader /><section className={styles.signedOut}><p className={styles.eyebrow}>YOUR AI SCHOOL</p><h1>Your learning profile is waiting.</h1><p>Sign in to keep your course progress and build a daily learning streak.</p><a href="/api/auth/google/start?returnTo=%2Fprofile">Sign in with Google <PixelArrow /></a><a href="/">Back to AI school</a></section></main>;
 
   const avatarStyle = progress.user.pictureUrl ? { backgroundImage: `url(${progress.user.pictureUrl})` } : undefined;
-  return <main className={styles.page}><div className={styles.shell}>
-    <nav className={styles.nav} aria-label="Profile navigation"><a href="/" className={styles.homeLink}><PixelArrow className={styles.iconBack} /> Home</a><a href="/" className={styles.wordmark}>AI school</a><a href="/course/basics/context-rot">AI workflows</a></nav>
+  return <main className={styles.page}>
+    <SiteHeader />
+    <div className={styles.shell}>
     <header className={styles.profileHeader}><div className={styles.identity}><span className={styles.avatar} style={avatarStyle}>{progress.user.pictureUrl ? null : initial}</span><div><p className={styles.eyebrow}>LEARNER PROFILE</p><h1>{progress.user.name}</h1><p>{progress.user.email}</p></div></div><div className={styles.stat}><strong>{completedTasks}</strong><span>tasks completed</span></div><div className={styles.stat}><strong>{dayStreak}</strong><span>day streak</span></div></header>
     <div className={styles.grid}><CourseProgress completedTasks={completedTasks} /><aside className={styles.side}><section className={styles.activityCard}><PixelSpark className={styles.cornerSpark} /><div className={styles.activityTitle}><div><p className={styles.eyebrow}>CONSISTENCY</p><h2>Learning activity</h2></div><b>{completedThisMonth} this month</b></div><ActivityGrid activity={activity} /><div className={styles.legend}><span>Less</span>{[0, 1, 2, 3, 4].map((level) => <i key={level} className={`${styles.day} ${styles[`level${level}`]}`} />)}<span>More</span></div></section><section className={styles.next}><PixelSpark className={styles.cornerSparkNext} /><p className={styles.eyebrow}>UP NEXT</p><h2>Context rot</h2><p>Learn why a long chat starts losing the thread and how to prevent it.</p><a href="/course/basics/context-rot">Open lesson <PixelArrow /></a></section></aside></div>
   </div></main>;

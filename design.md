@@ -109,7 +109,14 @@ function PixelArrow({ className = "" }: { className?: string }) {
 }
 ```
 
-`fill="currentColor"` lets the icon inherit the surrounding text colour; multi-tone sprites (like `PixelMascot`) set explicit `fill` per `<rect>` instead. Reuse the same component everywhere the same shape is needed rather than drawing one-off icons. Decorative sparks use a shared `.corner-spark` positioning class placed inside a `position: relative` container's padding area (never overlapping text) — see `.proof-section`, `.home-final`, `.home-footer` in `globals.css`.
+`fill="currentColor"` lets the icon inherit the surrounding text colour; multi-tone sprites (like `PixelMascot`) set explicit `fill` per `<rect>` instead. Reuse the same component everywhere the same shape is needed rather than drawing one-off icons.
+
+Two placements for decorative sparks, depending on how much room the container has:
+
+- **Spacious section** (generous padding, e.g. `.proof-section`, `.home-final`, `.home-footer` in `globals.css`): a `.corner-spark` class sits *inside* the container's own padding, near a corner but with a positive offset (e.g. `top: 32px; right: 28px`), so it never reaches as far as the actual content.
+- **Dense card** (tight padding, e.g. the profile page's `.courseCard`/`.activityCard`/`.next` in `profile.module.css`): perch the spark *outside* the card's corner instead, with a small negative offset (e.g. `top: -14px; right: -10px`, sized up a little from the icon's default via `width`/`height`, like the profile page's `.cornerSpark`) — the same technique the homepage's `PixelMascot` uses to perch on the workflow console's corner. This guarantees no overlap with card content regardless of how tightly packed the card is.
+
+Both need `position: relative` on the container and `position: absolute` on the spark.
 
 Do not fetch external binary assets automatically. If richer sprite/animation packs are wanted later, [Kenney.nl](https://kenney.nl) is CC0/public domain, free, and needs no attribution — a good source to hand-pick from deliberately rather than something to wire up unprompted.
 
@@ -131,6 +138,10 @@ Always gate looping animation behind `@media (prefers-reduced-motion: no-prefere
 
 No hyphens, en dashes or em dashes anywhere in visible homepage text (including `aria-label`/`title` attributes) — rephrase with a comma, "and", or two sentences instead. This does not apply to CSS class names, file paths or code, only to text a reader sees.
 
+## A specific gotcha: overriding shared components
+
+`AuthButton.tsx` (`.auth-sign-in`, `.auth-user`) is shared between the dark lesson header and the light homepage/profile pages, so it has a dark base style plus a `.home-page .auth-sign-in` override for the light context. The homepage retheme once only overrode `background`/`border-radius` and left the base rule's near-white `color` in place, producing invisible white-on-white text — a real bug that shipped and had to be fixed later. When overriding a shared component's colours for a specific page context, override every colour-related property together (`color`, `background`, `border`, any child element's colours), not just the ones that visibly differ at a glance — a partial override can leave an inherited value that only becomes illegible in the new context.
+
 ## What to avoid (recap)
 
 - Gradient button fills, gradient text (`background-clip: text`), gradient glow blobs.
@@ -139,8 +150,12 @@ No hyphens, en dashes or em dashes anywhere in visible homepage text (including 
 - Unicode arrow/decoration glyphs (`→`, `↗`, `✨`, etc.) standing in for iconography — draw a pixel sprite instead.
 - Hyphens and dashes in visible copy.
 
+## Shared header
+
+The homepage and `/profile` render the exact same top navigation via `app/components/SiteHeader.tsx` (brand logo/wordmark, `AuthButton`, a "Start learning" CTA) — this is a genuinely shared component, not two implementations styled to look alike. Its CSS (`.home-nav`, `.site-brand`, `.home-nav-links`, `.nav-cta`, and the light `.auth-sign-in`/`.auth-user` treatment, scoped under `.home-nav` rather than a page wrapper) lives in `globals.css` and is intentionally *not* scoped under `.home-page`, so it renders identically regardless of which page mounts it. The `--home-*` colour tokens and `--home-gutter` spacing token live on `:root` for the same reason — any page can use them, not just the homepage. If a third page adopts this header, just render `<SiteHeader />`; don't recreate the markup.
+
 ## Rollout
 
-Applied so far: the homepage, and `/profile` (`app/profile/profile.module.css` and `ProfileClient.tsx`, as of 8 August 2026 — same palette, hard-shadow/border formulas and pixel-icon swaps as the homepage, translated into that page's CSS module).
+Applied so far: the homepage, and `/profile` (`app/profile/profile.module.css` and `ProfileClient.tsx`, as of 8 August 2026 — same palette, hard-shadow/border formulas and pixel-icon swaps as the homepage, translated into that page's CSS module, plus the shared `SiteHeader` described above).
 
-The course/lesson pages (`.course-sidebar`/`.lesson-reading` and related rules in `globals.css`) still use the separate, older soft-light theme and were deliberately left untouched. When extending this pixel-art treatment to them, reuse the palette and border/shadow/icon patterns above rather than introducing new values.
+The course/lesson pages (`.course-sidebar`/`.lesson-reading` and related rules in `globals.css`) still use the separate, older soft-light theme and were deliberately left untouched. When extending this pixel-art treatment to them, reuse the palette, border/shadow/icon patterns and shared header above rather than introducing new values.

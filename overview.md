@@ -24,7 +24,8 @@ The audience has no assumed technical background. Lessons should explain the pro
 
 The visual direction is split deliberately:
 
-- The homepage uses a soft light theme (as of 8 August 2026), matching the palette already used on `/profile` and the course lesson pages: a near-white background (`#f6f7fb`), dark ink text (`#0b1130`), and a blue-to-violet-to-pink accent gradient (`#3561dc` → `#6258e9` → `#c2469e`) carried through the hero glow, buttons, workflow console mock-up and progress bar. It previously used a dark, glowing style influenced by Lovable and Zite; that direction was retired in favour of visual consistency across the site. It should still feel specific to this course, use the full width of the page and avoid generic card grids, overlapping flat shapes or decorative assets covering content.
+- The homepage and `/profile` (as of 8 August 2026) use a flat pixel-art theme: a near-white background (`#f6f7fb`), dark ink text (`#0b1130`), a blue-to-violet-to-pink accent scale (`#3561dc` / `#6258e9` / `#c2469e`), solid ink borders, hard zero-blur offset shadows instead of soft glows, small sharp corners instead of pill shapes, and hand-authored pixel-art SVG icons (`site/app/components/PixelIcons.tsx`) instead of Unicode arrow glyphs or gradient text. The full palette, border/shadow formulas and icon technique are documented in `site/design.md` — read that file before touching either page's visual styling rather than re-deriving values. This retired an earlier dark, glowing style influenced by Lovable and Zite, and before that a soft-light-but-still-gradient-heavy version; both were replaced in favour of a more distinctive, less generic-AI-product look. It should still feel specific to this course, use the full width of the page and avoid generic card grids, overlapping flat shapes or decorative assets covering content.
+- The course/lesson pages still use the older soft-light theme (not yet converted to the pixel-art style above).
 - Lesson pages use a structured reading layout with a course sidebar, clear sections and task-owned visual demonstrations.
 - Side views use the full pane without an empty frame around them. Text must stay readable, and each visual should be interactive where the subject benefits from it.
 - On mobile, the course sidebar starts closed and a task visual opens as a bottom sheet over roughly the lower half of the screen.
@@ -131,9 +132,12 @@ Important files are:
 - `site/app/course/basics/context-rot/LessonClient.tsx`: lesson reading, tasks, progress state, sidebar and side-view controls.
 - `site/app/course/basics/context-rot/LessonVisuals.tsx`: recipe chat, animated workflow comparison and `overview.md` workspace.
 - `site/app/components/AuthButton.tsx`: Google sign-in, name, profile photo and sign-out UI.
+- `site/app/components/SiteHeader.tsx`: the shared top navigation (brand, sign-in/profile, course CTA) rendered identically on the homepage and profile page — a genuine shared component, not two look-alike implementations.
+- `site/app/components/PixelIcons.tsx`: shared hand-authored pixel-art SVG icons (arrow, spark, check, mascot), used across the homepage, profile page and `CourseProgress`.
 - `site/app/profile/ProfileClient.tsx`: signed-in learner profile, course overview and activity heatmap.
 - `site/app/profile/profile.module.css`: profile layout and responsive activity heatmap styling.
 - `site/app/components/CourseProgress.tsx`: homepage course progress.
+- `site/design.md`: the pixel-art visual theme reference (palette, borders/shadows, icon technique, animation convention). Read before any homepage or profile styling change.
 - `site/lib/server/auth.ts`: OAuth cookies, sessions, profile lookup and D1 access.
 - `site/app/api/auth/`: Google login start, callback, current user and logout routes.
 - `site/app/api/progress/route.ts`: saved task progress for Lesson 1.1.
@@ -249,12 +253,14 @@ The next work should be completed in this order:
 
 There is a profile page at `/profile`, reached by clicking the signed-in profile in the top navigation. It shows the active AI workflows course, task count, 12-week activity heatmap and links back into the first lesson. There is no admin interface, content management system, payment system, analytics service or video library. Do not add these unless the owner asks for them.
 
+A friends/social feature (search for other learners, send and accept friend requests, a profile level, notifications, a progress-comparison graph) has been requested and is being scoped. `site/friends.md` holds the proposed plan — read it before starting any implementation, since the data model, privacy rules (emails stay hidden until a friend request is accepted) and header changes it describes are not yet finalised or built.
+
 ## Instructions for the next chat
 
 Read this file first, then inspect only the files needed for the requested task. Preserve the existing homepage direction, lesson shell, Google login and D1 progress work. Do not restart the project or replace Vinext.
 
 Use sub-agents in every new chat whenever the work can be divided into independent tasks. Give them separate files or clearly bounded research, implementation, review and testing jobs so they can work in parallel without overwriting each other. Keep tightly coupled changes with the main agent, then have the main agent integrate the results, run the final checks and publish the finished version.
 
-Before changing course copy, use `stop-slopv4`. Before changing the website, use the site-building instructions. Test the production build and lint before pushing. Publish through `git push origin main`, then confirm the connected Worker updated with a read-only request. Do not use the local Wrangler session while it points at Hero Enterprise.
+Before changing course copy, use `stop-slopv4`. Before changing the homepage or profile page's visual styling, read `site/design.md` first and reuse its values rather than inventing new ones. Before changing the website, use the site-building instructions. Test the production build and lint before pushing. Publish through `git push origin main`, then confirm the connected Worker updated with a read-only request. Do not use the local Wrangler session while it points at Hero Enterprise.
 
 If no more specific task has been given, the next concrete job is to design and build Lesson 1.2, `Your project brain`, while first extracting the shared lesson shell and course map so the next 22 lessons are easier to add.
