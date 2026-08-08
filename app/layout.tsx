@@ -13,7 +13,11 @@ export async function generateMetadata(): Promise<Metadata> {
     description: "A free visual course that takes you from messy chats to agents, skills and working AI systems.",
     openGraph: { title: "Build serious projects with AI, properly.", description: "A free course covering project memory, models, agents, skills and parallel workflows.", images: ["/og-home.png"] },
     twitter: { card: "summary_large_image", title: "Build serious projects with AI, properly.", images: ["/og-home.png"] },
-    icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
+    icons: {
+      icon: [{ url: "/favicon-32.png", sizes: "32x32", type: "image/png" }],
+      shortcut: "/favicon-32.png",
+      apple: [{ url: "/icon-192.png", sizes: "192x192", type: "image/png" }],
+    },
   };
 }
 
