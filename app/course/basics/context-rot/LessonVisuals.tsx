@@ -68,29 +68,29 @@ export function WorkflowDiagramVisual() {
       {mode === "single" ? <section className="chat-product-mock long-thread" aria-label="A large chat thread containing many unrelated requests">
         <div className="mock-browser-bar"><span><i /><i /><i /></span><b>chat.example.com</b><small>GPT chat</small></div>
         <div className="long-thread-layout">
-          <aside className="chat-rail"><b>GPT</b><button type="button">+ New chat</button><small>RECENT</small><span className="selected">Weeknight meal plan</span><span>Portfolio copy</span><span>Holiday notes</span></aside>
+          <aside className="chat-rail"><b>GPT</b><button type="button">+ New chat</button><small>RECENT</small><span className="selected">Course launch plan</span><span>Portfolio copy</span><span>Holiday notes</span></aside>
           <div className="chat-thread">
-            <header><div><span>GPT chat</span><b>Weeknight meal plan</b></div><small>48 messages</small></header>
+            <header><div><span>GPT chat</span><b>Course launch plan</b></div><small>48 messages</small></header>
             <div className="thread-scroll">
-              <article className="thread-message you faded"><small>You · message 01</small><p>Use chickpeas, spinach, peppers, lemon, rice and yoghurt first. Vegetarian dinners for two.</p></article>
-              <article className="thread-message ai"><small>GPT · message 18</small><p>Here are the revised portions for the second dinner, with mild spice and a cold yoghurt sauce.</p></article>
-              <article className="thread-message you"><small>You · message 31</small><p>Now give me Thursday lunch ideas and a shopping list by aisle.</p></article>
-              <article className="thread-message ai current"><small>GPT · message 48</small><p>For Friday, try quinoa with avocado and feta. I can also turn the plan into a table.</p></article>
+              <article className="thread-message you faded"><small>You · message 01</small><p>Build a clear course landing page for beginners, using the brand direction and the lesson plan we agreed.</p></article>
+              <article className="thread-message ai"><small>GPT · message 18</small><p>I have revised the hero to make the course free and beginner-friendly, with a direct route into lesson one.</p></article>
+              <article className="thread-message you"><small>You · message 31</small><p>Now write the author section and a short launch checklist for next week.</p></article>
+              <article className="thread-message ai current"><small>GPT · message 48</small><p>For the launch, use a dark product page with a social card and an email sign-up form.</p></article>
             </div>
             <div className="mock-composer"><span>Message GPT about this project…</span><b>↑</b></div>
           </div>
         </div>
         <footer><span>Everything said before is still in this one thread.</span><b>Old brief competes with 47 later messages</b></footer>
       </section> : <section className="chat-product-mock project-chats" aria-label="A project with shared context and separate focused chats">
-        <div className="mock-browser-bar"><span><i /><i /><i /></span><b>chat.example.com / projects / weeknight meals</b><small>GPT chat</small></div>
+        <div className="mock-browser-bar"><span><i /><i /><i /></span><b>chat.example.com / projects / course launch</b><small>GPT chat</small></div>
         <div className="project-chat-layout">
           <main>
-            <div className="project-title"><small>PROJECTS /</small><h3>Weeknight meals</h3><span>⋮</span></div>
+            <div className="project-title"><small>PROJECTS /</small><h3>Course launch</h3><span>⋮</span></div>
             <div className="project-composer"><span>Start a clean chat…</span><div><i>Chat</i><b>Send ↑</b></div></div>
             <p className="project-recents">Recent chats</p>
-            <div className="project-chat-list"><article><i>◌</i><div><b>Plan Monday dinner</b><small>Uses project context · today</small></div><span>›</span></article><article><i>◌</i><div><b>Adjust portions for two</b><small>Uses project context · yesterday</small></div><span>›</span></article><article><i>◌</i><div><b>Write the shopping list</b><small>Uses project context · yesterday</small></div><span>›</span></article></div>
+            <div className="project-chat-list"><article><i>◌</i><div><b>Draft the landing page hero</b><small>Uses project context · today</small></div><span>›</span></article><article><i>◌</i><div><b>Review the mobile layout</b><small>Uses project context · yesterday</small></div><span>›</span></article><article><i>◌</i><div><b>Write the launch checklist</b><small>Uses project context · yesterday</small></div><span>›</span></article></div>
           </main>
-          <aside className="project-context-panel"><header><b>Project context</b><span>+</span></header><p>Files attached to every new chat in this project.</p><div className="context-file"><span>MD</span><div><b>overview.md</b><small>Goal, ingredients, rules</small></div><i>✓</i></div><div className="context-file"><span>PDF</span><div><b>budget-notes.pdf</b><small>Optional reference</small></div><i>✓</i></div><footer><b>3% of project capacity used</b><i><span /></i></footer></aside>
+          <aside className="project-context-panel"><header><b>Project context</b><span>+</span></header><p>Files attached to every new chat in this project.</p><div className="context-file"><span>MD</span><div><b>overview.md</b><small>Goal, audience, rules</small></div><i>✓</i></div><div className="context-file"><span>PDF</span><div><b>brand-notes.pdf</b><small>Optional reference</small></div><i>✓</i></div><footer><b>3% of project capacity used</b><i><span /></i></footer></aside>
         </div>
         <footer><span>Each chat starts clean.</span><b>It receives the project context, not the other chats</b></footer>
       </section>}
