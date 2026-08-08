@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties } from "react";
+import { useState } from "react";
 
 export type LessonVisual = "chat" | "workflow" | "workspace";
 
@@ -51,155 +51,63 @@ export function RecipeChatVisual() {
   );
 }
 
-const contextSteps = [
-  { title: "Pantry and rules", detail: "Vegetarian · two people · use what is already there", attention: 100 },
-  { title: "Dinner revisions", detail: "Faster cooking · exact quantities · mild spice", attention: 82 },
-  { title: "Lunch and shopping", detail: "A second job enters the same conversation", attention: 61 },
-  { title: "Budget changes", detail: "New ingredients and price limits compete", attention: 39 },
-  { title: "Formatting request", detail: "The original pantry is now far above", attention: 22 },
-];
-
-const focusedChats = [
-  { title: "Plan dinners", detail: "Pantry + dietary rules" },
-  { title: "Adjust portions", detail: "Recipe + serving size" },
-  { title: "Write shopping list", detail: "Final meals only" },
-  { title: "Lower the cost", detail: "Budget + current plan" },
-];
-
 type WorkflowMode = "single" | "project";
 
 export function WorkflowDiagramVisual() {
   const [mode, setMode] = useState<WorkflowMode>("single");
-  const [step, setStep] = useState(0);
-  const [playing, setPlaying] = useState(true);
-  const finalStep = contextSteps.length - 1;
-  const current = contextSteps[step];
-
-  useEffect(() => {
-    if (!playing) return;
-    const timer = window.setInterval(() => {
-      setStep((value) => {
-        if (value >= finalStep) {
-          setPlaying(false);
-          return value;
-        }
-        return value + 1;
-      });
-    }, 1700);
-    return () => window.clearInterval(timer);
-  }, [playing, finalStep]);
-
-  function chooseMode(nextMode: WorkflowMode) {
-    setMode(nextMode);
-    setStep(0);
-    setPlaying(true);
-  }
-
-  function togglePlayback() {
-    if (playing) {
-      setPlaying(false);
-      return;
-    }
-    if (step === finalStep) setStep(0);
-    setPlaying(true);
-  }
 
   return (
-    <div className={`workflow-comparison interactive-workflow ${mode}`}>
-      <header className="workflow-demo-head">
-        <div><span>Interactive context map</span><b>Watch the same project handled in two ways</b></div>
-        <div className="workflow-mode-switch" role="tablist" aria-label="Choose a context workflow">
-          <button type="button" role="tab" aria-selected={mode === "single"} className={mode === "single" ? "active" : ""} onClick={() => chooseMode("single")}><span>01</span>One chat</button>
-          <button type="button" role="tab" aria-selected={mode === "project"} className={mode === "project" ? "active" : ""} onClick={() => chooseMode("project")}><span>02</span>Project context</button>
+    <div className="web-context-comparison">
+      <header className="web-comparison-head">
+        <div><span>WEB CONTEXT WORKFLOW</span><b>Two ways to organise the same project</b></div>
+        <div className="web-mode-switch" role="tablist" aria-label="Choose a context workflow">
+          <button type="button" role="tab" aria-selected={mode === "single"} className={mode === "single" ? "active" : ""} onClick={() => setMode("single")}><span>01</span>One long chat</button>
+          <button type="button" role="tab" aria-selected={mode === "project"} className={mode === "project" ? "active" : ""} onClick={() => setMode("project")}><span>02</span>Project chats</button>
         </div>
       </header>
-
-      <div className="workflow-live-area">
-        {mode === "single" ? <section className="single-context-scene" aria-label="One growing chat context animation">
-          <div className="workflow-explanation">
-            <span>ONE GROWING CHAT · STEP {step + 1}</span>
-            <h3>{current.title}</h3>
-            <p>{current.detail}</p>
-            <div className="attention-readout"><div><span>Original brief in focus</span><b>{current.attention}%</b></div><i><span style={{ width: `${current.attention}%` }} /></i></div>
-            <p className="workflow-note">Nothing has been deleted. The first instructions are competing with every later request.</p>
-          </div>
-          <div className="single-context-canvas" style={{ "--attention": `${current.attention}%` } as CSSProperties}>
-            <div className="context-packet-stream">
-              {contextSteps.map((item, index) => <div className={`context-packet ${index <= step ? "visible" : ""} ${index === 0 && step >= 3 ? "fading" : ""} ${index === step ? "current" : ""}`} key={item.title}><small>{String(index + 1).padStart(2, "0")}</small><b>{item.title}</b></div>)}
+      {mode === "single" ? <section className="chat-product-mock long-thread" aria-label="A large chat thread containing many unrelated requests">
+        <div className="mock-browser-bar"><span><i /><i /><i /></span><b>chat.example.com</b><small>GPT chat</small></div>
+        <div className="long-thread-layout">
+          <aside className="chat-rail"><b>GPT</b><button type="button">+ New chat</button><small>RECENT</small><span className="selected">Weeknight meal plan</span><span>Portfolio copy</span><span>Holiday notes</span></aside>
+          <div className="chat-thread">
+            <header><div><span>GPT chat</span><b>Weeknight meal plan</b></div><small>48 messages</small></header>
+            <div className="thread-scroll">
+              <article className="thread-message you faded"><small>You · message 01</small><p>Use chickpeas, spinach, peppers, lemon, rice and yoghurt first. Vegetarian dinners for two.</p></article>
+              <article className="thread-message ai"><small>GPT · message 18</small><p>Here are the revised portions for the second dinner, with mild spice and a cold yoghurt sauce.</p></article>
+              <article className="thread-message you"><small>You · message 31</small><p>Now give me Thursday lunch ideas and a shopping list by aisle.</p></article>
+              <article className="thread-message ai current"><small>GPT · message 48</small><p>For Friday, try quinoa with avocado and feta. I can also turn the plan into a table.</p></article>
             </div>
-            <div className="context-flow-arrow" aria-hidden="true"><i /><span>CONTEXT</span></div>
-            <div className="single-context-core">
-              <div className="context-orbit" aria-hidden="true"><i /><i /><i /></div>
-              <span>ONE CHAT</span>
-              <strong>{step + 1} {step === 0 ? "job" : "jobs"} sharing one context</strong>
-              <p>The model must retrieve the right facts before it can answer the current request.</p>
-              <div><i style={{ width: `${current.attention}%` }} /><span>Useful attention</span></div>
-            </div>
+            <div className="mock-composer"><span>Message GPT about this project…</span><b>↑</b></div>
           </div>
-        </section> : <section className="project-context-scene" aria-label="Project context with multiple focused chats animation">
-          <div className="workflow-explanation">
-            <span>PROJECT CONTEXT · CHAT {Math.min(step + 1, focusedChats.length)}</span>
-            <h3>One source of truth, then a clean chat for each job.</h3>
-            <p>The stable facts live outside the conversation. Each chat receives only the context its task needs.</p>
-            <div className="attention-readout healthy"><div><span>Relevant context in focus</span><b>100%</b></div><i><span /></i></div>
-            <p className="workflow-note">When a decision changes, update the project context separately before opening the next chat.</p>
-          </div>
-          <div className="project-context-canvas">
-            <div className="project-context-hub"><span>SOURCE OF TRUTH</span><strong>overview.md</strong><p>Pantry · vegetarian · two people · current decisions</p><div><i />Always current</div></div>
-            <div className="project-branch" aria-hidden="true"><i /><i /><i /><i /></div>
-            <div className="project-chat-grid">
-              {focusedChats.map((chat, index) => <div className={`project-chat-node ${index <= step ? "visible" : ""} ${index === Math.min(step, focusedChats.length - 1) ? "current" : ""}`} key={chat.title}><small>CLEAN CHAT {String(index + 1).padStart(2, "0")}</small><b>{chat.title}</b><p>{chat.detail}</p><span><i />Focused</span></div>)}
-            </div>
-          </div>
-        </section>}
-      </div>
-
-      <footer className="workflow-playback">
-        <button type="button" onClick={togglePlayback}>{playing ? "Pause" : step === finalStep ? "Replay" : "Play"}<span aria-hidden="true">{playing ? "Ⅱ" : "▶"}</span></button>
-        <label><span>{mode === "single" ? "Add requests to the chat" : "Open focused chats"}</span><input type="range" min="0" max={finalStep} value={step} onChange={(event) => { setPlaying(false); setStep(Number(event.target.value)); }} /></label>
-        <b aria-live="polite">{String(step + 1).padStart(2, "0")} / {String(contextSteps.length).padStart(2, "0")}</b>
-      </footer>
+        </div>
+        <footer><span>Everything said before is still in this one thread.</span><b>Old brief competes with 47 later messages</b></footer>
+      </section> : <section className="chat-product-mock project-chats" aria-label="A project with shared context and separate focused chats">
+        <div className="mock-browser-bar"><span><i /><i /><i /></span><b>chat.example.com / projects / weeknight meals</b><small>GPT chat</small></div>
+        <div className="project-chat-layout">
+          <main>
+            <div className="project-title"><small>PROJECTS /</small><h3>Weeknight meals</h3><span>⋮</span></div>
+            <div className="project-composer"><span>Start a clean chat…</span><div><i>Chat</i><b>Send ↑</b></div></div>
+            <p className="project-recents">Recent chats</p>
+            <div className="project-chat-list"><article><i>◌</i><div><b>Plan Monday dinner</b><small>Uses project context · today</small></div><span>›</span></article><article><i>◌</i><div><b>Adjust portions for two</b><small>Uses project context · yesterday</small></div><span>›</span></article><article><i>◌</i><div><b>Write the shopping list</b><small>Uses project context · yesterday</small></div><span>›</span></article></div>
+          </main>
+          <aside className="project-context-panel"><header><b>Project context</b><span>+</span></header><p>Files attached to every new chat in this project.</p><div className="context-file"><span>MD</span><div><b>overview.md</b><small>Goal, ingredients, rules</small></div><i>✓</i></div><div className="context-file"><span>PDF</span><div><b>budget-notes.pdf</b><small>Optional reference</small></div><i>✓</i></div><footer><b>3% of project capacity used</b><i><span /></i></footer></aside>
+        </div>
+        <footer><span>Each chat starts clean.</span><b>It receives the project context, not the other chats</b></footer>
+      </section>}
     </div>
   );
 }
 
 export function OverviewWorkspaceVisual() {
   return (
-    <div className="overview-workspace-visual">
-      <div className="visual-window-bar"><span><i /><i /><i /></span><b>recipe-project</b><small>Clean workspace</small></div>
-      <div className="editor-shell">
-        <aside className="editor-tree">
-          <p>EXPLORER</p>
-          <b>▾ RECIPE-PROJECT</b>
-          <span className="active"># overview.md</span>
-          <span>▸ recipes</span>
-          <span>▸ shopping</span>
-          <span>notes.txt</span>
-        </aside>
-        <section className="editor-main">
-          <div className="editor-tabs"><span>overview.md</span></div>
-          <div className="markdown-editor">
-            <p><i>1</i><b># Weeknight meals</b></p>
-            <p><i>2</i></p>
-            <p><i>3</i><b>## Goal</b></p>
-            <p><i>4</i><span>Plan affordable vegetarian dinners for two.</span></p>
-            <p><i>5</i></p>
-            <p><i>6</i><b>## Ingredients to use first</b></p>
-            <p><i>7</i><span>- chickpeas, spinach, two peppers</span></p>
-            <p><i>8</i><span>- lemon, rice and plain yoghurt</span></p>
-            <p><i>9</i></p>
-            <p><i>10</i><b>## Rules</b></p>
-            <p><i>11</i><span>- vegetarian, mild spice, two portions</span></p>
-            <p><i>12</i><span>- avoid buying ingredients until these are used</span></p>
-          </div>
-          <div className="clean-chat-panel">
-            <header><span>NEW CHAT</span><b>Recipe task</b></header>
-            <div className="clean-prompt"><small>You</small><p><code>@overview.md</code> please suggest a recipe</p></div>
-            <div className="clean-answer"><small>Assistant</small><p>Make lemon chickpea rice bowls with roasted peppers, spinach and cold garlic yoghurt. The recipe uses the ingredients listed in overview.md and makes two portions.</p></div>
-          </div>
-        </section>
+    <div className="coding-workspace-visual">
+      <div className="visual-window-bar"><span><i /><i /><i /></span><b>weeknight-meals</b><small>Visual Studio Code</small></div>
+      <div className="vscode-shell">
+        <aside className="vscode-activity" aria-hidden="true"><b>▣</b><span>⌕</span><span>⑂</span><span>▹</span><span>▦</span></aside>
+        <aside className="vscode-explorer"><header>EXPLORER <span>···</span></header><b>▾ WEEKnight-MEALS</b><div className="tree-active"><i>ⓜ</i> overview.md</div><div>⌄ <span>recipes</span></div><div className="tree-child">recipe-notes.md</div><div>⌄ <span>shopping</span></div><div className="tree-child">list.md</div><div>⌄ <span>src</span></div><div>.gitignore</div></aside>
+        <section className="vscode-editor"><div className="vscode-tabs"><span className="active"><i>ⓜ</i> overview.md <b>×</b></span><span>recipe-notes.md</span></div><div className="vscode-breadcrumb">WEEKnight-MEALS <b>›</b> overview.md <b>›</b> Project context</div><article className="markdown-preview"><small>MARKDOWN PREVIEW</small><h1>Weeknight meals</h1><p className="preview-lede">The current project context for every coding task.</p><section><h2>Goal</h2><p>Plan affordable vegetarian dinners for two, using the ingredients already in the kitchen before buying more.</p></section><section><h2>Ingredients to use first</h2><div className="ingredient-tags"><span>Chickpeas</span><span>Spinach</span><span>2 peppers</span><span>Lemon</span><span>Rice</span><span>Plain yoghurt</span></div></section><section><h2>Rules</h2><ul><li>Keep the meals vegetarian and mild.</li><li>Make two portions at a time.</li><li>Update this file when a decision changes.</li></ul></section><section className="current-task"><span>Current task</span><b>Write a recipe for Monday dinner.</b></section></article><footer><span>Ln 1, Col 1</span><span>Spaces: 2</span><span>UTF-8</span><b>Markdown</b></footer></section>
       </div>
-      <div className="workspace-foot"><span>overview.md holds the current facts</span><b>Each new chat receives the same clean starting point</b></div>
+      <div className="workspace-foot"><span>overview.md is open in the project workspace</span><b>Every task begins from the current file</b></div>
     </div>
   );
 }

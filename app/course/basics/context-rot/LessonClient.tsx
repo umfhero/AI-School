@@ -51,7 +51,6 @@ export default function LessonClient() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [visualOpen, setVisualOpen] = useState(false);
   const [activeVisual, setActiveVisual] = useState<LessonVisual | null>(null);
-  const [startedTasks, setStartedTasks] = useState<string[]>([]);
   const [visualWidth, setVisualWidth] = useState(620);
   const resizing = useRef(false);
 
@@ -83,10 +82,13 @@ export default function LessonClient() {
     return () => window.cancelAnimationFrame(frame);
   }, []);
 
-  function startTask(task: string, visual: LessonVisual) {
-    setStartedTasks((tasks) => tasks.includes(task) ? tasks : [...tasks, task]);
+  function startTask(visual: LessonVisual) {
     setActiveVisual(visual);
     setVisualOpen(true);
+  }
+
+  function isTaskVisualOpen(visual: LessonVisual) {
+    return visualOpen && activeVisual === visual;
   }
 
   function completeTask(task: string) {
@@ -180,9 +182,9 @@ export default function LessonClient() {
                 <div className="task-heading"><span>TASK 01 · FIND THE DRIFT</span><b>{completedTasks.includes("diagnose") ? "COMPLETE ✓" : "3 MINUTES"}</b></div>
                 <h3>Read the conversation and find the first reply that breaks the original brief.</h3>
                 <p>The original brief asks for vegetarian meals for two people that use chickpeas, spinach, peppers, lemon, rice and yoghurt first.</p>
-                <button className="start-task-button" type="button" onClick={() => startTask("diagnose", "chat")}>{completedTasks.includes("diagnose") ? "Review task visual" : startedTasks.includes("diagnose") ? "Open task visual" : "Start task"}<span aria-hidden="true">→</span></button>
-                {startedTasks.includes("diagnose") || completedTasks.includes("diagnose") ? <><div className="answer-list"><button onClick={() => setQuizAnswer("a")}>Turn 04, when the assistant changes the cooking method.</button><button onClick={() => { setQuizAnswer("b"); completeTask("diagnose"); }}>Turn 10, when the assistant buys a new meal and adds breakfast food.</button><button onClick={() => setQuizAnswer("c")}>Turn 16, when the assistant suggests couscous and halloumi.</button></div>
-                {quizAnswer ? <p className={`task-feedback ${quizAnswer === "b" ? "right" : "wrong"}`}>{quizAnswer === "b" ? "Turn 10 is the first clear drift, because it ignores the pantry and also breaks the instruction about breakfast food." : "The conversation has already drifted before that point, so compare the reply with the original instruction at the top of the side view."}</p> : null}</> : <p className="task-start-note">Start the task to open its recipe conversation and reveal the answer choices.</p>}
+                <button className="start-task-button" type="button" onClick={() => startTask("chat")}>Open task<span aria-hidden="true">→</span></button>
+                {isTaskVisualOpen("chat") ? <><div className="answer-list"><button onClick={() => setQuizAnswer("a")}>Turn 04, when the assistant changes the cooking method.</button><button onClick={() => { setQuizAnswer("b"); completeTask("diagnose"); }}>Turn 10, when the assistant buys a new meal and adds breakfast food.</button><button onClick={() => setQuizAnswer("c")}>Turn 16, when the assistant suggests couscous and halloumi.</button></div>
+                {quizAnswer ? <p className={`task-feedback ${quizAnswer === "b" ? "right" : "wrong"}`}>{quizAnswer === "b" ? "Turn 10 is the first clear drift, because it ignores the pantry and also breaks the instruction about breakfast food." : "The conversation has already drifted before that point, so compare the reply with the original instruction at the top of the side view."}</p> : null}</> : <p className="task-start-note">Open the task to view the recipe conversation and reveal the answer choices.</p>}
               </div>
             </section>
 
@@ -203,8 +205,8 @@ export default function LessonClient() {
                 <div className="task-heading"><span>TASK 02 · COMPARE THE WORKFLOWS</span><b>{completedTasks.includes("compare") ? "COMPLETE ✓" : "2 MINUTES"}</b></div>
                 <h3>Follow where the original ingredients live in each workflow.</h3>
                 <p>In the growing chat, those facts sit above every later job. In the focused workflow, the facts live in one source of truth and each new chat receives the part it needs.</p>
-                <button className="start-task-button" type="button" onClick={() => startTask("compare", "workflow")}>{completedTasks.includes("compare") ? "Review task visual" : startedTasks.includes("compare") ? "Open task visual" : "Start task"}<span aria-hidden="true">→</span></button>
-                {startedTasks.includes("compare") || completedTasks.includes("compare") ? <button className="task-complete-button" onClick={() => completeTask("compare")}>{completedTasks.includes("compare") ? "Comparison complete" : "I have compared both workflows"}</button> : <p className="task-start-note">Start the task to open the two-workflow comparison.</p>}
+                <button className="start-task-button" type="button" onClick={() => startTask("workflow")}>Open task<span aria-hidden="true">→</span></button>
+                {isTaskVisualOpen("workflow") ? <button className="task-complete-button" onClick={() => completeTask("compare")}>{completedTasks.includes("compare") ? "Comparison complete" : "I have compared both workflows"}</button> : <p className="task-start-note">Open the task to compare the two workflows.</p>}
               </div>
             </section>
 
@@ -219,8 +221,8 @@ export default function LessonClient() {
                 <div className="task-heading"><span>TASK 03 · MAKE THE FILE</span><b>{completedTasks.includes("build") ? "COMPLETE ✓" : "5 MINUTES"}</b></div>
                 <h3>Create overview.md for a project you already have.</h3>
                 <ul><li>Write the project goal and the current state as facts.</li><li>Record decisions that the next chat must keep.</li><li>Give the next chat one specific job, then start that job in a clean chat with the file attached.</li></ul>
-                <button className="start-task-button" type="button" onClick={() => startTask("build", "workspace")}>{completedTasks.includes("build") ? "Review task visual" : startedTasks.includes("build") ? "Open task visual" : "Start task"}<span aria-hidden="true">→</span></button>
-                {startedTasks.includes("build") || completedTasks.includes("build") ? <button className="task-complete-button" onClick={() => completeTask("build")}>{completedTasks.includes("build") ? "Task complete" : "I have made the file"}</button> : <p className="task-start-note">Start the task to open the clean overview.md workspace.</p>}
+                <button className="start-task-button" type="button" onClick={() => startTask("workspace")}>Open task<span aria-hidden="true">→</span></button>
+                {isTaskVisualOpen("workspace") ? <button className="task-complete-button" onClick={() => completeTask("build")}>{completedTasks.includes("build") ? "Task complete" : "I have made the file"}</button> : <p className="task-start-note">Open the task to inspect the overview.md workspace.</p>}
               </div>
             </section>
 
