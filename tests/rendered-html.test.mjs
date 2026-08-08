@@ -30,5 +30,5 @@ test("server-renders the context rot lesson workspace", async () => {
   assert.match(html, /Course contents/i);
   assert.match(html, /Learning objectives/i);
   assert.match(html, /TASK 01/i);
-  assert.match(html, /Complete the tasks to continue/i);
+  assert.match(html, /Next lesson/i);
 });

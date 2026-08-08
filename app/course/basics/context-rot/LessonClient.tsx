@@ -81,6 +81,7 @@ export default function LessonClient() {
   const [completedTasks, setCompletedTasks] = useState<string[]>([]);
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const progress = Math.round((completedTasks.length / 3) * 100);
 
@@ -132,9 +133,9 @@ export default function LessonClient() {
 
   return (
     <main className="lesson-page">
-      <header className="lesson-header"><Link className="lesson-brand" href="/"><b>← AI Free Course</b></Link><div className="lesson-crumb"><span>Chapter 01 · The basics</span><span>/</span><b>Context rot</b></div><div className="lesson-account"><div className="lesson-progress"><span><i style={{ width: `${Math.max(4, progress)}%` }} /></span><b>{completedTasks.length} / 3 tasks</b></div><AuthButton returnTo="/course/basics/context-rot" compact /></div></header>
-      <div className="lesson-workspace">
-        <aside className="course-sidebar" aria-label="Course contents">
+      <header className="lesson-header"><div className="lesson-header-left"><button className="sidebar-toggle" type="button" onClick={() => setSidebarOpen((open) => !open)} aria-expanded={sidebarOpen} aria-controls="course-contents"><span aria-hidden="true">{sidebarOpen ? "×" : "☰"}</span><b>{sidebarOpen ? "Hide contents" : "Show contents"}</b></button><div className="lesson-brand"><b>AI Free Course</b></div></div><div className="lesson-crumb"><span>Chapter 01 · The basics</span><span>/</span><b>Context rot</b></div><div className="lesson-account"><div className="lesson-progress"><span><i style={{ width: `${Math.max(4, progress)}%` }} /></span><b>{completedTasks.length} / 3 tasks</b></div><AuthButton returnTo="/course/basics/context-rot" compact /></div></header>
+      <div className={`lesson-workspace ${sidebarOpen ? "" : "sidebar-closed"}`}>
+        <aside className="course-sidebar" id="course-contents" aria-label="Course contents">
           <div className="course-side-head"><p>AI Free Course</p><h2>Course contents</h2><div><span style={{ width: `${Math.max(4, progress)}%` }} /><small>{progress}% of this lesson</small></div></div>
           <nav>
             {courseChapters.map((chapter, chapterIndex) => <div className={`side-chapter ${chapterIndex === 0 ? "current" : ""}`} key={chapter.title}>
@@ -143,7 +144,6 @@ export default function LessonClient() {
             </div>)}
           </nav>
           <div className="chapter-project"><span>CHAPTER PROJECT</span><b>Build your project brain</b><p>Unlocks after all four lessons.</p><small>0 / 4 lessons</small></div>
-          <Link className="side-back" href="/">← Back to home</Link>
         </aside>
         <article className="lesson-reading">
           <div className="lesson-reading-inner">
@@ -168,14 +168,14 @@ export default function LessonClient() {
 
             <section id="try-it"><p className="reading-kicker">Section 4 · Try it now</p><h2>Make the file your next chat needs.</h2><p>Copy this into a new overview.md file, then replace the square brackets with your own project details.</p><div className="lesson-template"><div><span>overview.md</span><button onClick={copyTemplate}>{copied ? "Copied" : "Copy template"}</button></div><pre><code>{template}</code></pre></div><div className={`inline-task build-task ${completedTasks.includes("build") ? "complete" : ""}`}><div className="task-heading"><span>TASK 03 · MAKE THE FILE</span><b>{completedTasks.includes("build") ? "COMPLETE ✓" : "5 MINUTES"}</b></div><h3>Complete your own overview.md.</h3><ul><li>State what you are making and who it is for.</li><li>Record the pages, files and decisions that already exist.</li><li>Give the next chat one exact job.</li></ul><button className="task-complete-button" onClick={() => completeTask("build")}>{completedTasks.includes("build") ? "Task complete" : "I have made the file"}</button></div></section>
 
-            {completedTasks.length === 3 ? <section className="lesson-complete-card"><span>LESSON COMPLETE</span><h2>You have separated project memory from chat history.</h2><p>{signedIn ? "Your progress is saved to your account and will be here on any device." : "Sign in with Google to save this lesson to your account and continue on another device."}</p><Link href="/">Return home →</Link></section> : null}
+            {completedTasks.length === 3 ? <section className="lesson-complete-card"><span>LESSON COMPLETE</span><h2>You have separated project memory from chat history.</h2><p>{signedIn ? "Your progress is saved to your account and will be here on any device." : "Sign in with Google to save this lesson to your account and continue on another device."}</p></section> : null}
 
             <section className="lesson-sources"><p className="reading-kicker">Sources</p><h2>Read the work behind the lesson.</h2><a href="https://research.trychroma.com/context-rot" target="_blank" rel="noreferrer"><b>Chroma Research</b><span>Context Rot ↗</span></a><a href="https://arxiv.org/abs/2307.03172" target="_blank" rel="noreferrer"><b>Liu et al.</b><span>Lost in the Middle ↗</span></a><a href="https://arxiv.org/abs/2311.04325" target="_blank" rel="noreferrer"><b>Hsieh et al.</b><span>RULER ↗</span></a></section>
           </div>
         </article>
         <aside className="lesson-visual" aria-label="Visual example of a poorly organised AI project"><BadProjectVisual /></aside>
       </div>
-      <nav className="lesson-bottom" aria-label="Lesson navigation"><Link href="/">← Home</Link><div><span>CHAPTER 01 · THE BASICS</span><b>{completedTasks.length} of 3 tasks complete</b></div><button className="lesson-next" disabled={completedTasks.length < 3}>{completedTasks.length === 3 ? "Next: Your project brain →" : "Complete the tasks to continue"}</button></nav>
+      <nav className="lesson-bottom" aria-label="Lesson navigation"><Link className="lesson-home-back" href="/"><span aria-hidden="true">←</span><b>Back to home</b></Link><div><span>CHAPTER 01 · THE BASICS</span><b>{completedTasks.length} of 3 tasks complete</b></div><button className="lesson-next" disabled={completedTasks.length < 3} title={completedTasks.length < 3 ? "Complete the three tasks to unlock the next lesson" : undefined}>Next lesson <span aria-hidden="true">→</span></button></nav>
     </main>
   );
 }
