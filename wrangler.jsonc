@@ -10,7 +10,7 @@
     {
       "binding": "DB",
       "database_name": "ai-workflow",
-      "database_id": "a7b52273-ee86-496b-b8e5-07bed3cd1c08",
+      "database_id": "4a3fa6da-2fc6-4e51-80f9-eb48b7953986",
       "migrations_dir": "drizzle"
     }
   ]
