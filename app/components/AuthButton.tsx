@@ -22,7 +22,10 @@ export default function AuthButton({ returnTo = "/", compact = false }: { return
 
   async function signOut() {
     const response = await fetch("/api/auth/logout", { method: "POST", credentials: "same-origin" });
-    if (response.ok) setUser(null);
+    if (response.ok) {
+      setUser(null);
+      window.dispatchEvent(new Event("auth-changed"));
+    }
   }
 
   if (loading) return <span className={`auth-loading ${compact ? "compact" : ""}`} aria-label="Checking sign-in status" />;

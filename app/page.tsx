@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import AuthButton from "./components/AuthButton";
+import CourseProgress from "./components/CourseProgress";
 
 export const metadata: Metadata = {
   title: "AI Free Course | Build properly with AI",
@@ -52,9 +53,6 @@ export default function Home() {
         </div>
 
         <div className="hero-showcase" aria-label="A structured AI workflow preview">
-          <div className="icon-aura" aria-hidden="true">
-            <Image src="/ai-workflows-icon.png" alt="" width={172} height={172} priority />
-          </div>
           <div className="workflow-console">
             <div className="console-top">
               <span className="console-lights" aria-hidden="true"><i /><i /><i /></span>
@@ -88,6 +86,8 @@ export default function Home() {
           <p className="showcase-caption"><span>01</span> You will build workflows like this, one decision at a time.</p>
         </div>
       </section>
+
+      <CourseProgress />
 
       <section className="proof-section" id="proof">
         <div className="proof-statement">
