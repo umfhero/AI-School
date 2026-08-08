@@ -8,9 +8,9 @@ export async function GET(request: Request) {
     const user = await getSessionUser(request);
     if (!user) return noStoreJson({ user: null, completedTasks: [], activity: {} });
     const row = await database().prepare(
-      "SELECT completed_tasks AS completedTasks FROM lesson_progress WHERE user_id = ? AND lesson_id = ?",
-    ).bind(user.id, LESSON_ID).first<{ completedTasks: string }>();
-    const progress = parseProgress(row?.completedTasks);
+      "SELECT completed_tasks AS completedTasks, updated_at AS updatedAt FROM lesson_progress WHERE user_id = ? AND lesson_id = ?",
+    ).bind(user.id, LESSON_ID).first<{ completedTasks: string; updatedAt: number }>();
+    const progress = parseProgress(row?.completedTasks, row?.updatedAt);
     return noStoreJson({ user, completedTasks: progress.completedTasks, activity: activityByDay(progress.completedAt) });
   } catch (error) {
     console.error("Progress lookup failed", error);
@@ -29,9 +29,9 @@ export async function PUT(request: Request) {
       : [];
     const now = Math.floor(Date.now() / 1000);
     const existing = await database().prepare(
-      "SELECT completed_tasks AS completedTasks FROM lesson_progress WHERE user_id = ? AND lesson_id = ?",
-    ).bind(user.id, LESSON_ID).first<{ completedTasks: string }>();
-    const previous = parseProgress(existing?.completedTasks);
+      "SELECT completed_tasks AS completedTasks, updated_at AS updatedAt FROM lesson_progress WHERE user_id = ? AND lesson_id = ?",
+    ).bind(user.id, LESSON_ID).first<{ completedTasks: string; updatedAt: number }>();
+    const previous = parseProgress(existing?.completedTasks, existing?.updatedAt);
 
     // Completion is monotonic: a stale browser tab cannot erase a completed task,
     // and a timestamp is added only when the task is first completed.
@@ -57,12 +57,13 @@ type StoredProgress = {
   completedAt: Record<string, number>;
 };
 
-function parseProgress(value?: string): StoredProgress {
+function parseProgress(value?: string, fallbackTimestamp?: number): StoredProgress {
   if (!value) return { version: 2, completedTasks: [], completedAt: {} };
   try {
     const parsed = JSON.parse(value);
-    // Existing production rows are arrays. They remain valid and are upgraded on
-    // the next completion save, without inventing historical completion dates.
+    // Older production rows are arrays. Their row update time is the only date
+    // retained for those completions, so use it as a transparent best available
+    // activity date rather than falsely showing an empty history.
     const rawTasks = Array.isArray(parsed) ? parsed : Array.isArray(parsed?.completedTasks) ? parsed.completedTasks : [];
     const rawDates = !Array.isArray(parsed) && parsed?.completedAt && typeof parsed.completedAt === "object"
       ? parsed.completedAt as Record<string, unknown> : {};
@@ -70,6 +71,11 @@ function parseProgress(value?: string): StoredProgress {
     const completedAt = Object.fromEntries(Object.entries(rawDates)
       .filter(([task, timestamp]) => ALLOWED_TASKS.has(task) && typeof timestamp === "number" && Number.isFinite(timestamp) && timestamp > 0)
       .map(([task, timestamp]) => [task, Math.floor(timestamp as number)]));
+    const fallback = typeof fallbackTimestamp === "number" && Number.isFinite(fallbackTimestamp) && fallbackTimestamp > 0
+      ? Math.floor(fallbackTimestamp) : undefined;
+    for (const task of completedTasks) {
+      if (!completedAt[task] && fallback) completedAt[task] = fallback;
+    }
     return { version: 2, completedTasks, completedAt };
   } catch {
     return { version: 2, completedTasks: [], completedAt: {} };

@@ -35,9 +35,5 @@ export default function AuthButton({ returnTo = "/", compact = false }: { return
 
   const initial = user.name.trim().charAt(0).toUpperCase() || user.email.charAt(0).toUpperCase();
   const avatarStyle = user.pictureUrl ? { backgroundImage: `url(${user.pictureUrl})` } : undefined;
-  const openProfile = () => window.location.assign("/profile");
-  const openProfileWithKeyboard = (event: React.KeyboardEvent<HTMLSpanElement>) => {
-    if (event.key === "Enter" || event.key === " ") { event.preventDefault(); openProfile(); }
-  };
-  return <div className={`auth-user ${compact ? "compact" : ""}`} title={`${user.name} · ${user.email}`}><span className="auth-avatar" style={avatarStyle} role="link" tabIndex={0} aria-label="Open your profile" onClick={openProfile} onKeyDown={openProfileWithKeyboard}>{user.pictureUrl ? null : initial}</span><b>{user.name}</b><button type="button" onClick={signOut}>Sign out</button></div>;
+  return <div className={`auth-user ${compact ? "compact" : ""}`} title={`${user.name} · ${user.email}`}><a className="auth-profile-link" href="/profile" aria-label="Open your profile"><span className="auth-avatar" style={avatarStyle}>{user.pictureUrl ? null : initial}</span><b>{user.name}</b></a><button type="button" onClick={signOut}>Sign out</button></div>;
 }
