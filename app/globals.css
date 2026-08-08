@@ -1190,6 +1190,7 @@ button,a { font:inherit; }
     width: 100%;
     height: 52vh;
     height: 52dvh;
+    min-height: 0;
     position: fixed;
     z-index: 26;
     top: auto;
