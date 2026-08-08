@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import AuthButton from "./components/AuthButton";
 
 export const metadata: Metadata = {
   title: "AI Workflows | A free course for building properly with AI",
@@ -62,7 +63,7 @@ export default function Home() {
       <nav className="home-nav" aria-label="Main navigation">
         <Brand />
         <div className="home-nav-links"><a href="#proof">Why me</a><a href="#course">Course map</a></div>
-        <a className="nav-cta" href="/course/basics/context-rot">Start learning <span aria-hidden="true">↗</span></a>
+        <div className="home-nav-actions"><AuthButton /><a className="nav-cta" href="/course/basics/context-rot">Start learning <span aria-hidden="true">↗</span></a></div>
       </nav>
 
       <section className="home-hero">

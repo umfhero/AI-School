@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import AuthButton from "../../../components/AuthButton";
 
 const template = `# [Project name]
 
@@ -78,11 +79,49 @@ export default function LessonClient() {
   const [openChapter, setOpenChapter] = useState(0);
   const [quizAnswer, setQuizAnswer] = useState<string | null>(null);
   const [completedTasks, setCompletedTasks] = useState<string[]>([]);
+  const [signedIn, setSignedIn] = useState<boolean | null>(null);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
 
   const progress = Math.round((completedTasks.length / 3) * 100);
 
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch("/api/progress", { signal: controller.signal, credentials: "same-origin" })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Progress unavailable");
+        return response.json() as Promise<{ user: unknown; completedTasks?: string[] }>;
+      })
+      .then((data) => {
+        setSignedIn(Boolean(data.user));
+        if (data.user && Array.isArray(data.completedTasks)) setCompletedTasks(data.completedTasks);
+      })
+      .catch((error: unknown) => {
+        if (!(error instanceof DOMException && error.name === "AbortError")) setSaveStatus("error");
+      });
+    return () => controller.abort();
+  }, []);
+
   function completeTask(task: string) {
-    setCompletedTasks((current) => current.includes(task) ? current : [...current, task]);
+    if (completedTasks.includes(task)) return;
+    const next = [...completedTasks, task];
+    setCompletedTasks(next);
+    if (signedIn) void saveProgress(next);
+  }
+
+  async function saveProgress(tasks: string[]) {
+    setSaveStatus("saving");
+    try {
+      const response = await fetch("/api/progress", {
+        method: "PUT",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ completedTasks: tasks }),
+      });
+      if (!response.ok) throw new Error("Save failed");
+      setSaveStatus("saved");
+    } catch {
+      setSaveStatus("error");
+    }
   }
 
   async function copyTemplate() {
@@ -93,7 +132,7 @@ export default function LessonClient() {
 
   return (
     <main className="lesson-page">
-      <header className="lesson-header"><Link className="lesson-brand" href="/"><span>AW</span><b>AI Workflows</b></Link><div className="lesson-crumb"><Link href="/#course">Chapter 01 · The basics</Link><span>/</span><b>Context rot</b></div><div className="lesson-progress"><span><i style={{ width: `${Math.max(4, progress)}%` }} /></span><b>{completedTasks.length} / 3 tasks</b></div></header>
+      <header className="lesson-header"><Link className="lesson-brand" href="/"><span>AW</span><b>AI Workflows</b></Link><div className="lesson-crumb"><Link href="/#course">Chapter 01 · The basics</Link><span>/</span><b>Context rot</b></div><div className="lesson-account"><div className="lesson-progress"><span><i style={{ width: `${Math.max(4, progress)}%` }} /></span><b>{completedTasks.length} / 3 tasks</b></div><AuthButton returnTo="/course/basics/context-rot" compact /></div></header>
       <div className="lesson-workspace">
         <aside className="course-sidebar" aria-label="Course contents">
           <div className="course-side-head"><p>AI Workflows</p><h2>Course contents</h2><div><span style={{ width: `${Math.max(4, progress)}%` }} /><small>{progress}% of this lesson</small></div></div>
@@ -109,6 +148,7 @@ export default function LessonClient() {
         <article className="lesson-reading">
           <div className="lesson-reading-inner">
             <div className="lesson-meta"><span>LESSON 01.1</span><span>8 MINUTES</span><span>BEGINNER</span></div>
+            <p className={`progress-save-state ${signedIn ? "connected" : ""}`}>{signedIn ? (saveStatus === "saving" ? "Saving progress…" : saveStatus === "error" ? "Could not save just now — your lesson stays open." : "Signed in · progress saves automatically") : signedIn === false ? "Sign in above to save your progress across devices." : "Checking saved progress…"}</p>
             <h1>Your AI did not get worse. <em>Your chat got messy.</em></h1>
             <p className="lesson-lede">A large context window means a model can read a lot. It does not mean every old instruction, correction and decision receives equal attention.</p>
             <aside className="objectives-card"><div><span aria-hidden="true">◎</span><h2>Learning objectives</h2></div><p>After this lesson, you will be able to:</p><ul><li>Explain why a long chat can become less reliable.</li><li>Separate project memory from conversation history.</li><li>Use one focused chat for one proper job.</li></ul></aside>
@@ -128,7 +168,7 @@ export default function LessonClient() {
 
             <section id="try-it"><p className="reading-kicker">Section 4 · Try it now</p><h2>Make the file your next chat needs.</h2><p>Copy this into a new overview.md file, then replace the square brackets with your own project details.</p><div className="lesson-template"><div><span>overview.md</span><button onClick={copyTemplate}>{copied ? "Copied" : "Copy template"}</button></div><pre><code>{template}</code></pre></div><div className={`inline-task build-task ${completedTasks.includes("build") ? "complete" : ""}`}><div className="task-heading"><span>TASK 03 · MAKE THE FILE</span><b>{completedTasks.includes("build") ? "COMPLETE ✓" : "5 MINUTES"}</b></div><h3>Complete your own overview.md.</h3><ul><li>State what you are making and who it is for.</li><li>Record the pages, files and decisions that already exist.</li><li>Give the next chat one exact job.</li></ul><button className="task-complete-button" onClick={() => completeTask("build")}>{completedTasks.includes("build") ? "Task complete" : "I have made the file"}</button></div></section>
 
-            {completedTasks.length === 3 ? <section className="lesson-complete-card"><span>LESSON COMPLETE</span><h2>You have separated project memory from chat history.</h2><p>Your progress will be saved to an account once login is connected. For now, this interaction is a working preview.</p><Link href="/#course">Return to the course map →</Link></section> : null}
+            {completedTasks.length === 3 ? <section className="lesson-complete-card"><span>LESSON COMPLETE</span><h2>You have separated project memory from chat history.</h2><p>{signedIn ? "Your progress is saved to your account and will be here on any device." : "Sign in with Google to save this lesson to your account and continue on another device."}</p><Link href="/#course">Return to the course map →</Link></section> : null}
 
             <section className="lesson-sources"><p className="reading-kicker">Sources</p><h2>Read the work behind the lesson.</h2><a href="https://research.trychroma.com/context-rot" target="_blank" rel="noreferrer"><b>Chroma Research</b><span>Context Rot ↗</span></a><a href="https://arxiv.org/abs/2307.03172" target="_blank" rel="noreferrer"><b>Liu et al.</b><span>Lost in the Middle ↗</span></a><a href="https://arxiv.org/abs/2311.04325" target="_blank" rel="noreferrer"><b>Hsieh et al.</b><span>RULER ↗</span></a></section>
           </div>
