@@ -6,6 +6,26 @@ import Image from "next/image";
 import AuthButton from "../../../components/AuthButton";
 import { LessonVisualContent, OverviewWorkspaceVisual, type LessonVisual } from "./LessonVisuals";
 
+const projectSetupPrompt = `You are setting up durable project context for this workspace.
+
+First, inspect the project folder and the files that explain it. Read the existing documentation, package or dependency files, source structure, configuration, current task notes and recent decisions where they exist. Use only information you can find in the project or that I provide. Do not change code, configuration or dependencies yet.
+
+Then create overview.md in the project root. Keep it concise, factual and useful to the next clean chat. Include:
+
+# [Project name]
+## Goal
+## User and product context
+## What exists
+## How to run and check the project
+## Current decisions
+## Rules and constraints
+## Current task
+## TODO / tracker
+
+For the TODO / tracker, separate completed work, work in progress, the next task and blocked items. Include file paths, commands and links when they matter. Mark anything uncertain as "Needs confirmation" instead of guessing.
+
+When the file is ready, show me a short summary, the questions that still need my answer and the exact overview.md path. Do not start the next task until I have reviewed the file.`;
+
 const courseChapters = [
   { title: "The basics", lessons: ["Context rot", "Your project brain", "Files and handovers", "A clean first workflow"] },
   { title: "Pick the right model", lessons: ["What models change", "Speed, cost and reasoning", "Context windows", "A simple model test"] },
@@ -28,6 +48,7 @@ const visualTaskLabels: Record<LessonVisual, string> = {
 };
 
 export default function LessonClient() {
+  const [copied, setCopied] = useState(false);
   const [openChapter, setOpenChapter] = useState(0);
   const [quizAnswer, setQuizAnswer] = useState<string | null>(null);
   const [completedTasks, setCompletedTasks] = useState<string[]>([]);
@@ -97,6 +118,12 @@ export default function LessonClient() {
     } catch {
       setSaveStatus("error");
     }
+  }
+
+  async function copyProjectSetupPrompt() {
+    await navigator.clipboard.writeText(projectSetupPrompt);
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1600);
   }
 
   function beginResize(event: ReactPointerEvent<HTMLDivElement>) {
@@ -196,6 +223,10 @@ export default function LessonClient() {
               <p>The clean chat becomes useful when you give it that current record at the start. For the recipe example, a new chat can begin with <code>@overview.md please suggest a recipe</code>, which supplies the pantry list and rules without the older lunch discussion or abandoned shopping ideas.</p>
               <p>Use a separate clean chat for each proper job, then update overview.md when a fact or decision changes. The next task begins from the edited file, while completed chat history can stay closed.</p>
               <div className="section-coding-workspace"><OverviewWorkspaceVisual /></div>
+              <div className="project-setup-guide">
+                <div className="project-setup-steps"><span>SET UP THE FILE ONCE</span><h3>Ask your AI to make the first version from the project it can see.</h3><ol><li><b>Open a new chat in the project folder.</b><span>Give it access to the files, documentation and current task notes.</span></li><li><b>Copy the prompt below.</b><span>It tells the AI to inspect the evidence before it writes overview.md.</span></li><li><b>Review the file before the next task.</b><span>Correct missing facts, then keep the tracker current as the work changes.</span></li></ol></div>
+                <div className="project-setup-prompt"><header><div><span>PROJECT SETUP PROMPT</span><b>Paste this into your AI at the start of a project.</b></div><button type="button" onClick={copyProjectSetupPrompt}>{copied ? "Copied" : "Copy prompt"}</button></header><pre><code>{projectSetupPrompt}</code></pre></div>
+              </div>
               <div className={`inline-task context-task build-task ${completedTasks.includes("build") ? "complete" : ""}`}>
                 <div className="task-heading"><span>TASK 03 · MAKE THE FILE</span><b>{completedTasks.includes("build") ? "COMPLETE ✓" : "5 MINUTES"}</b></div>
                 <h3>Create overview.md for a project you already have.</h3>
