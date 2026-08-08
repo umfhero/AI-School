@@ -834,6 +834,16 @@ button,a { font:inherit; }
   animation: auth-shimmer 1.2s linear infinite;
 }
 
+/* Keep the course progress in the first desktop viewport and make supporting copy readable. */
+.home-page .home-hero {
+  min-height: 590px;
+  padding-top: 54px;
+  padding-bottom: 54px;
+}
+.home-page .section-kicker { font-size: .76rem; }
+.home-page .showcase-caption { font: 700 .78rem/1.55 monospace; }
+.home-page .course-facts small { font-size: .66rem; }
+
 @media (max-width: 1150px) {
   .home-page .home-hero { grid-template-columns: 1fr; }
   .home-page .hero-showcase { width: min(900px, 100%); }
@@ -863,6 +873,12 @@ button,a { font:inherit; }
   .home-progress-current,
   .home-progress-continue { grid-column: 1; grid-row: auto; }
   .home-progress-continue { justify-content: space-between; }
+
+  .home-page .home-hero {
+    min-height: 0;
+    padding-top: 64px;
+    padding-bottom: 86px;
+  }
 }
 
 /* Clearer lesson navigation */

@@ -46,9 +46,9 @@ export default function Home() {
             </a>
           </div>
           <div className="course-facts" aria-label="Course facts">
-            <span><b>6</b><small>chapters</small></span>
+            <span><b>1</b><small>course</small></span>
             <span><b>24</b><small>lessons</small></span>
-            <span><b>£0</b><small>to complete</small></span>
+            <span><b>£0</b><small>price</small></span>
           </div>
         </div>
 

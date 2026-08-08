@@ -157,7 +157,10 @@ export default function LessonClient() {
       <header className="lesson-header">
         <div className="lesson-header-left">
           <button className="sidebar-toggle" type="button" onClick={() => setSidebarOpen((open) => !open)} aria-expanded={sidebarOpen} aria-controls="course-contents"><span aria-hidden="true">{sidebarOpen ? "×" : "☰"}</span><b>{sidebarOpen ? "Hide contents" : "Show contents"}</b></button>
-          <div className="lesson-brand"><b>AI workflow course</b></div>
+          <a className="lesson-brand" href="/profile#courses" aria-label="Return to your AI workflow course overview">
+            <Image src="/ai-workflows-icon.png" alt="" width={28} height={28} priority />
+            <b>AI workflow course</b>
+          </a>
         </div>
         <div className="lesson-crumb"><span>Chapter 01 · The basics</span><span>/</span><b>Context rot</b></div>
         <div className="lesson-account"><div className="lesson-progress"><span><i style={{ width: `${Math.max(4, progress)}%` }} /></span><b>{completedTasks.length} / 3 tasks</b></div><AuthButton returnTo="/course/basics/context-rot" compact /></div>
