@@ -6,6 +6,7 @@ import Image from "next/image";
 import AuthButton from "../../../components/AuthButton";
 import ExperienceBadge from "../../../components/ExperienceBadge";
 import LessonXpCelebration from "../../../components/LessonXpCelebration";
+import { PixelArrow, PixelSpark } from "../../../components/PixelIcons";
 import { courseChapters } from "../../courseData";
 import { LessonCelebration } from "./LessonCelebration";
 import { LessonVisualContent, type LessonVisual } from "./LessonVisuals";
@@ -234,8 +235,8 @@ export default function LessonClient() {
         <div className="lesson-header-left">
           <button className="sidebar-toggle" type="button" onClick={() => setSidebarOpen((open) => !open)} aria-expanded={sidebarOpen} aria-controls="course-contents"><span aria-hidden="true">{sidebarOpen ? "×" : "☰"}</span><b>{sidebarOpen ? "Hide contents" : "Show contents"}</b></button>
           <a className="lesson-brand" href="/profile#courses" aria-label="Return to your AI workflow course overview">
-            <Image src="/ai-workflows-icon.png" alt="" width={28} height={28} priority />
-            <b>AI workflow course</b>
+            <PixelSpark className="lesson-brand-star" />
+            <b>AI school</b>
           </a>
         </div>
         <div className="lesson-crumb"><span>Lesson 01.2 · The basics</span><span>/</span><b>Context rot</b></div>
@@ -339,7 +340,7 @@ export default function LessonClient() {
         {!visualOpen && activeVisual ? <button className="reopen-visual" type="button" onClick={() => setVisualOpen(true)}><span>Resume task visual</span><b>{visualLabels[activeVisual]}</b></button> : null}
       </div>
 
-      <nav className="lesson-bottom" aria-label="Lesson navigation"><a className="lesson-home-back" href="/"><span aria-hidden="true">←</span><b>Back to home</b></a><div><span>CHAPTER 01 · THE BASICS</span><b>{completedTasks.length} of 3 tasks complete</b></div><button className="lesson-next" disabled={!lessonComplete} title={!lessonComplete ? "Complete the lesson to unlock the next lesson" : undefined}>Next lesson <span aria-hidden="true">→</span></button></nav>
+      <nav className="lesson-bottom" aria-label="Lesson navigation"><a className="lesson-home-back" href="/"><span aria-hidden="true">←</span><b>Back to home</b></a><div><span>CHAPTER 01 · THE BASICS</span><b>{completedTasks.length} of 3 tasks complete</b></div><button className="lesson-next" disabled={!lessonComplete} title={!lessonComplete ? "Complete the lesson to unlock the next lesson" : undefined}>Next lesson <PixelArrow /></button></nav>
     </main>
   );
 }
