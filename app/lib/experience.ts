@@ -19,8 +19,6 @@ export type Experience = {
 
 export function getExperience(lessons: Record<string, LessonExperienceState>): Experience {
   const completedXp = (lessonId: string, fallbackXp = XP_PER_LESSON) => lessons[lessonId]?.lessonCompletedAt ? lessons[lessonId].xpAwarded ?? fallbackXp : 0;
-  const completedChapterXp = (chapterIndex: number) => courseChapters[chapterIndex].lessons
-    .reduce((total, lesson) => total + completedXp(lesson.id), 0);
   const introComplete = Boolean(lessons[courseIntroLesson.id]?.lessonCompletedAt);
   const totalXp = courseLessons.reduce((total, lesson) => total + completedXp(lesson.id, lesson.xpAward ?? XP_PER_LESSON), 0);
   if (!introComplete) {
@@ -39,8 +37,12 @@ export function getExperience(lessons: Record<string, LessonExperienceState>): E
   const graduated = nextChapterIndex === -1;
   const chapterIndex = graduated ? courseChapters.length - 1 : nextChapterIndex;
   const chapter = courseChapters[chapterIndex];
-  const xpTarget = chapter.lessons.length * XP_PER_LESSON;
-  const xpInLevel = completedChapterXp(chapterIndex);
+  const xpTarget = graduated
+    ? totalXp
+    : (courseIntroLesson.xpAward ?? XP_PER_LESSON) + courseChapters
+      .slice(0, chapterIndex + 1)
+      .reduce((total, courseChapter) => total + courseChapter.lessons.length * XP_PER_LESSON, 0);
+  const xpInLevel = totalXp;
 
   return {
     totalXp,

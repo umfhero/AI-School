@@ -6,7 +6,7 @@ The course currently has six chapters and 25 proposed lessons. AI? has two tasks
 
 ## Course introduction
 
-This is a short, task-free first lesson that sits before Chapter 1. It explains that the course is for non-technical learners who want to use AI to make and manage real projects, and that prior coding experience is not required. It makes clear that AI is not intelligent in the human sense, and that its answers depend on its training, instructions, context, tools, model and settings. It introduces the six chapters, what AI and models are, hallucinations and checking work, agents, context management, anti-hallucination workflows, skills, parallel work and safe shipping. The learner completes it after reading and earns 500 XP, moving from Level 0 to Level 1.
+This is a short, task-free first lesson that sits before Chapter 1. It explains that the course is for non-technical learners who want to use AI to make and manage real projects, and that prior coding experience is not required. It makes clear that AI is not intelligent in the human sense, and that its answers depend on its training, instructions, context, tools, model and settings. It introduces the six chapters, what AI and models are, hallucinations and checking work, agents, context management, anti-hallucination workflows, skills, parallel work and safe shipping. The learner completes it after reading and earns 500 XP, moving from Level 0 to Level 1. Completing Chapter 1 brings the learner to 1,000 total XP and Level 2.
 
 ## Chapter 1: The basics
 

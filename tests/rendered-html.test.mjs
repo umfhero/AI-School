@@ -73,6 +73,7 @@ test("server-renders the course introduction", async () => {
   assert.match(html, /Learn to work with AI, without losing the thread/i);
   assert.match(html, /For curious beginners who want a calmer way to build/i);
   assert.match(html, /AI is stupid, even when it sounds confident/i);
+  assert.match(html, /five trillion searches a year/i);
   assert.match(html, /Six chapters, one connected workflow/i);
   assert.match(html, /Complete introduction/i);
   assert.match(html, /500 XP/i);
