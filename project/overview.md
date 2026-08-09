@@ -21,6 +21,7 @@ These are hard operating constraints, not aspirational targets. Recalculate the 
 
 - Static asset requests are free; SSR pages and API routes consume Worker invocations. Do not make a public page dynamic or add client API calls without adding them to the request estimate.
 - A typical signed-in lesson session currently makes approximately 8–12 Worker invocations, 20–40 D1 row reads and 4–8 D1 row writes. Treat these as a baseline to update, not a guarantee.
+- The shared header makes one additional `GET /api/notifications` request for signed-in visitors. Plan for roughly 9–13 Worker invocations and 22–45 D1 reads per signed-in lesson session before a notification is opened; opening a notification adds one D1 write for its private read state. Do not add polling or real-time delivery without recalculating the busiest-day impact.
 - D1 does not have a monthly free allowance to smooth usage: the practical capacity is determined by the busiest day. As a loose guide, a 5,000-DAU service supports roughly 15,000–40,000 MAU depending on how often learners return.
 
 ### Public counts, caching and failure safety
@@ -46,6 +47,11 @@ Read more than one document whenever the change crosses boundaries. For example,
 - Google OAuth uses PKCE and state validation. Sessions are HttpOnly and hashed in D1. Do not expose emails, OAuth values, tokens or secrets in pages, bundles or logs.
 - Accounts must accept the current Terms version before account features continue. Keep acceptance versioned if Terms change.
 - D1 schema is in `db/schema.ts`; generate and inspect a Drizzle migration for schema changes. The terms-acceptance table also initialises safely on first use because the connected deployment does not apply migrations automatically.
+- Notifications are available to signed-in learners through the shared `SiteHeader` bell and `/notifications`. `GET /api/notifications` returns only the requesting account's inbox and is `no-store`; `PATCH /api/notifications` can mark only a notification delivered to that same account as read and requires a same-origin request.
+- `notifications` stores broadcasts once (`audience = all`) or a future individual delivery (`recipient_user_id`); `notification_reads` stores private per-account read state. Never fan a broadcast out into one row per user. Keep inbox queries indexed, newest-first and capped at 50 items, and never include emails or another learner's data in notification content or API responses.
+- Use the server-only `createNotification` helper in `lib/server/notifications.ts` for future course launches, course changes and friend-request events. Do not add a learner-controlled publishing route. The helper validates internal links and the runtime initialiser creates the notification tables and indexes safely while the connected deployment is catching up with the Drizzle migrations (`0002_careful_vampiro.sql` and `0003_vengeful_sandman.sql`).
+- Notification read records are included in account export and deleted with the account. Keep the Privacy page accurate for any new notification data or delivery channel.
+- A one-off, idempotent global preview broadcast is currently configured in `lib/server/notifications.ts`: title `Hello!` with lorem ipsum body. It is for visual testing only. Remove the seed after approval; removing it from source does not delete the already-created production notification, so ask the owner before arranging any production data cleanup.
 - Every published lesson must use the complete lesson shell: header, `sidebar-toggle`, `course-sidebar` (`id="course-contents"`), lesson reading area and bottom navigation. Do not ship a lesson with a reading area alone or a permanently visible contents panel. Reuse a working lesson shell, including the responsive `sidebarOpen` state, before adding lesson-specific tasks or visuals.
 
 ## Build, release and safety
