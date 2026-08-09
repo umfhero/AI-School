@@ -1,6 +1,13 @@
 "use client";
 /* eslint-disable @next/next/no-html-link-for-pages -- Native navigation is required by the deployed Vinext Worker router. */
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent as ReactKeyboardEvent,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
 import AuthButton from "../../../components/AuthButton";
 import ExperienceBadge from "../../../components/ExperienceBadge";
 import LessonXpCelebration from "../../../components/LessonXpCelebration";
@@ -34,22 +41,48 @@ export default function CleanWorkflowLessonClient() {
   const [answers, setAnswers] = useState<Record<number, boolean>>({});
   const [score, setScore] = useState<number | null>(null);
   const [finish, setFinish] = useState(false);
+  const [visualWidth, setVisualWidth] = useState(620);
+  const resizing = useRef(false);
   const progress = Math.round((tasks.length / 3) * 100);
+  const answerCount = Object.keys(answers).length;
+  const workspaceStyle = {
+    "--visual-width": `${visualWidth}px`,
+  } as CSSProperties;
   useEffect(() => {
     fetch("/api/progress", { credentials: "same-origin" })
       .then((r) => r.json())
-      .then(
-        (d: {
-          user: unknown;
-          lessons?: Lessons;
-        }) => {
-          setSignedIn(Boolean(d.user));
-          setLessons(d.lessons ?? {});
-          setTasks(d.lessons?.[lessonId]?.completedTasks ?? []);
-          setComplete(Boolean(d.lessons?.[lessonId]?.lessonCompletedAt));
-        },
-      );
+      .then((d: { user: unknown; lessons?: Lessons }) => {
+        setSignedIn(Boolean(d.user));
+        setLessons(d.lessons ?? {});
+        setTasks(d.lessons?.[lessonId]?.completedTasks ?? []);
+        setComplete(Boolean(d.lessons?.[lessonId]?.lessonCompletedAt));
+      });
   }, []);
+  function beginResize(event: ReactPointerEvent<HTMLDivElement>) {
+    resizing.current = true;
+    event.currentTarget.setPointerCapture(event.pointerId);
+  }
+  function resizeVisual(event: ReactPointerEvent<HTMLDivElement>) {
+    if (resizing.current)
+      setVisualWidth(
+        Math.min(860, Math.max(380, window.innerWidth - event.clientX)),
+      );
+  }
+  function endResize(event: ReactPointerEvent<HTMLDivElement>) {
+    resizing.current = false;
+    if (event.currentTarget.hasPointerCapture(event.pointerId))
+      event.currentTarget.releasePointerCapture(event.pointerId);
+  }
+  function resizeWithKeyboard(event: ReactKeyboardEvent<HTMLDivElement>) {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    event.preventDefault();
+    setVisualWidth((width) =>
+      Math.min(
+        860,
+        Math.max(380, width + (event.key === "ArrowLeft" ? 30 : -30)),
+      ),
+    );
+  }
   useEffect(() => {
     const mobileQuery = window.matchMedia("(max-width: 920px)");
     const closeOnMobile = () => setSidebarOpen(!mobileQuery.matches);
@@ -58,8 +91,9 @@ export default function CleanWorkflowLessonClient() {
     return () => mobileQuery.removeEventListener("change", closeOnMobile);
   }, []);
   async function passQuiz() {
-    const correct = questions.filter(([, answer], i) => answers[i] === answer)
-      .length;
+    const correct = questions.filter(
+      ([, answer], i) => answers[i] === answer,
+    ).length;
     setScore(correct);
     if (correct < 4) return;
     const next = taskIds;
@@ -138,6 +172,7 @@ export default function CleanWorkflowLessonClient() {
       </header>
       <div
         className={`lesson-workspace ${open ? "" : "visual-closed"} ${sidebarOpen ? "" : "sidebar-closed"}`}
+        style={workspaceStyle}
       >
         <aside
           className="course-sidebar"
@@ -315,7 +350,21 @@ export default function CleanWorkflowLessonClient() {
           </div>
         </article>
         {open ? (
-          <div className="lesson-resize-handle" aria-hidden="true">
+          <div
+            className="lesson-resize-handle"
+            role="separator"
+            aria-label="Resize the chapter quiz side view"
+            aria-orientation="vertical"
+            aria-valuemin={380}
+            aria-valuemax={860}
+            aria-valuenow={visualWidth}
+            tabIndex={0}
+            onPointerDown={beginResize}
+            onPointerMove={resizeVisual}
+            onPointerUp={endResize}
+            onPointerCancel={endResize}
+            onKeyDown={resizeWithKeyboard}
+          >
             <span>⋮</span>
           </div>
         ) : null}
@@ -329,7 +378,9 @@ export default function CleanWorkflowLessonClient() {
                 <span>Side view</span>
                 <b>Chapter 1 quiz</b>
               </div>
-              <span className="task-visual-context">80% to pass</span>
+              <span className="task-visual-context">
+                {answerCount}/5 answered
+              </span>
               <button
                 className="close-visual"
                 type="button"
@@ -340,7 +391,10 @@ export default function CleanWorkflowLessonClient() {
               </button>
             </header>
             <div className="workflow-quiz-content">
-              <p>Answer all five questions, then submit your quiz.</p>
+              <p>
+                Answer all five questions, then submit your quiz. You need 4
+                correct answers to pass.
+              </p>
               {questions.map(([text], i) => (
                 <div className="quiz-question" key={text}>
                   <b>
@@ -365,11 +419,22 @@ export default function CleanWorkflowLessonClient() {
               <button
                 className="complete-lesson-button"
                 type="button"
-                disabled={Object.keys(answers).length !== 5}
+                disabled={answerCount !== 5}
                 onClick={passQuiz}
               >
                 Submit quiz
               </button>
+              {score !== null && score < 4 ? (
+                <p className="workflow-quiz-result" role="status">
+                  You scored {score}/5. Review the lesson, change your answers
+                  and submit again.
+                </p>
+              ) : answerCount < 5 ? (
+                <p className="workflow-quiz-result" role="status">
+                  Choose {5 - answerCount} more answer
+                  {5 - answerCount === 1 ? "" : "s"} to enable submission.
+                </p>
+              ) : null}
             </div>
           </aside>
         ) : null}
