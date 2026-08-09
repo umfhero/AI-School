@@ -163,6 +163,7 @@ export default function LessonClient() {
   }
 
   function beginSheetDrag(event: ReactPointerEvent<HTMLDivElement>) {
+    if ((event.target as HTMLElement).closest(".close-visual")) return;
     sheetDrag.current = { startY: event.clientY, startHeight: sheetHeightRef.current };
     setSheetDragging(true);
     event.currentTarget.setPointerCapture(event.pointerId);
@@ -301,8 +302,9 @@ export default function LessonClient() {
         {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex */}
         {visualOpen && activeVisual ? <div className="lesson-resize-handle" role="separator" aria-label="Resize the lesson visual" aria-orientation="vertical" aria-valuemin={380} aria-valuemax={860} aria-valuenow={visualWidth} tabIndex={0} onPointerDown={beginResize} onPointerMove={resizeVisual} onPointerUp={endResize} onPointerCancel={endResize} onKeyDown={resizeWithKeyboard}><span aria-hidden="true">⋮</span></div> : null}
         {visualOpen && activeVisual ? <aside className={`lesson-visual context-visual${sheetDragging ? " sheet-dragging" : ""}`} aria-label={`${visualLabels[activeVisual]} visual`}>
-          <div className="visual-switcher task-visual-header">
-            <div className="sheet-grab-handle" role="slider" aria-label="Resize the task visual sheet" aria-orientation="vertical" aria-valuemin={14} aria-valuemax={92} aria-valuenow={Math.round(sheetHeight)} tabIndex={0} onPointerDown={beginSheetDrag} onPointerMove={dragSheet} onPointerUp={endSheetDrag} onPointerCancel={endSheetDrag} onKeyDown={resizeSheetWithKeyboard}><span aria-hidden="true" /></div>
+          {/* On phones this whole bar is the drag surface for the bottom sheet, not just the pill: a real thumb rarely lands on a few-pixel-tall strip, and the close button opts itself out via the target check in beginSheetDrag. */}
+          <div className="visual-switcher task-visual-header sheet-drag-surface" onPointerDown={beginSheetDrag} onPointerMove={dragSheet} onPointerUp={endSheetDrag} onPointerCancel={endSheetDrag}>
+            <div className="sheet-grab-handle" role="slider" aria-label="Resize the task visual sheet" aria-orientation="vertical" aria-valuemin={14} aria-valuemax={92} aria-valuenow={Math.round(sheetHeight)} tabIndex={0} onKeyDown={resizeSheetWithKeyboard}><span aria-hidden="true" /></div>
             <div><span>Side view</span><b>{visualLabels[activeVisual]}</b></div>
             <span className="task-visual-context">{visualTaskLabels[activeVisual]}</span>
             <button className="close-visual" type="button" onClick={() => setVisualOpen(false)} aria-label="Close side view">×</button>
