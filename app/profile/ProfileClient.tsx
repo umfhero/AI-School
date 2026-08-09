@@ -5,11 +5,72 @@ import { useEffect, useMemo, useState } from "react";
 import styles from "./profile.module.css";
 import SiteHeader from "../components/SiteHeader";
 import { PixelArrow, PixelSpark } from "../components/PixelIcons";
-import { chapterTaskCount, courseChapters, getLesson, totalCourseTasks } from "../course/courseData";
+import { chapterTaskCount, courseChapters, getLesson, totalCourseTasks, type CourseChapter } from "../course/courseData";
 
 type User = { name: string; email: string; pictureUrl: string | null };
-type Progress = { user: User | null; completedTasks?: string[]; lessons?: Record<string, { completedTasks?: string[] }>; activity?: Record<string, number> };
+type LessonMap = Record<string, { completedTasks?: string[] }>;
+type Progress = { user: User | null; completedTasks?: string[]; lessons?: LessonMap; activity?: Record<string, number> };
 const heatLabels = ["Mon", "Wed", "Fri"];
+
+// Each completed task awards XP. A level is one course chapter: finishing every lesson in the
+// current chapter fills the XP bar and advances the learner to the next chapter's level.
+const XP_PER_TASK = 25;
+
+function chapterCompletedTasks(chapter: CourseChapter, lessons: LessonMap) {
+  return chapter.lessons.reduce((total, lesson) => total + Math.min(lessons[lesson.id]?.completedTasks?.length ?? 0, lesson.taskCount), 0);
+}
+
+function getLevelState(lessons: LessonMap) {
+  const chapterIndex = courseChapters.findIndex((chapter) => chapterCompletedTasks(chapter, lessons) < chapterTaskCount(chapter));
+  const graduated = chapterIndex === -1;
+  const levelIndex = graduated ? courseChapters.length - 1 : chapterIndex;
+  const chapter = courseChapters[levelIndex];
+  const xpInLevel = chapterCompletedTasks(chapter, lessons) * XP_PER_TASK;
+  const xpTarget = chapterTaskCount(chapter) * XP_PER_TASK;
+  return {
+    level: levelIndex + 1,
+    levelTitle: graduated ? "Course graduate" : chapter.title,
+    xpInLevel,
+    xpTarget,
+    xpPercent: xpTarget ? Math.min(100, Math.round((xpInLevel / xpTarget) * 100)) : 100,
+    graduated,
+  };
+}
+
+function PixelShield({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      className={`pixel-icon ${className}`.trim()}
+      viewBox="0 0 7 8"
+      width="20"
+      height="22"
+      fill="currentColor"
+      aria-hidden="true"
+      focusable="false"
+      shapeRendering="crispEdges"
+    >
+      <rect x="1" y="0" width="5" height="1" />
+      <rect x="0" y="1" width="7" height="1" />
+      <rect x="0" y="2" width="7" height="3" />
+      <rect x="1" y="5" width="5" height="1" />
+      <rect x="2" y="6" width="3" height="1" />
+      <rect x="3" y="7" width="1" height="1" />
+    </svg>
+  );
+}
+
+function ChapterBadges({ lessons }: { lessons: LessonMap }) {
+  const unlockedCount = courseChapters.filter((chapter) => chapterCompletedTasks(chapter, lessons) >= chapterTaskCount(chapter)).length;
+  return <section className={styles.badgesCard}>
+    <div className={styles.badgesTop}><div><p className={styles.eyebrow}>ACHIEVEMENTS</p><h2>Chapter badges</h2></div><span className={styles.badgesCount}>{unlockedCount} of {courseChapters.length}</span></div>
+    <div className={styles.badgeRow}>{courseChapters.map((chapter) => {
+      const done = chapterCompletedTasks(chapter, lessons);
+      const total = chapterTaskCount(chapter);
+      const unlocked = done >= total;
+      return <div key={chapter.title} className={`${styles.badge} ${unlocked ? styles.badgeUnlocked : ""}`} title={`${chapter.title}: ${done} of ${total} tasks complete`}><PixelShield className={styles.badgeIcon} /><span>{chapter.title}</span></div>;
+    })}</div>
+  </section>;
+}
 
 function localDateKey(date: Date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
@@ -93,6 +154,7 @@ export default function ProfileClient() {
   const nextTitle = !aiComplete ? "AI?" : !contextComplete ? "Context rot" : "Your project brain";
   const nextCopy = !aiComplete ? "Start with what AI is, where people use it and how a project grows from a chat into a workspace." : !contextComplete ? "Learn why a long chat starts losing the thread and how to prevent it." : "Learn how a short project overview keeps important context in one place.";
   const nextHref = !aiComplete ? "/course/basics/ai" : !contextComplete ? "/course/basics/context-rot" : "/course/basics/ai";
+  const level = getLevelState(lessons);
   const activity = progress?.activity ?? {};
   const currentMonth = localDateKey(new Date()).slice(0, 7);
   const completedThisMonth = Object.entries(activity).reduce((total, [day, count]) => day.startsWith(currentMonth) ? total + count : total, 0);
@@ -107,7 +169,21 @@ export default function ProfileClient() {
   return <main className={styles.page}>
     <SiteHeader />
     <div className={styles.shell}>
-    <header className={styles.profileHeader}><div className={styles.identity}><span className={styles.avatar} style={avatarStyle}>{progress.user.pictureUrl ? null : initial}</span><div><p className={styles.eyebrow}>LEARNER PROFILE</p><h1>{progress.user.name}</h1><p>{progress.user.email}</p></div></div><div className={styles.stat}><strong>{completedTasks}</strong><span>tasks completed</span></div><div className={styles.stat}><strong>{dayStreak}</strong><span>day streak</span></div></header>
-    <div className={styles.grid}><CourseProgress completedTasks={completedTasks} lessons={lessons} /><aside className={styles.side}><section className={styles.activityCard}><PixelSpark className={styles.cornerSpark} /><div className={styles.activityTitle}><div><p className={styles.eyebrow}>CONSISTENCY</p><h2>Learning activity</h2></div><b>{completedThisMonth} this month</b></div><ActivityGrid activity={activity} /><div className={styles.legend}><span>Less</span>{[0, 1, 2, 3, 4].map((level) => <i key={level} className={`${styles.day} ${styles[`level${level}`]}`} />)}<span>More</span></div></section><section className={styles.next}><PixelSpark className={styles.cornerSparkNext} /><p className={styles.eyebrow}>UP NEXT</p><h2>{nextTitle}</h2><p>{nextCopy}</p><a href={nextHref}>Open lesson <PixelArrow /></a></section></aside></div>
+    <header className={styles.profileHeader}>
+      <div className={styles.profileHeaderTop}>
+        <div className={styles.identity}><span className={styles.avatar} style={avatarStyle}>{progress.user.pictureUrl ? null : initial}</span><div><p className={styles.eyebrow}>LEARNER PROFILE</p><h1>{progress.user.name}</h1><p>{progress.user.email}</p></div></div>
+        <div className={styles.stat}><strong>{completedTasks}</strong><span>tasks completed</span></div>
+        <div className={styles.stat}><strong>{dayStreak}</strong><span>day streak</span></div>
+      </div>
+      <div className={styles.levelBar}>
+        <div className={styles.levelPill}><PixelSpark className={styles.levelIcon} /><span>LV {level.level}</span></div>
+        <div className={styles.xpInfo}>
+          <div className={styles.xpTop}><b>{level.levelTitle}</b><span>{level.graduated ? "Course complete" : `${level.xpInLevel} / ${level.xpTarget} XP`}</span></div>
+          <div className={styles.xpTrack} aria-label={`${level.xpPercent}% progress toward level ${level.level + 1}`}><span style={{ width: `${level.xpPercent}%` }} /></div>
+        </div>
+      </div>
+    </header>
+    <ChapterBadges lessons={lessons} />
+    <div className={styles.grid}><CourseProgress completedTasks={completedTasks} lessons={lessons} /><aside className={styles.side}><section className={styles.activityCard}><PixelSpark className={styles.cornerSpark} /><div className={styles.activityTitle}><div><p className={styles.eyebrow}>CONSISTENCY</p><h2>Learning activity</h2></div><b>{completedThisMonth} this month</b></div><ActivityGrid activity={activity} /><div className={styles.legend}><span>Less</span>{[0, 1, 2, 3, 4].map((tier) => <i key={tier} className={`${styles.day} ${styles[`level${tier}`]}`} />)}<span>More</span></div></section><section className={styles.next}><PixelSpark className={styles.cornerSparkNext} /><p className={styles.eyebrow}>UP NEXT</p><h2>{nextTitle}</h2><p>{nextCopy}</p><a href={nextHref}>Open lesson <PixelArrow /></a></section></aside></div>
   </div></main>;
 }
