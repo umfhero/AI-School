@@ -24,6 +24,7 @@ test("server-renders the context rot lesson workspace", async () => {
   assert.equal(response.status, 200);
   const html = await response.text();
   assert.match(html, /Context rot\./i);
+  assert.match(html, /Lesson 01\.2/i);
   assert.match(html, /One topic slowly becomes one crowded chat/i);
   assert.match(html, /Repeated Words/i);
   assert.match(html, /context-rot-repeated-words\.png/i);
@@ -41,4 +42,22 @@ test("server-renders the context rot lesson workspace", async () => {
   assert.doesNotMatch(html, /KEEP THIS STRAIGHT/i);
   assert.doesNotMatch(html, /LESSON 01\.1/i);
   assert.doesNotMatch(html, /Illustrative conversation/i);
+});
+
+test("server-renders the AI introduction lesson", async () => {
+  const response = await render("/course/basics/ai");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /AI\?/i);
+  assert.match(html, /Lesson 01\.1/i);
+  assert.match(html, /A helpful assistant, not a magic box/i);
+  assert.match(html, /created-vs-used\.png/i);
+  assert.match(html, /href="https:\/\/chatgpt\.com\//i);
+  assert.match(html, /href="https:\/\/claude\.ai\//i);
+  assert.match(html, /href="https:\/\/gemini\.google\.com\//i);
+  assert.match(html, /href="https:\/\/code\.visualstudio\.com\//i);
+  assert.match(html, /href="https:\/\/www\.cursor\.com\//i);
+  assert.match(html, /TASK 01 · MATCH THE SETUPS/i);
+  assert.match(html, /TASK 02 · ORDER THE SETUPS/i);
+  assert.match(html, /Context rot/i);
 });

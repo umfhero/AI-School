@@ -5,11 +5,10 @@ import { useEffect, useMemo, useState } from "react";
 import styles from "./profile.module.css";
 import SiteHeader from "../components/SiteHeader";
 import { PixelArrow, PixelSpark } from "../components/PixelIcons";
+import { chapterTaskCount, courseChapters, getLesson, totalCourseTasks } from "../course/courseData";
 
 type User = { name: string; email: string; pictureUrl: string | null };
-type Progress = { user: User | null; completedTasks?: string[]; activity?: Record<string, number> };
-
-const chapters = ["The basics", "Pick the right model", "Build with an agent", "Skills and repeatable work", "Fleets and parallel work", "Your AI workflow"];
+type Progress = { user: User | null; completedTasks?: string[]; lessons?: Record<string, { completedTasks?: string[] }>; activity?: Record<string, number> };
 const heatLabels = ["Mon", "Wed", "Fri"];
 
 function localDateKey(date: Date) {
@@ -48,20 +47,26 @@ function ActivityGrid({ activity }: { activity: Record<string, number> }) {
   </div>;
 }
 
-function CourseProgress({ completedTasks }: { completedTasks: number }) {
-  const totalTasks = 72;
-  const percent = Math.round((completedTasks / totalTasks) * 100);
-  const completedFirstLesson = completedTasks >= 3;
+function CourseProgress({ completedTasks, lessons }: { completedTasks: number; lessons: Record<string, { completedTasks?: string[] }> }) {
+  const percent = Math.round((completedTasks / totalCourseTasks) * 100);
+  const basics = courseChapters[0];
+  const basicsTasks = basics.lessons.reduce((total, lesson) => total + (lessons[lesson.id]?.completedTasks?.length ?? 0), 0);
+  const aiTasks = lessons["basics/ai"]?.completedTasks?.length ?? 0;
+  const contextTasks = lessons["basics/context-rot"]?.completedTasks?.length ?? 0;
+  const aiComplete = aiTasks >= (getLesson("basics/ai")?.taskCount ?? 2);
+  const contextComplete = contextTasks >= (getLesson("basics/context-rot")?.taskCount ?? 3);
+  const nextTitle = !aiComplete ? "AI?" : !contextComplete ? "Context rot" : "Your project brain";
+  const nextHref = !aiComplete ? "/course/basics/ai" : !contextComplete ? "/course/basics/context-rot" : "/course/basics/ai";
   return <section className={styles.courseCard} id="courses">
     <PixelSpark className={styles.cornerSpark} />
     <div className={styles.courseHeader}><div><p className={styles.eyebrow}>COURSE IN PROGRESS</p><h2>AI workflows</h2><p>Build a calmer, more capable way of working with AI.</p></div><strong>{percent}%<small>complete</small></strong></div>
     <div className={styles.progressTrack} aria-label={`${percent}% of the course complete`}><span style={{ width: `${Math.max(percent, completedTasks ? 2 : 0)}%` }} /></div>
-    <div className={styles.chapterList}>{chapters.map((chapter, index) => {
+    <div className={styles.chapterList}>{courseChapters.map((chapter, index) => {
       const active = index === 0;
-      const done = active && completedFirstLesson;
-      return <div key={chapter} className={`${styles.chapter} ${active ? styles.active : ""} ${done ? styles.done : ""}`}><span>{done ? "✓" : String(index + 1).padStart(2, "0")}</span><div><b>{chapter}</b><small>{active ? `${completedTasks} of 3 tasks in Context rot` : "Not started"}</small></div><i>{done ? "Complete" : active ? "In progress" : "Locked"}</i></div>;
+      const done = active && basicsTasks >= chapterTaskCount(basics);
+      return <div key={chapter.title} className={`${styles.chapter} ${active ? styles.active : ""} ${done ? styles.done : ""}`}><span>{done ? "✓" : String(index + 1).padStart(2, "0")}</span><div><b>{chapter.title}</b><small>{active ? `${basicsTasks} of ${chapterTaskCount(basics)} tasks in The basics` : "Not started"}</small></div><i>{done ? "Complete" : active ? "In progress" : "Locked"}</i></div>;
     })}</div>
-    <a href="/course/basics/context-rot" className={styles.continue}>{completedTasks ? "Continue course" : "Start course"}<PixelArrow /></a>
+    <a href={nextHref} className={styles.continue}>{completedTasks ? `Continue with ${nextTitle}` : "Start course"}<PixelArrow /></a>
   </section>;
 }
 
@@ -80,6 +85,14 @@ export default function ProfileClient() {
   }, []);
 
   const completedTasks = progress?.completedTasks?.length ?? 0;
+  const lessons = progress?.lessons ?? {};
+  const aiTasks = lessons["basics/ai"]?.completedTasks?.length ?? 0;
+  const contextTasks = lessons["basics/context-rot"]?.completedTasks?.length ?? 0;
+  const aiComplete = aiTasks >= (getLesson("basics/ai")?.taskCount ?? 2);
+  const contextComplete = contextTasks >= (getLesson("basics/context-rot")?.taskCount ?? 3);
+  const nextTitle = !aiComplete ? "AI?" : !contextComplete ? "Context rot" : "Your project brain";
+  const nextCopy = !aiComplete ? "Start with what AI is, where people use it and how a project grows from a chat into a workspace." : !contextComplete ? "Learn why a long chat starts losing the thread and how to prevent it." : "Learn how a short project overview keeps important context in one place.";
+  const nextHref = !aiComplete ? "/course/basics/ai" : !contextComplete ? "/course/basics/context-rot" : "/course/basics/ai";
   const activity = progress?.activity ?? {};
   const currentMonth = localDateKey(new Date()).slice(0, 7);
   const completedThisMonth = Object.entries(activity).reduce((total, [day, count]) => day.startsWith(currentMonth) ? total + count : total, 0);
@@ -95,6 +108,6 @@ export default function ProfileClient() {
     <SiteHeader />
     <div className={styles.shell}>
     <header className={styles.profileHeader}><div className={styles.identity}><span className={styles.avatar} style={avatarStyle}>{progress.user.pictureUrl ? null : initial}</span><div><p className={styles.eyebrow}>LEARNER PROFILE</p><h1>{progress.user.name}</h1><p>{progress.user.email}</p></div></div><div className={styles.stat}><strong>{completedTasks}</strong><span>tasks completed</span></div><div className={styles.stat}><strong>{dayStreak}</strong><span>day streak</span></div></header>
-    <div className={styles.grid}><CourseProgress completedTasks={completedTasks} /><aside className={styles.side}><section className={styles.activityCard}><PixelSpark className={styles.cornerSpark} /><div className={styles.activityTitle}><div><p className={styles.eyebrow}>CONSISTENCY</p><h2>Learning activity</h2></div><b>{completedThisMonth} this month</b></div><ActivityGrid activity={activity} /><div className={styles.legend}><span>Less</span>{[0, 1, 2, 3, 4].map((level) => <i key={level} className={`${styles.day} ${styles[`level${level}`]}`} />)}<span>More</span></div></section><section className={styles.next}><PixelSpark className={styles.cornerSparkNext} /><p className={styles.eyebrow}>UP NEXT</p><h2>Context rot</h2><p>Learn why a long chat starts losing the thread and how to prevent it.</p><a href="/course/basics/context-rot">Open lesson <PixelArrow /></a></section></aside></div>
+    <div className={styles.grid}><CourseProgress completedTasks={completedTasks} lessons={lessons} /><aside className={styles.side}><section className={styles.activityCard}><PixelSpark className={styles.cornerSpark} /><div className={styles.activityTitle}><div><p className={styles.eyebrow}>CONSISTENCY</p><h2>Learning activity</h2></div><b>{completedThisMonth} this month</b></div><ActivityGrid activity={activity} /><div className={styles.legend}><span>Less</span>{[0, 1, 2, 3, 4].map((level) => <i key={level} className={`${styles.day} ${styles[`level${level}`]}`} />)}<span>More</span></div></section><section className={styles.next}><PixelSpark className={styles.cornerSparkNext} /><p className={styles.eyebrow}>UP NEXT</p><h2>{nextTitle}</h2><p>{nextCopy}</p><a href={nextHref}>Open lesson <PixelArrow /></a></section></aside></div>
   </div></main>;
 }

@@ -4,6 +4,7 @@
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import Image from "next/image";
 import AuthButton from "../../../components/AuthButton";
+import { courseChapters } from "../../courseData";
 import { LessonCelebration } from "./LessonCelebration";
 import { LessonVisualContent, type LessonVisual } from "./LessonVisuals";
 
@@ -26,15 +27,6 @@ Then create overview.md in the project root. Keep it concise, factual and useful
 For the TODO / tracker, separate completed work, work in progress, the next task and blocked items. Include file paths, commands and links when they matter. Mark anything uncertain as "Needs confirmation" instead of guessing.
 
 When the file is ready, show me a short summary, the questions that still need my answer and the exact overview.md path. Do not start the next task until I have reviewed the file.`;
-
-const courseChapters = [
-  { title: "The basics", lessons: ["Context rot", "Your project brain", "Files and handovers", "A clean first workflow"] },
-  { title: "Pick the right model", lessons: ["What models change", "Speed, cost and reasoning", "Context windows", "A simple model test"] },
-  { title: "Build with an agent", lessons: ["Write the task brief", "Let the agent inspect", "Make the change", "Review what happened"] },
-  { title: "Skills and repeatable work", lessons: ["What a skill is", "Write your first skill", "Use templates well", "Improve it from results"] },
-  { title: "Fleets and parallel work", lessons: ["When parallel work helps", "Divide the jobs", "Write clean handovers", "Merge without chaos"] },
-  { title: "Ship it properly", lessons: ["Verification", "Source control", "Deployment", "Maintaining the system"] },
-];
 
 const visualLabels: Record<LessonVisual, string> = {
   chat: "Long recipe chat",
@@ -80,11 +72,11 @@ export default function LessonClient() {
     fetch("/api/progress", { signal: controller.signal, credentials: "same-origin" })
       .then(async (response) => {
         if (!response.ok) throw new Error("Progress unavailable");
-        return response.json() as Promise<{ user: unknown; completedTasks?: string[] }>;
+        return response.json() as Promise<{ user: unknown; lessons?: Record<string, { completedTasks?: string[] }> }>;
       })
       .then((data) => {
         setSignedIn(Boolean(data.user));
-        if (data.user && Array.isArray(data.completedTasks)) setCompletedTasks(data.completedTasks);
+        if (data.user) setCompletedTasks(data.lessons?.["basics/context-rot"]?.completedTasks ?? []);
       })
       .catch((error: unknown) => {
         if (!(error instanceof DOMException && error.name === "AbortError")) setSaveStatus("error");
@@ -126,7 +118,7 @@ export default function LessonClient() {
         method: "PUT",
         credentials: "same-origin",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ completedTasks: tasks }),
+        body: JSON.stringify({ lessonId: "basics/context-rot", completedTasks: tasks }),
       });
       if (!response.ok) throw new Error("Save failed");
       setSaveStatus("saved");
@@ -211,7 +203,7 @@ export default function LessonClient() {
             <b>AI workflow course</b>
           </a>
         </div>
-        <div className="lesson-crumb"><span>Chapter 01 · The basics</span><span>/</span><b>Context rot</b></div>
+        <div className="lesson-crumb"><span>Lesson 01.2 · The basics</span><span>/</span><b>Context rot</b></div>
         <div className="lesson-account"><div className="lesson-progress"><span><i style={{ width: `${Math.max(4, progress)}%` }} /></span><b>{completedTasks.length} / 3 tasks</b></div><AuthButton returnTo="/course/basics/context-rot" compact /></div>
       </header>
 
@@ -222,11 +214,11 @@ export default function LessonClient() {
             {courseChapters.map((chapter, chapterIndex) => (
               <div className={`side-chapter ${chapterIndex === 0 ? "current" : ""}`} key={chapter.title}>
                 <button onClick={() => setOpenChapter(openChapter === chapterIndex ? -1 : chapterIndex)} aria-expanded={openChapter === chapterIndex}><span>{String(chapterIndex + 1).padStart(2, "0")}</span><b>{chapter.title}</b><i aria-hidden="true">{openChapter === chapterIndex ? "−" : "+"}</i></button>
-                {openChapter === chapterIndex ? <ol>{chapter.lessons.map((lesson, lessonIndex) => <li className={chapterIndex === 0 && lessonIndex === 0 ? "active" : ""} key={lesson}><span>{chapterIndex === 0 && lessonIndex === 0 ? "●" : "○"}</span><div><small>Lesson {chapterIndex + 1}.{lessonIndex + 1}</small><b>{lesson}</b></div>{chapterIndex > 0 ? <i>LOCKED</i> : null}</li>)}</ol> : null}
+                {openChapter === chapterIndex ? <ol>{chapter.lessons.map((lesson, lessonIndex) => <li className={lesson.id === "basics/context-rot" ? "active" : ""} key={lesson.id}><span>{lesson.id === "basics/context-rot" ? "●" : "○"}</span><div><small>Lesson {chapterIndex + 1}.{lessonIndex + 1}</small>{lesson.path ? <a href={lesson.path}>{lesson.title}</a> : <b>{lesson.title}</b>}</div>{!lesson.path ? <i>LOCKED</i> : null}</li>)}</ol> : null}
               </div>
             ))}
           </nav>
-          <div className="chapter-project"><span>CHAPTER PROJECT</span><b>Build your project brain</b><p>Unlocks after all four lessons.</p><small>0 / 4 lessons</small></div>
+          <div className="chapter-project"><span>CHAPTER PROJECT</span><b>Build your project brain</b><p>Unlocks after all five lessons.</p><small>0 / 5 lessons</small></div>
         </aside>
 
         <article className="lesson-reading">

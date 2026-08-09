@@ -13,7 +13,7 @@ export default function SiteHeader() {
       </a>
       <div className="home-nav-actions">
         <AuthButton />
-        <a className="nav-cta" href="/course/basics/context-rot">
+        <a className="nav-cta" href="/course/basics/ai">
           Start learning <PixelArrow />
         </a>
       </div>

@@ -1,14 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { getLesson, totalCourseLessons, totalCourseTasks } from "../course/courseData";
 import { PixelArrow } from "./PixelIcons";
 
 type ProgressResponse = {
   user: { name: string } | null;
   completedTasks?: string[];
+  lessons?: Record<string, { completedTasks?: string[] }>;
 };
-
-const TOTAL_COURSE_TASKS = 6 * 4 * 3;
 
 export default function CourseProgress() {
   const [progress, setProgress] = useState<ProgressResponse | null>(null);
@@ -52,15 +52,24 @@ export default function CourseProgress() {
   }
 
   const completedTasks = progress.completedTasks?.length ?? 0;
-  const coursePercent = Math.round((completedTasks / TOTAL_COURSE_TASKS) * 100);
-  const lessonComplete = completedTasks === 3;
+  const coursePercent = Math.round((completedTasks / totalCourseTasks) * 100);
+  const aiTasks = progress.lessons?.["basics/ai"]?.completedTasks?.length ?? 0;
+  const contextTasks = progress.lessons?.["basics/context-rot"]?.completedTasks?.length ?? 0;
+  const aiComplete = aiTasks >= (getLesson("basics/ai")?.taskCount ?? 2);
+  const contextComplete = contextTasks >= (getLesson("basics/context-rot")?.taskCount ?? 3);
+  const currentHref = aiComplete ? "/course/basics/context-rot" : "/course/basics/ai";
+  const currentText = !aiComplete
+    ? `Lesson 1 of ${totalCourseLessons} · AI? · ${aiTasks} of 2 tasks`
+    : !contextComplete
+      ? `Lesson 2 of ${totalCourseLessons} · Context rot · ${contextTasks} of 3 tasks`
+      : "Lessons 1 and 2 complete · Your project brain is next";
 
   return (
     <section className="home-progress" aria-label="Your saved course progress">
       <div className="home-progress-summary">
         <span>YOUR COURSE PROGRESS</span>
         <strong>{coursePercent}%</strong>
-        <small>{completedTasks} of {TOTAL_COURSE_TASKS} course tasks</small>
+        <small>{completedTasks} of {totalCourseTasks} course tasks</small>
       </div>
       <div className="home-progress-track">
         <div><span style={{ width: `${Math.max(coursePercent, completedTasks ? 1.5 : 0)}%` }} /></div>
@@ -69,9 +78,9 @@ export default function CourseProgress() {
       <div className="home-progress-current">
         <span>CURRENT POSITION</span>
         <strong>Chapter 1 of 6 · The basics</strong>
-        <p>{lessonComplete ? "Lesson 1 complete · Your project brain is next" : `Lesson 1 of 24 · Context rot · ${completedTasks} of 3 tasks`}</p>
+        <p>{currentText}</p>
       </div>
-      <a className="home-progress-continue" href="/course/basics/context-rot">{completedTasks ? "Continue learning" : "Start lesson one"} <PixelArrow /></a>
+      <a className="home-progress-continue" href={currentHref}>{completedTasks ? "Continue learning" : "Start lesson one"} <PixelArrow /></a>
     </section>
   );
 }
