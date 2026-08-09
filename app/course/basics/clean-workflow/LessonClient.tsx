@@ -137,7 +137,7 @@ export default function CleanWorkflowLessonClient() {
         </div>
       </header>
       <div
-        className={`lesson-workspace visual-closed ${sidebarOpen ? "" : "sidebar-closed"}`}
+        className={`lesson-workspace ${open ? "" : "visual-closed"} ${sidebarOpen ? "" : "sidebar-closed"}`}
       >
         <aside
           className="course-sidebar"
