@@ -45,6 +45,28 @@ export function PixelSpark({ className = "" }: { className?: string }) {
   );
 }
 
+export function PixelBell({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      className={`pixel-icon pixel-bell ${className}`.trim()}
+      viewBox="0 0 9 9"
+      width="16"
+      height="16"
+      fill="currentColor"
+      aria-hidden="true"
+      focusable="false"
+      shapeRendering="crispEdges"
+    >
+      <rect x="3" y="0" width="3" height="1" />
+      <rect x="2" y="1" width="5" height="1" />
+      <rect x="2" y="2" width="5" height="3" />
+      <rect x="1" y="5" width="7" height="2" />
+      <rect x="0" y="7" width="9" height="1" />
+      <rect x="3" y="8" width="3" height="1" />
+    </svg>
+  );
+}
+
 const badgeGlyphs = [
   ["0011100", "0111110", "1111111", "1111111", "0111110", "0011100", "0001000"],
   ["0111110", "1100011", "1011101", "1010101", "1011101", "1100011", "0111110"],

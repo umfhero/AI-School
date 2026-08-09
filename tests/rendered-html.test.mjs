@@ -144,6 +144,12 @@ test("server-renders the privacy and terms pages", async () => {
   assert.match(await terms.text(), /Terms of use/i);
 });
 
+test("server-renders the notifications inbox", async () => {
+  const page = await render("/notifications");
+  assert.equal(page.status, 200);
+  assert.match(await page.text(), /Notifications/i);
+});
+
 test("routes team contact through a non-indexed compose link", async () => {
   const response = await render("/contact");
   assert.equal(response.status, 302);

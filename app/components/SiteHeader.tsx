@@ -2,6 +2,7 @@
 
 import AuthButton from "./AuthButton";
 import ExperienceBadge from "./ExperienceBadge";
+import NotificationButton from "./NotificationButton";
 import { PixelArrow, PixelSpark } from "./PixelIcons";
 
 export default function SiteHeader() {
@@ -12,6 +13,7 @@ export default function SiteHeader() {
         <b>AI school</b>
       </a>
       <div className="home-nav-actions">
+        <NotificationButton />
         <AuthButton />
         <ExperienceBadge />
         <a className="nav-cta" href="/course">

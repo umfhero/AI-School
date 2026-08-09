@@ -19,11 +19,11 @@ export default function PrivacyPage() {
 
       <section>
         <h2>What we collect</h2>
-        <p>When you choose to sign in with Google, we receive your Google account ID, verified email address, display name and, if Google provides one, profile picture. We also store your course progress and an account session record. The browser keeps a sign-in token, while the database stores only a hashed version of that token.</p>
+        <p>When you choose to sign in with Google, we receive your Google account ID, verified email address, display name and, if Google provides one, profile picture. We also store your course progress, in-app notification read state and an account session record. The browser keeps a sign-in token, while the database stores only a hashed version of that token.</p>
       </section>
       <section>
         <h2>Why we use it</h2>
-        <p>We use this information to create your account, keep you signed in, save your learning progress, show your profile and protect the service. The legal basis is providing the account and course features you request, alongside legitimate interests in keeping the service secure and preventing misuse.</p>
+        <p>We use this information to create your account, keep you signed in, save your learning progress, show your profile, remember which in-app updates you have read and protect the service. The legal basis is providing the account and course features you request, alongside legitimate interests in keeping the service secure and preventing misuse.</p>
       </section>
       <section>
         <h2>Who receives it</h2>
@@ -31,7 +31,7 @@ export default function PrivacyPage() {
       </section>
       <section>
         <h2>How long we keep it</h2>
-        <p>We keep account and progress information while your account remains open. The browser sign-in cookie ends when you close the browser, and its matching server session expires after 30 days. You can download or delete your account from your signed-in profile. Deleting an account removes its account record, saved progress and active sessions. We may keep the minimum information needed to deal with a legal obligation, security incident or dispute.</p>
+        <p>We keep account, progress and notification read information while your account remains open. The browser sign-in cookie ends when you close the browser, and its matching server session expires after 30 days. You can download or delete your account from your signed-in profile. Deleting an account removes its account record, saved progress, notification read state and active sessions. We may keep the minimum information needed to deal with a legal obligation, security incident or dispute.</p>
       </section>
       <section>
         <h2>Your choices and rights</h2>

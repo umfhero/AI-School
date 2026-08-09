@@ -21,10 +21,10 @@ export default function ExperienceBadge({ compact = false }: { compact?: boolean
   }, []);
 
   useEffect(() => {
-    void loadExperience();
+    const timer = window.setTimeout(() => void loadExperience(), 0);
     window.addEventListener("auth-changed", loadExperience);
     window.addEventListener("progress-changed", loadExperience);
-    return () => { window.removeEventListener("auth-changed", loadExperience); window.removeEventListener("progress-changed", loadExperience); };
+    return () => { window.clearTimeout(timer); window.removeEventListener("auth-changed", loadExperience); window.removeEventListener("progress-changed", loadExperience); };
   }, [loadExperience]);
 
   if (!experience) return null;
