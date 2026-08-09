@@ -1,6 +1,6 @@
 # AI workflow course project handover
 
-Last updated: 8 August 2026
+Last updated: 9 August 2026
 
 ## Start here
 
@@ -29,6 +29,7 @@ The visual direction is split deliberately:
 - Lesson pages use a structured reading layout with a course sidebar, clear sections and task-owned visual demonstrations.
 - Side views use the full pane without an empty frame around them. Text must stay readable, and each visual should be interactive where the subject benefits from it.
 - On mobile, the course sidebar starts closed and a task visual opens as a bottom sheet over roughly the lower half of the screen.
+- A mobile bottom sheet must actually be draggable to full screen, half and closed, not just look like one. Make the whole header bar the drag surface and put `touch-action: none` on that whole bar, not only a thin grab-bar pill — a real thumb rarely lands on a strip a few pixels tall, so the touch falls through to native page scrolling before any pointer handler runs. Lesson 1.1's side view (`site/app/course/basics/context-rot/LessonClient.tsx`) already implements this correctly; reuse that pattern for any new side view instead of re-deriving it.
 - Respect `prefers-reduced-motion` whenever animation is added.
 
 The course should not copy Codédex assets or layout. `references/Learn Python - For Beginners.html` is only a visual reference for the feeling of a progress-led course.
@@ -129,7 +130,7 @@ Important files are:
 
 - `site/app/page.tsx`: homepage content and structure.
 - `site/app/globals.css`: homepage, lesson, responsive and visual styles.
-- `site/app/course/basics/context-rot/LessonClient.tsx`: lesson reading, tasks, progress state, sidebar and side-view controls.
+- `site/app/course/basics/context-rot/LessonClient.tsx`: lesson reading, tasks, progress state, sidebar and side-view controls, including the pointer-driven mobile bottom-sheet drag (open to full screen, half or closed) — see the mobile side-view note under Product direction before rebuilding this for another lesson.
 - `site/app/course/basics/context-rot/LessonVisuals.tsx`: recipe chat, animated workflow comparison and `overview.md` workspace.
 - `site/app/components/AuthButton.tsx`: Google sign-in, name, profile photo and sign-out UI.
 - `site/app/components/SiteHeader.tsx`: the shared top navigation (brand, sign-in/profile, course CTA) rendered identically on the homepage and profile page — a genuine shared component, not two look-alike implementations.
