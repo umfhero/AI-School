@@ -912,6 +912,19 @@ button,a { font:inherit; }
 .home-page .showcase-caption { font: 700 .78rem/1.55 monospace; }
 .home-page .course-facts small { font-size: .66rem; }
 
+/* Four facts still share the hero neatly at every viewport width. */
+.home-page .course-facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  max-width: 520px;
+}
+.home-page .course-facts span {
+  min-width: 0;
+  margin-right: 0;
+  padding-right: 14px;
+}
+.home-page .course-facts span:not(:first-child) { padding-left: 14px; }
+
 @media (max-width: 1150px) {
   .home-page .home-hero { grid-template-columns: 1fr; }
   .home-page .hero-showcase { width: min(900px, 100%); }

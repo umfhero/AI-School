@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import CourseProgress from "./components/CourseProgress";
 import SiteHeader from "./components/SiteHeader";
+import SignupCount from "./components/SignupCount";
 import { PixelArrow, PixelSpark, PixelCheck, PixelMascot, PixelWord } from "./components/PixelIcons";
 
 export const metadata: Metadata = {
@@ -45,6 +46,7 @@ export default function Home() {
             <span><b>1</b><small>course</small></span>
             <span><b>25</b><small>lessons</small></span>
             <span><b>£0</b><small>price</small></span>
+            <span><SignupCount /><small>signed up</small></span>
           </div>
         </div>
 

@@ -16,6 +16,7 @@ test("server-renders the course home page", async () => {
   assert.match(html, /Cloudflare/i);
   assert.match(html, /AI school/i);
   assert.match(html, /Start chapter one/i);
+  assert.match(html, /signed up/i);
   assert.doesNotMatch(html, /Your route/i);
 });
 
