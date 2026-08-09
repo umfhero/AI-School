@@ -166,9 +166,11 @@ button,a { font:inherit; }
   letter-spacing: -.025em;
 }
 
-.site-brand .brand-star { width: 34px; height: 34px; flex: 0 0 auto; color: var(--home-blue); }
+.site-brand { transition: transform .1s steps(2,end); }
+.site-brand .brand-star { width: 34px; height: 34px; flex: 0 0 auto; color: var(--home-blue); transition: transform .1s steps(2,end); }
 @media (prefers-reduced-motion: no-preference) { .site-brand .brand-star { animation: brand-star-colour 2.4s steps(3,end) infinite; } }
 @keyframes brand-star-colour { 0%,100% { color: var(--home-blue); } 34% { color: var(--home-violet); } 67% { color: var(--home-pink); } }
+.site-brand:hover,.site-brand:focus-visible { transform: translate(1px,1px); }.site-brand:hover b,.site-brand:focus-visible b { color: var(--home-violet); }.site-brand:hover .brand-star,.site-brand:focus-visible .brand-star { transform: scale(1.14); }.site-brand:focus-visible { outline: 2px solid var(--home-violet); outline-offset: 4px; }
 
 .site-brand b { font-size: .95rem; }
 .home-nav-links { gap: 8px; }
@@ -298,9 +300,7 @@ button,a { font:inherit; }
   display: inline-block;
   padding-right: .16em;
 }
-.home-page .home-hero h1 .properly-normal { letter-spacing: -.073em; }
-.home-page .home-hero h1 .properly-transition { display: inline-block; margin-left: .015em; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: .93em; font-weight: 900; letter-spacing: -.1em; text-shadow: 1px 1px 0 rgba(98,88,233,.35); }
-.home-page .home-hero h1 .properly-pixel { display: inline-block; width: 1.28em; height: .66em; margin-left: .09em; vertical-align: .02em; color: var(--home-violet); }
+.home-page .home-hero h1 .properly-pixel { display: inline-block; width: 4.55em; height: .66em; margin-left: .05em; vertical-align: .03em; color: var(--home-violet); }
 .home-page .home-hero h1 .properly-spark {
   position: absolute;
   top: -.20em;
@@ -1565,6 +1565,7 @@ button,a { font:inherit; }
 .completion-error { display: block; margin-top: 11px; color: #ffc2b9; font-size: .74rem; }
 .lesson-complete-card.complete { border-color: #67d69a; }
 .experience-badge { display: grid; grid-template-columns: auto minmax(58px,auto); align-items: center; gap: 3px 7px; min-width: 124px; padding: 6px 8px; border: 2px solid #0b1130; border-radius: 6px; background: #fff; box-shadow: 3px 3px 0 #0b1130; color: #0b1130; font-family: Arial,sans-serif; }
+.experience-badge:not(.compact) { transition: transform .1s steps(2,end), box-shadow .1s steps(2,end), background .1s steps(2,end); }.experience-badge:not(.compact):hover { transform: translate(1px,1px); background: #efedff; box-shadow: 2px 2px 0 #6258e9; }.experience-badge:not(.compact):hover > svg { color: #c2469e; transform: scale(1.12); }.experience-badge:not(.compact) > svg { transition: transform .1s steps(2,end), color .1s steps(2,end); }
 .experience-badge > svg { grid-row: span 2; width: 16px; height: 16px; color: #7359e8; }
 .experience-badge div { display: flex; justify-content: space-between; gap: 6px; white-space: nowrap; }
 .experience-badge b { font-size: .62rem; letter-spacing: .04em; }

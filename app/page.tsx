@@ -30,7 +30,7 @@ export default function Home() {
         <div className="hero-ambient" aria-hidden="true" />
         <div className="home-hero-copy">
           <h1>
-            Build serious projects with AI, <em className="properly" aria-label="properly."><span className="properly-normal" aria-hidden="true">pro</span><span className="properly-transition" aria-hidden="true">per</span><PixelWord text="ly." className="properly-pixel" /><PixelSpark className="properly-spark" /></em>
+            Build serious projects with AI, <em className="properly" aria-label="properly."><PixelWord text="properly." className="properly-pixel" /><PixelSpark className="properly-spark" /></em>
           </h1>
           <p>
             Learn the workflow behind substantial AI work from project memory and model choice to agents,
