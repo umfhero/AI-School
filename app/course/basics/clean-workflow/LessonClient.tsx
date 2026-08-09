@@ -10,6 +10,7 @@ import {
 } from "react";
 import AuthButton from "../../../components/AuthButton";
 import ExperienceBadge from "../../../components/ExperienceBadge";
+import LessonSaveState from "../../../components/LessonSaveState";
 import LessonXpCelebration from "../../../components/LessonXpCelebration";
 import { PixelArrow, PixelSpark } from "../../../components/PixelIcons";
 import { courseChapters, courseIntroLesson } from "../../courseData";
@@ -45,6 +46,12 @@ export default function CleanWorkflowLessonClient() {
   const resizing = useRef(false);
   const progress = Math.round((tasks.length / 3) * 100);
   const answerCount = Object.keys(answers).length;
+  const lessonDone = (id: string) =>
+    Boolean(id === lessonId ? complete : lessons[id]?.lessonCompletedAt);
+  const basicsLessons = courseChapters[0].lessons;
+  const basicsDone = basicsLessons.filter((lesson) =>
+    lessonDone(lesson.id),
+  ).length;
   const workspaceStyle = {
     "--visual-width": `${visualWidth}px`,
   } as CSSProperties;
@@ -56,7 +63,8 @@ export default function CleanWorkflowLessonClient() {
         setLessons(d.lessons ?? {});
         setTasks(d.lessons?.[lessonId]?.completedTasks ?? []);
         setComplete(Boolean(d.lessons?.[lessonId]?.lessonCompletedAt));
-      });
+      })
+      .catch(() => setSignedIn(false));
   }, []);
   function beginResize(event: ReactPointerEvent<HTMLDivElement>) {
     resizing.current = true;
@@ -149,7 +157,11 @@ export default function CleanWorkflowLessonClient() {
             <span aria-hidden="true">{sidebarOpen ? "×" : "☰"}</span>
             <b>{sidebarOpen ? "Hide contents" : "Show contents"}</b>
           </button>
-          <a className="lesson-brand" href="/profile#courses">
+          <a
+            className="lesson-brand"
+            href="/profile#courses"
+            aria-label="Return to your AI school course overview"
+          >
             <PixelSpark className="lesson-brand-star" />
             <b>AI school</b>
           </a>
@@ -166,6 +178,7 @@ export default function CleanWorkflowLessonClient() {
             </span>
             <b>{tasks.length}/3 tasks</b>
           </div>
+          <LessonSaveState signedIn={signedIn} />
           <ExperienceBadge compact />
           <AuthButton returnTo="/course/basics/clean-workflow" compact />
         </div>
@@ -198,53 +211,83 @@ export default function CleanWorkflowLessonClient() {
                 <b>{courseIntroLesson.title}</b>
               </div>
             </a>
-            {courseChapters.map((chapter, chapterIndex) => (
-              <div
-                className={`side-chapter ${chapterIndex === 0 ? "current" : ""}`}
-                key={chapter.title}
-              >
-                <button
-                  type="button"
-                  onClick={() =>
-                    setOpenChapter((current) =>
-                      current === chapterIndex ? -1 : chapterIndex,
-                    )
-                  }
-                  aria-expanded={openChapter === chapterIndex}
+            {courseChapters.map((chapter, chapterIndex) => {
+              const chapterDone = chapter.lessons.every((lesson) =>
+                lessonDone(lesson.id),
+              );
+              return (
+                <div
+                  className={`side-chapter ${chapterIndex === 0 ? "current" : ""} ${chapterDone ? "complete" : ""}`}
+                  key={chapter.title}
                 >
-                  <span>{String(chapterIndex + 1).padStart(2, "0")}</span>
-                  <b>{chapter.title}</b>
-                  <i>{openChapter === chapterIndex ? "−" : "+"}</i>
-                </button>
-                {openChapter === chapterIndex ? (
-                  <ol>
-                    {chapter.lessons.map((lesson, lessonIndex) => (
-                      <li
-                        className={`${lesson.id === lessonId ? "active" : ""} ${lessons[lesson.id]?.lessonCompletedAt ? "complete" : ""}`}
-                        key={lesson.id}
-                      >
-                        <span>
-                          {lessons[lesson.id]?.lessonCompletedAt
-                            ? "✓"
-                            : lesson.id === lessonId
-                              ? "●"
-                              : "○"}
-                        </span>
-                        <div>
-                          <small>Lesson 1.{lessonIndex + 1}</small>
-                          {lesson.path ? (
-                            <a href={lesson.path}>{lesson.title}</a>
-                          ) : (
-                            <b>{lesson.title}</b>
-                          )}
-                        </div>
-                      </li>
-                    ))}
-                  </ol>
-                ) : null}
-              </div>
-            ))}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setOpenChapter((current) =>
+                        current === chapterIndex ? -1 : chapterIndex,
+                      )
+                    }
+                    aria-expanded={openChapter === chapterIndex}
+                  >
+                    <span>
+                      {chapterDone
+                        ? "✓"
+                        : String(chapterIndex + 1).padStart(2, "0")}
+                    </span>
+                    <b>{chapter.title}</b>
+                    <i aria-label={chapterDone ? "Chapter complete" : undefined}>
+                      {chapterDone
+                        ? "COMPLETE"
+                        : openChapter === chapterIndex
+                          ? "−"
+                          : "+"}
+                    </i>
+                  </button>
+                  {openChapter === chapterIndex ? (
+                    <ol>
+                      {chapter.lessons.map((lesson, lessonIndex) => (
+                        <li
+                          className={`${lesson.id === lessonId ? "active" : ""} ${lessonDone(lesson.id) ? "complete" : ""}`}
+                          key={lesson.id}
+                        >
+                          <span>
+                            {lessonDone(lesson.id)
+                              ? "✓"
+                              : lesson.id === lessonId
+                                ? "●"
+                                : "○"}
+                          </span>
+                          <div>
+                            <small>
+                              Lesson {chapterIndex + 1}.{lessonIndex + 1}
+                            </small>
+                            {lesson.path ? (
+                              <a href={lesson.path}>{lesson.title}</a>
+                            ) : (
+                              <b>{lesson.title}</b>
+                            )}
+                          </div>
+                          {lessonDone(lesson.id) ? (
+                            <i>COMPLETE</i>
+                          ) : !lesson.path ? (
+                            <i>LOCKED</i>
+                          ) : null}
+                        </li>
+                      ))}
+                    </ol>
+                  ) : null}
+                </div>
+              );
+            })}
           </nav>
+          <div className="chapter-project">
+            <span>CHAPTER PROJECT</span>
+            <b>Build your project brain</b>
+            <p>Unlocks after all five lessons.</p>
+            <small>
+              {basicsDone} / {basicsLessons.length} lessons
+            </small>
+          </div>
         </aside>
         <article className="lesson-reading">
           <div className="lesson-reading-inner">
@@ -258,7 +301,7 @@ export default function CleanWorkflowLessonClient() {
             </p>
             <div className="lesson-rule" />
             <section>
-              <p className="reading-kicker">The routine</p>
+              <p className="reading-kicker">Section 1</p>
               <h2>Define, give context, change, check, record.</h2>
               <p>
                 Start by naming one outcome and the limits that matter. Give the
@@ -290,6 +333,23 @@ export default function CleanWorkflowLessonClient() {
                 </li>
               </ol>
             </section>
+            <section>
+              <p className="reading-kicker">Section 2</p>
+              <h2>Slower at the start, faster than a repair.</h2>
+              <p>
+                Asking one vague question is quicker in the moment, although it
+                moves the cost rather than removing it, because you pay it back
+                while working out which part of a confident answer was wrong.
+                The routine above spends a few minutes up front so that the work
+                you accept is work you can already explain.
+              </p>
+              <p>
+                Treat it as a habit rather than a rulebook, because the point is
+                to stay in control of a project while something faster than you
+                does part of the typing. That matters more as the work grows
+                past what a single conversation can carry.
+              </p>
+            </section>
             <section className="inline-task build-task">
               <div className="task-heading">
                 <span>CHAPTER QUIZ · TRUE OR FALSE</span>
@@ -298,7 +358,7 @@ export default function CleanWorkflowLessonClient() {
               <h3>Check that the Chapter 1 workflow makes sense.</h3>
               <p>
                 You need at least 4 out of 5 correct to finish this lesson and
-                unlock the next chapter.
+                close out Chapter 1.
               </p>
               <button
                 className="start-task-button"
@@ -330,7 +390,7 @@ export default function CleanWorkflowLessonClient() {
                 </h2>
                 <p>
                   {complete
-                    ? "Chapter 2 is ready when you are."
+                    ? "Chapter 2 is still being written. Your progress is saved, so it will be waiting for you when it lands."
                     : signedIn
                       ? "You passed the chapter quiz. Confirm this lesson to add 100 XP."
                       : "Sign in to save the quiz result and collect your XP."}
@@ -349,6 +409,8 @@ export default function CleanWorkflowLessonClient() {
             ) : null}
           </div>
         </article>
+        {/* A focusable ARIA separator supports pointer dragging and keyboard resizing. */}
+        {/* eslint-disable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex */}
         {open ? (
           <div
             className="lesson-resize-handle"
@@ -365,9 +427,10 @@ export default function CleanWorkflowLessonClient() {
             onPointerCancel={endResize}
             onKeyDown={resizeWithKeyboard}
           >
-            <span>⋮</span>
+            <span aria-hidden="true">⋮</span>
           </div>
         ) : null}
+        {/* eslint-enable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex */}
         {open ? (
           <aside
             className="lesson-visual context-visual workflow-quiz"
@@ -439,8 +502,9 @@ export default function CleanWorkflowLessonClient() {
           </aside>
         ) : null}
       </div>
-      <nav className="lesson-bottom">
+      <nav className="lesson-bottom" aria-label="Lesson navigation">
         <a className="lesson-home-back" href="/">
+          <span aria-hidden="true">←</span>
           <b>Back to home</b>
         </a>
         <div>
@@ -449,6 +513,7 @@ export default function CleanWorkflowLessonClient() {
         </div>
         <a
           className={`lesson-next ${!complete ? "disabled" : ""}`}
+          aria-disabled={!complete}
           href={complete ? "/profile#courses" : "/course/basics/clean-workflow"}
         >
           Course overview <PixelArrow />

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import AuthButton from "../../../components/AuthButton";
 import ExperienceBadge from "../../../components/ExperienceBadge";
+import LessonSaveState from "../../../components/LessonSaveState";
 import LessonXpCelebration from "../../../components/LessonXpCelebration";
 import { PixelArrow, PixelSpark } from "../../../components/PixelIcons";
 import { courseChapters, courseIntroLesson } from "../../courseData";
@@ -36,6 +37,12 @@ export default function FilesHandoversLessonClient() {
   const complete = Boolean(completedAt);
   const allComplete = taskIds.every((task) => tasks.includes(task));
   const progress = Math.round((tasks.length / 3) * 100);
+  const lessonDone = (id: string) =>
+    Boolean(id === lessonId ? completedAt : lessons[id]?.lessonCompletedAt);
+  const basicsLessons = courseChapters[0].lessons;
+  const basicsDone = basicsLessons.filter((lesson) =>
+    lessonDone(lesson.id),
+  ).length;
   useEffect(() => {
     const mobileQuery = window.matchMedia("(max-width: 920px)");
     const closeOnMobile = () => setSidebarOpen(!mobileQuery.matches);
@@ -115,7 +122,7 @@ export default function FilesHandoversLessonClient() {
     <main className="lesson-page">
       <LessonXpCelebration
         trigger={celebration}
-        nextLessonHref="/profile#courses"
+        nextLessonHref="/course/basics/clean-workflow"
       />
       <header className="lesson-header">
         <div className="lesson-header-left">
@@ -129,7 +136,11 @@ export default function FilesHandoversLessonClient() {
             <span aria-hidden="true">{sidebarOpen ? "×" : "☰"}</span>
             <b>{sidebarOpen ? "Hide contents" : "Show contents"}</b>
           </button>
-          <a className="lesson-brand" href="/profile#courses">
+          <a
+            className="lesson-brand"
+            href="/profile#courses"
+            aria-label="Return to your AI school course overview"
+          >
             <PixelSpark className="lesson-brand-star" />
             <b>AI school</b>
           </a>
@@ -146,6 +157,7 @@ export default function FilesHandoversLessonClient() {
             </span>
             <b>{tasks.length} / 3 tasks</b>
           </div>
+          <LessonSaveState signedIn={signedIn} status={status} />
           <ExperienceBadge compact />
           <AuthButton returnTo="/course/basics/files-handovers" compact />
         </div>
@@ -177,80 +189,106 @@ export default function FilesHandoversLessonClient() {
                 <b>{courseIntroLesson.title}</b>
               </div>
             </a>
-            {courseChapters.map((chapter, chapterIndex) => (
-              <div
-                className={`side-chapter ${chapterIndex === 0 ? "current" : ""}`}
-                key={chapter.title}
-              >
-                <button
-                  type="button"
-                  onClick={() =>
-                    setOpenChapter((current) =>
-                      current === chapterIndex ? -1 : chapterIndex,
-                    )
-                  }
-                  aria-expanded={openChapter === chapterIndex}
+            {courseChapters.map((chapter, chapterIndex) => {
+              const chapterDone = chapter.lessons.every((lesson) =>
+                lessonDone(lesson.id),
+              );
+              return (
+                <div
+                  className={`side-chapter ${chapterIndex === 0 ? "current" : ""} ${chapterDone ? "complete" : ""}`}
+                  key={chapter.title}
                 >
-                  <span>{String(chapterIndex + 1).padStart(2, "0")}</span>
-                  <b>{chapter.title}</b>
-                  <i>{openChapter === chapterIndex ? "−" : "+"}</i>
-                </button>
-                {openChapter === chapterIndex ? (
-                  <ol>
-                    {chapter.lessons.map((lesson, lessonIndex) => (
-                      <li
-                        className={`${lesson.id === lessonId ? "active" : ""} ${lessons[lesson.id]?.lessonCompletedAt ? "complete" : ""}`}
-                        key={lesson.id}
-                      >
-                        <span>
-                          {lessons[lesson.id]?.lessonCompletedAt
-                            ? "✓"
-                            : lesson.id === lessonId
-                              ? "●"
-                              : "○"}
-                        </span>
-                        <div>
-                          <small>Lesson 1.{lessonIndex + 1}</small>
-                          {lesson.path ? (
-                            <a href={lesson.path}>{lesson.title}</a>
-                          ) : (
-                            <b>{lesson.title}</b>
-                          )}
-                        </div>
-                      </li>
-                    ))}
-                  </ol>
-                ) : null}
-              </div>
-            ))}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setOpenChapter((current) =>
+                        current === chapterIndex ? -1 : chapterIndex,
+                      )
+                    }
+                    aria-expanded={openChapter === chapterIndex}
+                  >
+                    <span>
+                      {chapterDone
+                        ? "✓"
+                        : String(chapterIndex + 1).padStart(2, "0")}
+                    </span>
+                    <b>{chapter.title}</b>
+                    <i aria-label={chapterDone ? "Chapter complete" : undefined}>
+                      {chapterDone
+                        ? "COMPLETE"
+                        : openChapter === chapterIndex
+                          ? "−"
+                          : "+"}
+                    </i>
+                  </button>
+                  {openChapter === chapterIndex ? (
+                    <ol>
+                      {chapter.lessons.map((lesson, lessonIndex) => (
+                        <li
+                          className={`${lesson.id === lessonId ? "active" : ""} ${lessonDone(lesson.id) ? "complete" : ""}`}
+                          key={lesson.id}
+                        >
+                          <span>
+                            {lessonDone(lesson.id)
+                              ? "✓"
+                              : lesson.id === lessonId
+                                ? "●"
+                                : "○"}
+                          </span>
+                          <div>
+                            <small>
+                              Lesson {chapterIndex + 1}.{lessonIndex + 1}
+                            </small>
+                            {lesson.path ? (
+                              <a href={lesson.path}>{lesson.title}</a>
+                            ) : (
+                              <b>{lesson.title}</b>
+                            )}
+                          </div>
+                          {lessonDone(lesson.id) ? (
+                            <i>COMPLETE</i>
+                          ) : !lesson.path ? (
+                            <i>LOCKED</i>
+                          ) : null}
+                        </li>
+                      ))}
+                    </ol>
+                  ) : null}
+                </div>
+              );
+            })}
           </nav>
+          <div className="chapter-project">
+            <span>CHAPTER PROJECT</span>
+            <b>Build your project brain</b>
+            <p>Unlocks after all five lessons.</p>
+            <small>
+              {basicsDone} / {basicsLessons.length} lessons
+            </small>
+          </div>
         </aside>
         <article className="lesson-reading">
           <div className="lesson-reading-inner files-handovers-reading">
-            <p className={`progress-save-state ${signedIn ? "connected" : ""}`}>
-              {signedIn
-                ? status === "saving"
-                  ? "Saving progress…"
-                  : "You are signed in, so task progress saves automatically."
-                : "Sign in above when you want this progress saved across devices."}
-            </p>
             <p className="reading-kicker">Lesson 01.4</p>
             <h1>Files and handovers.</h1>
             <p className="lesson-lede">
-              A chat is where work is discussed. A file is where a useful piece
-              of work lives. A folder keeps the files for one project together.
-              When you put decisions and work in files, the next person, or the
-              next chat, has somewhere real to begin.
+              A chat is where the work gets discussed, a file is where a piece
+              of it actually lives, and a folder keeps the files for one project
+              in the same place. Once decisions and drafts sit in files, the
+              next person, or the next chat, has somewhere real to begin instead
+              of a transcript to scroll through.
             </p>
             <div className="lesson-rule" />
             <section>
               <p className="reading-kicker">Section 1</p>
               <h2>Give each kind of information a home.</h2>
               <p>
-                Chats are useful for a question or a task, although they are
-                poor storage for decisions that matter tomorrow. Put the project
-                overview, instructions, drafts and finished work in files inside
-                the project folder.
+                You have already moved the project&apos;s facts into
+                overview.md, and the same logic applies to everything else the
+                work produces. Instructions, research, drafts and finished
+                pieces each want a file of their own inside the project folder,
+                so that finding something later is a matter of looking rather
+                than remembering.
               </p>
               <div className="project-brain-preview">
                 <header>
@@ -317,10 +355,11 @@ export default function FilesHandoversLessonClient() {
               <p className="reading-kicker">Section 2</p>
               <h2>Record what a future task needs.</h2>
               <p>
-                A handover is a short note for whoever continues the work. It
-                says what changed, what remains, where to start and anything
-                that still needs checking. It is not formal paperwork, it is a
-                way to avoid repeating the same discovery.
+                A handover is a short note for whoever continues the work,
+                whether that is a colleague, a fresh chat or you in a fortnight.
+                It says what changed, what remains, where to start and what is
+                still uncertain, which is enough to save the next person from
+                rediscovering something you already worked out the hard way.
               </p>
               <div
                 className={`inline-task ${tasks.includes("record") ? "complete" : ""}`}
@@ -384,9 +423,9 @@ export default function FilesHandoversLessonClient() {
               <p className="reading-kicker">Section 3</p>
               <h2>Leave a handover that you can follow tomorrow.</h2>
               <p>
-                Use a small piece of work you have done recently, or make one
-                up. The text stays in this browser and is not sent to your
-                account.
+                Use a small piece of work you finished recently, or invent one
+                for the sake of the exercise. The text stays in this browser and
+                is not sent to your account.
               </p>
               <div
                 className={`inline-task build-task ${tasks.includes("handover") ? "complete" : ""}`}
@@ -446,7 +485,7 @@ export default function FilesHandoversLessonClient() {
                 </h2>
                 <p>
                   {complete
-                    ? "Your account has saved this lesson and its XP."
+                    ? "Your account has saved this lesson and its XP. The last lesson of the chapter puts the whole routine together."
                     : signedIn
                       ? "All tasks are complete. Confirm the lesson to add 100 XP."
                       : "Sign in with Google to save this lesson and collect its XP."}
@@ -481,10 +520,12 @@ export default function FilesHandoversLessonClient() {
           className={`lesson-next ${!complete ? "disabled" : ""}`}
           aria-disabled={!complete}
           href={
-            complete ? "/profile#courses" : "/course/basics/files-handovers"
+            complete
+              ? "/course/basics/clean-workflow"
+              : "/course/basics/files-handovers"
           }
         >
-          Course overview <PixelArrow />
+          Next lesson <PixelArrow />
         </a>
       </nav>
     </main>

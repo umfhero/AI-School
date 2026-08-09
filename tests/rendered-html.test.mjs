@@ -54,7 +54,7 @@ test("server-renders the AI introduction lesson", async () => {
   const html = await response.text();
   assert.match(html, /AI\?/i);
   assert.match(html, /Lesson 01\.1/i);
-  assert.match(html, /A helpful assistant, not a magic box/i);
+  assert.match(html, /An assistant that works at speed/i);
   assert.match(html, /created-vs-used\.png/i);
   assert.match(html, /href="https:\/\/chatgpt\.com\//i);
   assert.match(html, /href="https:\/\/claude\.ai\//i);
@@ -63,6 +63,8 @@ test("server-renders the AI introduction lesson", async () => {
   assert.match(html, /href="https:\/\/www\.cursor\.com\//i);
   assert.match(html, /TASK 01 · MATCH THE SETUPS/i);
   assert.match(html, /TASK 02 · ORDER THE SETUPS/i);
+  assert.match(html, /lesson-save-chip/i);
+  assert.doesNotMatch(html, /progress-save-state/i);
   assert.match(html, /Context rot/i);
 });
 
@@ -75,6 +77,8 @@ test("server-renders the course introduction", async () => {
   assert.match(html, /AI is stupid, even when it sounds confident/i);
   assert.match(html, /five trillion searches a year/i);
   assert.match(html, /Six chapters, one connected workflow/i);
+  assert.match(html, /lesson-save-chip/i);
+  assert.doesNotMatch(html, /progress-save-state/i);
   assert.match(html, /Complete introduction/i);
   assert.match(html, /500 XP/i);
   assert.doesNotMatch(html, /TASK 01/i);
@@ -85,10 +89,11 @@ test("server-renders the project brain lesson", async () => {
   assert.equal(response.status, 200);
   const html = await response.text();
   assert.match(html, /Your project brain/i);
-  assert.match(html, /Give the project one clear source of truth/i);
+  assert.match(html, /Six questions the file has to answer/i);
   assert.match(html, /TASK 01 · PICK THE FACTS/i);
-  assert.match(html, /TASK 03 · DRAFT YOUR OVERVIEW/i);
-  assert.match(html, /not sent to your account/i);
+  assert.match(html, /TASK 03 · CHECK YOUR FILE/i);
+  assert.match(html, /not saved to your account/i);
+  assert.match(html, /Read your own file the way a stranger would/i);
 });
 
 test("server-renders the files and handovers lesson", async () => {
@@ -99,6 +104,20 @@ test("server-renders the files and handovers lesson", async () => {
   assert.match(html, /Give each kind of information a home/i);
   assert.match(html, /TASK 03 · WRITE A HANDOVER/i);
   assert.match(html, /not sent to your account/i);
+  assert.match(html, /Next lesson/i);
+});
+
+test("server-renders the clean first workflow lesson", async () => {
+  const response = await render("/course/basics/clean-workflow");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /A clean first workflow/i);
+  assert.match(html, /Lesson 01\.5/i);
+  assert.match(html, /Define, give context, change, check, record/i);
+  assert.match(html, /Slower at the start, faster than a repair/i);
+  assert.match(html, /CHAPTER QUIZ · TRUE OR FALSE/i);
+  assert.match(html, /Course contents/i);
+  assert.doesNotMatch(html, /Chapter 2 is ready when you are/i);
 });
 
 test("publishes crawl and AI-discovery files for the active host", async () => {

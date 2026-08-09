@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as R
 import Image from "next/image";
 import AuthButton from "../../../components/AuthButton";
 import ExperienceBadge from "../../../components/ExperienceBadge";
+import LessonSaveState from "../../../components/LessonSaveState";
 import LessonXpCelebration from "../../../components/LessonXpCelebration";
 import { PixelArrow, PixelSpark } from "../../../components/PixelIcons";
 import { courseChapters, courseIntroLesson } from "../../courseData";
@@ -226,6 +227,8 @@ export default function LessonClient() {
 
   function lessonIsComplete(id: string) { return Boolean(id === "basics/context-rot" ? lessonCompletedAt : lessonProgress[id]?.lessonCompletedAt); }
   function chapterIsComplete(chapter: typeof courseChapters[number]) { return chapter.lessons.every((lesson) => lessonIsComplete(lesson.id)); }
+  const basicsLessons = courseChapters[0].lessons;
+  const basicsDone = basicsLessons.filter((lesson) => lessonIsComplete(lesson.id)).length;
 
   return (
     <main className="lesson-page">
@@ -239,8 +242,8 @@ export default function LessonClient() {
             <b>AI school</b>
           </a>
         </div>
-        <div className="lesson-crumb"><span>Lesson 01.2 · The basics</span><span>/</span><b>Context rot</b></div>
-        <div className="lesson-account"><div className="lesson-progress"><span><i style={{ width: `${Math.max(4, progress)}%` }} /></span><b>{completedTasks.length} / 3 tasks</b></div><ExperienceBadge compact /><AuthButton returnTo="/course/basics/context-rot" compact /></div>
+        <div className="lesson-crumb"><span>Chapter 01 · The basics</span><span>/</span><b>Context rot</b></div>
+        <div className="lesson-account"><div className="lesson-progress"><span><i style={{ width: `${Math.max(4, progress)}%` }} /></span><b>{completedTasks.length} / 3 tasks</b></div><LessonSaveState signedIn={signedIn} status={saveStatus} /><ExperienceBadge compact /><AuthButton returnTo="/course/basics/context-rot" compact /></div>
       </header>
 
       <div className={`lesson-workspace ${sidebarOpen ? "" : "sidebar-closed"} ${visualOpen ? "" : "visual-closed"}`} style={workspaceStyle}>
@@ -253,12 +256,12 @@ export default function LessonClient() {
               {openChapter === chapterIndex ? <ol>{chapter.lessons.map((lesson, lessonIndex) => { const lessonDone = lessonIsComplete(lesson.id); return <li className={`${lesson.id === "basics/context-rot" ? "active" : ""} ${lessonDone ? "complete" : ""}`} key={lesson.id}><span>{lessonDone ? "✓" : lesson.id === "basics/context-rot" ? "●" : "○"}</span><div><small>Lesson {chapterIndex + 1}.{lessonIndex + 1}</small>{lesson.path ? <a href={lesson.path}>{lesson.title}</a> : <b>{lesson.title}</b>}</div>{lessonDone ? <i>COMPLETE</i> : !lesson.path ? <i>LOCKED</i> : null}</li>; })}</ol> : null}
             </div>; })}
           </nav>
-          <div className="chapter-project"><span>CHAPTER PROJECT</span><b>Build your project brain</b><p>Unlocks after all five lessons.</p><small>0 / 5 lessons</small></div>
+          <div className="chapter-project"><span>CHAPTER PROJECT</span><b>Build your project brain</b><p>Unlocks after all five lessons.</p><small>{basicsDone} / {basicsLessons.length} lessons</small></div>
         </aside>
 
         <article className="lesson-reading">
           <div className="lesson-reading-inner context-rot-reading">
-            <p className={`progress-save-state ${signedIn ? "connected" : ""}`}>{signedIn ? (saveStatus === "saving" ? "Saving progress…" : saveStatus === "error" ? "Your progress could not be saved yet, while the lesson remains open." : "You are signed in, so task progress saves automatically.") : signedIn === false ? "Sign in above when you want this progress saved across devices." : "Your saved progress is being checked."}</p>
+            <p className="reading-kicker">Lesson 01.2</p>
             <h1>Context rot.</h1>
             <p className="lesson-lede">An average user opens <a className="lesson-reference-link" href="https://chatgpt.com/" target="_blank" rel="noreferrer">ChatGPT</a>, <a className="lesson-reference-link" href="https://claude.ai/" target="_blank" rel="noreferrer">Claude</a> or <a className="lesson-reference-link" href="https://gemini.google.com/" target="_blank" rel="noreferrer">Gemini</a> and starts typing about one topic, because the chat looks like a place where the model knows the subject and remembers everything said before. The same thread then gathers new requests, corrections and side jobs, until the information that mattered at the start becomes harder for the model to use consistently.</p>
             <div className="lesson-rule" />
