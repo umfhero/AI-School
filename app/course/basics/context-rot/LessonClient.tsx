@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as R
 import Image from "next/image";
 import AuthButton from "../../../components/AuthButton";
 import ExperienceBadge from "../../../components/ExperienceBadge";
+import LessonXpCelebration from "../../../components/LessonXpCelebration";
 import { courseChapters } from "../../courseData";
 import { LessonCelebration } from "./LessonCelebration";
 import { LessonVisualContent, type LessonVisual } from "./LessonVisuals";
@@ -52,6 +53,9 @@ export default function LessonClient() {
   const [visualOpen, setVisualOpen] = useState(false);
   const [activeVisual, setActiveVisual] = useState<LessonVisual | null>(null);
   const [celebrationKey, setCelebrationKey] = useState(0);
+  const [lessonCompletionKey, setLessonCompletionKey] = useState(0);
+  const [lessonCompletedAt, setLessonCompletedAt] = useState<number | null>(null);
+  const [completionStatus, setCompletionStatus] = useState<"idle" | "saving" | "error">("idle");
   const [visualWidth, setVisualWidth] = useState(620);
   const resizing = useRef(false);
   const [sheetHeight, setSheetHeightRaw] = useState(52);
@@ -60,6 +64,8 @@ export default function LessonClient() {
   const sheetDrag = useRef<{ startY: number; startHeight: number } | null>(null);
 
   const progress = Math.round((completedTasks.length / 3) * 100);
+  const allTasksComplete = completedTasks.length === 3;
+  const lessonComplete = Boolean(lessonCompletedAt);
   const workspaceStyle = { "--visual-width": `${visualWidth}px`, "--sheet-height": `${sheetHeight}vh`, "--sheet-height-dvh": `${sheetHeight}dvh` } as CSSProperties;
 
   function setSheetHeight(value: number) {
@@ -73,11 +79,11 @@ export default function LessonClient() {
     fetch("/api/progress", { signal: controller.signal, credentials: "same-origin" })
       .then(async (response) => {
         if (!response.ok) throw new Error("Progress unavailable");
-        return response.json() as Promise<{ user: unknown; lessons?: Record<string, { completedTasks?: string[] }> }>;
+        return response.json() as Promise<{ user: unknown; lessons?: Record<string, { completedTasks?: string[]; lessonCompletedAt?: number }> }>;
       })
       .then((data) => {
         setSignedIn(Boolean(data.user));
-        if (data.user) setCompletedTasks(data.lessons?.["basics/context-rot"]?.completedTasks ?? []);
+        if (data.user) { setCompletedTasks(data.lessons?.["basics/context-rot"]?.completedTasks ?? []); setLessonCompletedAt(data.lessons?.["basics/context-rot"]?.lessonCompletedAt ?? null); }
       })
       .catch((error: unknown) => {
         if (!(error instanceof DOMException && error.name === "AbortError")) setSaveStatus("error");
@@ -123,8 +129,31 @@ export default function LessonClient() {
       });
       if (!response.ok) throw new Error("Save failed");
       setSaveStatus("saved");
+      window.dispatchEvent(new Event("progress-changed"));
     } catch {
       setSaveStatus("error");
+    }
+  }
+
+  async function completeLesson() {
+    if (!signedIn || !allTasksComplete || lessonComplete || completionStatus === "saving") return;
+    setCompletionStatus("saving");
+    try {
+      const response = await fetch("/api/progress", {
+        method: "PUT",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lessonId: "basics/context-rot", completedTasks, completeLesson: true }),
+      });
+      if (!response.ok) throw new Error("Completion failed");
+      const data = await response.json() as { lesson?: { lessonCompletedAt?: number }; newlyCompleted?: boolean };
+      if (!data.lesson?.lessonCompletedAt) throw new Error("Completion was not saved");
+      setLessonCompletedAt(data.lesson.lessonCompletedAt);
+      setCompletionStatus("idle");
+      window.dispatchEvent(new Event("progress-changed"));
+      if (data.newlyCompleted) setLessonCompletionKey((key) => key + 1);
+    } catch {
+      setCompletionStatus("error");
     }
   }
 
@@ -196,6 +225,7 @@ export default function LessonClient() {
   return (
     <main className="lesson-page">
       <LessonCelebration trigger={celebrationKey} />
+      <LessonXpCelebration trigger={lessonCompletionKey} nextLessonHref="/profile#courses" />
       <header className="lesson-header">
         <div className="lesson-header-left">
           <button className="sidebar-toggle" type="button" onClick={() => setSidebarOpen((open) => !open)} aria-expanded={sidebarOpen} aria-controls="course-contents"><span aria-hidden="true">{sidebarOpen ? "×" : "☰"}</span><b>{sidebarOpen ? "Hide contents" : "Show contents"}</b></button>
@@ -285,7 +315,7 @@ export default function LessonClient() {
               </div>
             </section>
 
-            {completedTasks.length === 3 ? <section className="lesson-complete-card"><span>LESSON COMPLETE</span><h2>You have moved project memory outside the chat.</h2><p>{signedIn ? "Your account now holds the completed tasks, so this lesson will remain complete on another device." : "You can sign in with Google to keep the completed tasks when you continue on another device."}</p></section> : null}
+            {allTasksComplete ? <section className={`lesson-complete-card ${lessonComplete ? "complete" : ""}`}><span>{lessonComplete ? "LESSON COMPLETE" : "READY TO COMPLETE"}</span><h2>{lessonComplete ? "You have moved project memory outside the chat." : "Finish the lesson and collect your XP."}</h2><p>{lessonComplete ? "Your account has saved this lesson and its XP." : signedIn ? "All tasks are complete. Confirm the lesson to add 100 XP to your level." : "Sign in with Google to save this lesson and collect its XP."}</p>{lessonComplete ? null : <button className="complete-lesson-button" type="button" disabled={!signedIn || completionStatus === "saving"} onClick={completeLesson}>{completionStatus === "saving" ? "Completing lesson…" : "Complete lesson · +100 XP"}</button>}{completionStatus === "error" ? <small className="completion-error">We could not save the lesson yet. Please try again.</small> : null}</section> : null}
 
             <section className="lesson-sources"><p className="reading-kicker">Sources</p><h2>The research used in this lesson.</h2><a href="https://www.trychroma.com/research/context-rot" target="_blank" rel="noreferrer"><b>Chroma Research</b><span>Context Rot ↗</span></a><a href="https://arxiv.org/abs/2307.03172" target="_blank" rel="noreferrer"><b>Liu et al.</b><span>Lost in the Middle ↗</span></a></section>
           </div>
@@ -307,7 +337,7 @@ export default function LessonClient() {
         {!visualOpen && activeVisual ? <button className="reopen-visual" type="button" onClick={() => setVisualOpen(true)}><span>Resume task visual</span><b>{visualLabels[activeVisual]}</b></button> : null}
       </div>
 
-      <nav className="lesson-bottom" aria-label="Lesson navigation"><a className="lesson-home-back" href="/"><span aria-hidden="true">←</span><b>Back to home</b></a><div><span>CHAPTER 01 · THE BASICS</span><b>{completedTasks.length} of 3 tasks complete</b></div><button className="lesson-next" disabled={completedTasks.length < 3} title={completedTasks.length < 3 ? "Complete the three tasks to unlock the next lesson" : undefined}>Next lesson <span aria-hidden="true">→</span></button></nav>
+      <nav className="lesson-bottom" aria-label="Lesson navigation"><a className="lesson-home-back" href="/"><span aria-hidden="true">←</span><b>Back to home</b></a><div><span>CHAPTER 01 · THE BASICS</span><b>{completedTasks.length} of 3 tasks complete</b></div><button className="lesson-next" disabled={!lessonComplete} title={!lessonComplete ? "Complete the lesson to unlock the next lesson" : undefined}>Next lesson <span aria-hidden="true">→</span></button></nav>
     </main>
   );
 }

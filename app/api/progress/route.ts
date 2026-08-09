@@ -37,7 +37,11 @@ export async function PUT(request: Request) {
   try {
     const user = await getSessionUser(request);
     if (!user) return noStoreJson({ error: "Sign in to save progress." }, { status: 401 });
-    const payload = await request.json() as { lessonId?: unknown; completedTasks?: unknown; completeLesson?: unknown };
+    const payload = await request.json() as { lessonId?: unknown; completedTasks?: unknown; completeLesson?: unknown; resetProgress?: unknown };
+    if (payload.resetProgress === true) {
+      await database().prepare("DELETE FROM lesson_progress WHERE user_id = ?").bind(user.id).run();
+      return noStoreJson({ completedTasks: [], activity: {}, lessons: {}, experience: getExperience({}), saved: true, reset: true });
+    }
     const lessonId = typeof payload.lessonId === "string" && getLesson(payload.lessonId) ? payload.lessonId : null;
     const allowedTasks = lessonId ? allowedTasksByLesson[lessonId] : null;
     if (!lessonId || !allowedTasks) return noStoreJson({ error: "Unknown lesson." }, { status: 400 });
