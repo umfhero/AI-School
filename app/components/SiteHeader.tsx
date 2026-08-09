@@ -14,7 +14,7 @@ export default function SiteHeader() {
       <div className="home-nav-actions">
         <AuthButton />
         <ExperienceBadge />
-        <a className="nav-cta" href="/course/basics/ai">
+        <a className="nav-cta" href="/course">
           Start learning <PixelArrow />
         </a>
       </div>

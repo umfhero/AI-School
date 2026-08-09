@@ -4,6 +4,10 @@ This is the working outline for AI school. It is written for someone with no tec
 
 The course currently has six chapters and 25 proposed lessons. AI? has two tasks and the other 24 planned lessons have three each, which makes 74 tasks in the current course map. The live site has now been updated to use these figures.
 
+## Course introduction
+
+This is a short, task-free first lesson that sits before Chapter 1. It explains that the course is for non-technical learners who want to use AI to make and manage real projects, and that prior coding experience is not required. It makes clear that AI is not intelligent in the human sense, and that its answers depend on its training, instructions, context, tools, model and settings. It introduces the six chapters, what AI and models are, hallucinations and checking work, agents, context management, anti-hallucination workflows, skills, parallel work and safe shipping. The learner completes it after reading and earns 500 XP, moving from Level 0 to Level 1.
+
 ## Chapter 1: The basics
 
 This chapter starts before context rot. It gives a first-time learner enough vocabulary and confidence to understand what an AI tool, a chat, a project folder and a coding environment are, then shows why work needs a home outside a single conversation.

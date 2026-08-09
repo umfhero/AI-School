@@ -7,7 +7,7 @@ import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 import AuthButton from "../components/AuthButton";
 import { PixelArrow, PixelSpark } from "../components/PixelIcons";
-import { chapterTaskCount, courseChapters, getLesson, totalCourseTasks, type CourseChapter } from "../course/courseData";
+import { chapterTaskCount, courseChapters, getCourseResumeLesson, totalCourseProgressItems, type CourseChapter } from "../course/courseData";
 import { getExperience, type Experience } from "../lib/experience";
 
 type User = { name: string; email: string; pictureUrl: string | null };
@@ -90,16 +90,15 @@ function ActivityGrid({ activity }: { activity: Record<string, number> }) {
   </div>;
 }
 
-function CourseProgress({ completedTasks, lessons }: { completedTasks: number; lessons: Record<string, { completedTasks?: string[] }> }) {
-  const percent = Math.round((completedTasks / totalCourseTasks) * 100);
+function CourseProgress({ completedTasks, lessons }: { completedTasks: number; lessons: Record<string, { completedTasks?: string[]; lessonCompletedAt?: number }> }) {
+  const introComplete = Boolean(lessons.intro?.lessonCompletedAt);
+  const completedProgressItems = completedTasks + (introComplete ? 1 : 0);
+  const percent = Math.round((completedProgressItems / totalCourseProgressItems) * 100);
   const basics = courseChapters[0];
   const basicsTasks = basics.lessons.reduce((total, lesson) => total + (lessons[lesson.id]?.completedTasks?.length ?? 0), 0);
-  const aiTasks = lessons["basics/ai"]?.completedTasks?.length ?? 0;
-  const contextTasks = lessons["basics/context-rot"]?.completedTasks?.length ?? 0;
-  const aiComplete = aiTasks >= (getLesson("basics/ai")?.taskCount ?? 2);
-  const contextComplete = contextTasks >= (getLesson("basics/context-rot")?.taskCount ?? 3);
-  const nextTitle = !aiComplete ? "AI?" : !contextComplete ? "Context rot" : "Your project brain";
-  const nextHref = !aiComplete ? "/course/basics/ai" : !contextComplete ? "/course/basics/context-rot" : "/course/basics/ai";
+  const nextLesson = getCourseResumeLesson(lessons);
+  const nextTitle = nextLesson.title;
+  const nextHref = nextLesson.path;
   return <section className={styles.courseCard} id="courses">
     <PixelSpark className={styles.cornerSpark} />
     <div className={styles.courseHeader}><div><p className={styles.eyebrow}>COURSE IN PROGRESS</p><h2>AI workflows</h2><p>Build a calmer, more capable way of working with AI.</p></div><strong>{percent}%<small>complete</small></strong></div>
@@ -131,13 +130,10 @@ export default function ProfileClient() {
 
   const completedTasks = progress?.completedTasks?.length ?? 0;
   const lessons = progress?.lessons ?? {};
-  const aiTasks = lessons["basics/ai"]?.completedTasks?.length ?? 0;
-  const contextTasks = lessons["basics/context-rot"]?.completedTasks?.length ?? 0;
-  const aiComplete = aiTasks >= (getLesson("basics/ai")?.taskCount ?? 2);
-  const contextComplete = contextTasks >= (getLesson("basics/context-rot")?.taskCount ?? 3);
-  const nextTitle = !aiComplete ? "AI?" : !contextComplete ? "Context rot" : "Your project brain";
-  const nextCopy = !aiComplete ? "Start with what AI is, where people use it and how a project grows from a chat into a workspace." : !contextComplete ? "Learn why a long chat starts losing the thread and how to prevent it." : "Learn how a short project overview keeps important context in one place.";
-  const nextHref = !aiComplete ? "/course/basics/ai" : !contextComplete ? "/course/basics/context-rot" : "/course/basics/ai";
+  const nextLesson = getCourseResumeLesson(lessons);
+  const nextTitle = nextLesson.title;
+  const nextCopy = nextLesson.id === "intro" ? "See how the course is organised, who it is for and the workflow habits you will practise." : nextLesson.id === "basics/ai" ? "Start with what AI is, where people use it and how a project grows from a chat into a workspace." : "Learn why a long chat starts losing the thread and how to prevent it.";
+  const nextHref = nextLesson.path;
   const level = progress?.experience ?? getExperience(lessons);
   const activity = progress?.activity ?? {};
   const currentMonth = localDateKey(new Date()).slice(0, 7);

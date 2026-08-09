@@ -1,4 +1,4 @@
-import { courseChapters } from "../course/courseData";
+import { courseChapters, courseIntroLesson, courseLessons } from "../course/courseData";
 
 export const XP_PER_LESSON = 100;
 
@@ -18,9 +18,22 @@ export type Experience = {
 };
 
 export function getExperience(lessons: Record<string, LessonExperienceState>): Experience {
-  const completedXp = (lessonId: string) => lessons[lessonId]?.lessonCompletedAt ? lessons[lessonId].xpAwarded ?? XP_PER_LESSON : 0;
+  const completedXp = (lessonId: string, fallbackXp = XP_PER_LESSON) => lessons[lessonId]?.lessonCompletedAt ? lessons[lessonId].xpAwarded ?? fallbackXp : 0;
   const completedChapterXp = (chapterIndex: number) => courseChapters[chapterIndex].lessons
     .reduce((total, lesson) => total + completedXp(lesson.id), 0);
+  const introComplete = Boolean(lessons[courseIntroLesson.id]?.lessonCompletedAt);
+  const totalXp = courseLessons.reduce((total, lesson) => total + completedXp(lesson.id, lesson.xpAward ?? XP_PER_LESSON), 0);
+  if (!introComplete) {
+    return {
+      totalXp,
+      level: 0,
+      levelTitle: "Course introduction",
+      xpInLevel: completedXp(courseIntroLesson.id, courseIntroLesson.xpAward),
+      xpTarget: courseIntroLesson.xpAward ?? XP_PER_LESSON,
+      xpPercent: 0,
+      graduated: false,
+    };
+  }
   const nextChapterIndex = courseChapters.findIndex((chapter) => chapter.lessons
     .some((lesson) => !lessons[lesson.id]?.lessonCompletedAt));
   const graduated = nextChapterIndex === -1;
@@ -28,7 +41,6 @@ export function getExperience(lessons: Record<string, LessonExperienceState>): E
   const chapter = courseChapters[chapterIndex];
   const xpTarget = chapter.lessons.length * XP_PER_LESSON;
   const xpInLevel = completedChapterXp(chapterIndex);
-  const totalXp = courseChapters.reduce((total, _chapter, index) => total + completedChapterXp(index), 0);
 
   return {
     totalXp,

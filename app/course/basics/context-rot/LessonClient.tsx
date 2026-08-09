@@ -7,7 +7,7 @@ import AuthButton from "../../../components/AuthButton";
 import ExperienceBadge from "../../../components/ExperienceBadge";
 import LessonXpCelebration from "../../../components/LessonXpCelebration";
 import { PixelArrow, PixelSpark } from "../../../components/PixelIcons";
-import { courseChapters } from "../../courseData";
+import { courseChapters, courseIntroLesson } from "../../courseData";
 import { LessonCelebration } from "./LessonCelebration";
 import { LessonVisualContent, type LessonVisual } from "./LessonVisuals";
 
@@ -247,6 +247,7 @@ export default function LessonClient() {
         <aside className="course-sidebar" id="course-contents" aria-label="Course contents">
           <div className="course-side-head"><p>AI workflow course</p><h2>Course contents</h2><div><span style={{ width: `${Math.max(4, progress)}%` }} /><small>{progress}% of this lesson</small></div></div>
           <nav>
+            <a className={`course-intro-link ${lessonProgress.intro?.lessonCompletedAt ? "complete" : ""}`} href={courseIntroLesson.path}><span>{lessonProgress.intro?.lessonCompletedAt ? "✓" : "○"}</span><div><small>COURSE INTRO</small><b>{courseIntroLesson.title}</b></div>{lessonProgress.intro?.lessonCompletedAt ? <i>COMPLETE</i> : null}</a>
             {courseChapters.map((chapter, chapterIndex) => { const chapterComplete = chapterIsComplete(chapter); return <div className={`side-chapter ${chapterIndex === 0 ? "current" : ""} ${chapterComplete ? "complete" : ""}`} key={chapter.title}>
               <button onClick={() => setOpenChapter(openChapter === chapterIndex ? -1 : chapterIndex)} aria-expanded={openChapter === chapterIndex}><span>{chapterComplete ? "✓" : String(chapterIndex + 1).padStart(2, "0")}</span><b>{chapter.title}</b><i aria-label={chapterComplete ? "Chapter complete" : undefined}>{chapterComplete ? "COMPLETE" : openChapter === chapterIndex ? "−" : "+"}</i></button>
               {openChapter === chapterIndex ? <ol>{chapter.lessons.map((lesson, lessonIndex) => { const lessonDone = lessonIsComplete(lesson.id); return <li className={`${lesson.id === "basics/context-rot" ? "active" : ""} ${lessonDone ? "complete" : ""}`} key={lesson.id}><span>{lessonDone ? "✓" : lesson.id === "basics/context-rot" ? "●" : "○"}</span><div><small>Lesson {chapterIndex + 1}.{lessonIndex + 1}</small>{lesson.path ? <a href={lesson.path}>{lesson.title}</a> : <b>{lesson.title}</b>}</div>{lessonDone ? <i>COMPLETE</i> : !lesson.path ? <i>LOCKED</i> : null}</li>; })}</ol> : null}

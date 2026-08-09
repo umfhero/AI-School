@@ -3,11 +3,24 @@ export type CourseLesson = {
   title: string;
   path?: string;
   taskCount: number;
+  xpAward?: number;
 };
 
 export type CourseChapter = {
   title: string;
   lessons: CourseLesson[];
+};
+
+export type CourseLessonProgress = {
+  lessonCompletedAt?: number;
+};
+
+export const courseIntroLesson: CourseLesson = {
+  id: "intro",
+  title: "Introduction",
+  path: "/course/intro",
+  taskCount: 0,
+  xpAward: 500,
 };
 
 export const courseChapters: CourseChapter[] = [
@@ -53,12 +66,21 @@ export const courseChapters: CourseChapter[] = [
   ] },
 ];
 
-export const courseLessons = courseChapters.flatMap((chapter) => chapter.lessons);
+export const courseLessons = [courseIntroLesson, ...courseChapters.flatMap((chapter) => chapter.lessons)];
 export const totalCourseTasks = courseLessons.reduce((total, lesson) => total + lesson.taskCount, 0);
 export const totalCourseLessons = courseLessons.length;
+export const totalCourseProgressItems = totalCourseTasks + 1;
+export const totalCourseXp = courseLessons.reduce((total, lesson) => total + (lesson.xpAward ?? 100), 0);
+export const publishedCourseLessons = courseLessons.filter((lesson): lesson is CourseLesson & { path: string } => Boolean(lesson.path));
 
 export function getLesson(lessonId: string) {
   return courseLessons.find((lesson) => lesson.id === lessonId);
+}
+
+export function getCourseResumeLesson(lessons: Record<string, CourseLessonProgress>) {
+  const finalPublishedLesson = publishedCourseLessons[publishedCourseLessons.length - 1];
+  if (!finalPublishedLesson) throw new Error("The course needs at least one published lesson.");
+  return publishedCourseLessons.find((lesson) => !lessons[lesson.id]?.lessonCompletedAt) ?? finalPublishedLesson;
 }
 
 export function chapterTaskCount(chapter: CourseChapter) {

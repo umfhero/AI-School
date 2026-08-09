@@ -15,7 +15,7 @@ test("server-renders the course home page", async () => {
   assert.match(html, /Build serious projects with AI/i);
   assert.match(html, /Cloudflare/i);
   assert.match(html, /AI school/i);
-  assert.match(html, /Start chapter one/i);
+  assert.match(html, /Start course/i);
   assert.match(html, /signed up/i);
   assert.match(html, /href="\/privacy"/i);
   assert.match(html, /href="\/terms"/i);
@@ -64,6 +64,19 @@ test("server-renders the AI introduction lesson", async () => {
   assert.match(html, /TASK 01 · MATCH THE SETUPS/i);
   assert.match(html, /TASK 02 · ORDER THE SETUPS/i);
   assert.match(html, /Context rot/i);
+});
+
+test("server-renders the course introduction", async () => {
+  const response = await render("/course/intro");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /Learn to work with AI, without losing the thread/i);
+  assert.match(html, /For curious beginners who want a calmer way to build/i);
+  assert.match(html, /AI is stupid, even when it sounds confident/i);
+  assert.match(html, /Six chapters, one connected workflow/i);
+  assert.match(html, /Complete introduction/i);
+  assert.match(html, /500 XP/i);
+  assert.doesNotMatch(html, /TASK 01/i);
 });
 
 test("publishes crawl and AI-discovery files for the active host", async () => {

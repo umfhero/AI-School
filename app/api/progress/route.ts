@@ -1,9 +1,10 @@
 import { database, getSessionUser, isSameOrigin, noStoreJson } from "@/lib/server/auth";
-import { getLesson } from "@/app/course/courseData";
+import { courseIntroLesson, getLesson } from "@/app/course/courseData";
 import { getExperience } from "@/app/lib/experience";
 import { hasAcceptedCurrentTerms } from "@/lib/terms";
 
 const allowedTasksByLesson: Record<string, Set<string>> = {
+  [courseIntroLesson.id]: new Set(),
   "basics/ai": new Set(["identify", "order"]),
   "basics/context-rot": new Set(["diagnose", "compare", "build"]),
 };
@@ -70,7 +71,7 @@ export async function PUT(request: Request) {
       completedTasks,
       completedAt,
       lessonCompletedAt: newlyCompleted ? now : previous.lessonCompletedAt,
-      xpAwarded: newlyCompleted ? 100 : previous.xpAwarded,
+      xpAwarded: newlyCompleted ? getLesson(lessonId)?.xpAward ?? 100 : previous.xpAwarded,
     };
     await database().prepare(
       "INSERT INTO lesson_progress (user_id, lesson_id, completed_tasks, updated_at) VALUES (?, ?, ?, ?) ON CONFLICT(user_id, lesson_id) DO UPDATE SET completed_tasks = excluded.completed_tasks, updated_at = excluded.updated_at",

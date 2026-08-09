@@ -51,6 +51,7 @@ export default async function Home() {
           isAccessibleForFree: true,
         },
         hasPart: [
+          { "@type": "Course", name: "Course introduction", url: `${siteUrl}/course/intro` },
           { "@type": "Course", name: "AI?", url: `${siteUrl}/course/basics/ai` },
           { "@type": "Course", name: "Context rot", url: `${siteUrl}/course/basics/context-rot` },
         ],
@@ -74,13 +75,13 @@ export default async function Home() {
             reusable skills and parallel execution. No technical background required.
           </p>
           <div className="hero-actions">
-            <a className="button-primary" href="/course/basics/ai">
-              Start chapter one <PixelArrow />
+            <a className="button-primary" href="/course">
+              Start course <PixelArrow />
             </a>
           </div>
           <div className="course-facts" aria-label="Course facts">
             <span><b>1</b><small>course</small></span>
-            <span><b>25</b><small>lessons</small></span>
+            <span><b>26</b><small>lessons</small></span>
             <span><b>£0</b><small>price</small></span>
             <span><SignupCount /><small>signed up</small></span>
           </div>
@@ -148,9 +149,9 @@ export default async function Home() {
       <section className="home-final">
         <PixelSpark className="corner-spark" />
         <div className="final-icon" aria-hidden="true"><PixelSpark /></div>
-        <p>Lesson 01.1 is ready</p>
-        <h2>Start with what AI is.<br /><em>Then learn how to use it properly.</em></h2>
-        <a className="button-primary light" href="/course/basics/ai">Start the free course <PixelArrow /></a>
+        <p>The course introduction is ready</p>
+        <h2>Start with the workflow.<br /><em>Then learn how to use AI properly.</em></h2>
+        <a className="button-primary light" href="/course">Start the free course <PixelArrow /></a>
       </section>
 
       <SiteFooter />

@@ -4,6 +4,7 @@ export const dynamic = "force-dynamic";
 
 const pages = [
   { path: "/", priority: "1.0", changefreq: "weekly" },
+  { path: "/course/intro", priority: "0.9", changefreq: "monthly" },
   { path: "/course/basics/ai", priority: "0.9", changefreq: "monthly" },
   { path: "/course/basics/context-rot", priority: "0.9", changefreq: "monthly" },
   { path: "/privacy", priority: "0.3", changefreq: "yearly" },
