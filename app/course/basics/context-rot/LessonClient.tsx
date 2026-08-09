@@ -4,6 +4,7 @@
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import Image from "next/image";
 import AuthButton from "../../../components/AuthButton";
+import ExperienceBadge from "../../../components/ExperienceBadge";
 import { courseChapters } from "../../courseData";
 import { LessonCelebration } from "./LessonCelebration";
 import { LessonVisualContent, type LessonVisual } from "./LessonVisuals";
@@ -204,7 +205,7 @@ export default function LessonClient() {
           </a>
         </div>
         <div className="lesson-crumb"><span>Lesson 01.2 · The basics</span><span>/</span><b>Context rot</b></div>
-        <div className="lesson-account"><div className="lesson-progress"><span><i style={{ width: `${Math.max(4, progress)}%` }} /></span><b>{completedTasks.length} / 3 tasks</b></div><AuthButton returnTo="/course/basics/context-rot" compact /></div>
+        <div className="lesson-account"><div className="lesson-progress"><span><i style={{ width: `${Math.max(4, progress)}%` }} /></span><b>{completedTasks.length} / 3 tasks</b></div><ExperienceBadge compact /><AuthButton returnTo="/course/basics/context-rot" compact /></div>
       </header>
 
       <div className={`lesson-workspace ${sidebarOpen ? "" : "sidebar-closed"} ${visualOpen ? "" : "visual-closed"}`} style={workspaceStyle}>

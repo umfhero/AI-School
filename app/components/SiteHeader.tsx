@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import AuthButton from "./AuthButton";
+import ExperienceBadge from "./ExperienceBadge";
 import { PixelArrow } from "./PixelIcons";
 
 export default function SiteHeader() {
@@ -13,6 +14,7 @@ export default function SiteHeader() {
       </a>
       <div className="home-nav-actions">
         <AuthButton />
+        <ExperienceBadge />
         <a className="nav-cta" href="/course/basics/ai">
           Start learning <PixelArrow />
         </a>

@@ -6,35 +6,15 @@ import styles from "./profile.module.css";
 import SiteHeader from "../components/SiteHeader";
 import { PixelArrow, PixelSpark } from "../components/PixelIcons";
 import { chapterTaskCount, courseChapters, getLesson, totalCourseTasks, type CourseChapter } from "../course/courseData";
+import { getExperience, type Experience } from "../lib/experience";
 
 type User = { name: string; email: string; pictureUrl: string | null };
-type LessonMap = Record<string, { completedTasks?: string[] }>;
-type Progress = { user: User | null; completedTasks?: string[]; lessons?: LessonMap; activity?: Record<string, number> };
+type LessonMap = Record<string, { completedTasks?: string[]; lessonCompletedAt?: number; xpAwarded?: number }>;
+type Progress = { user: User | null; completedTasks?: string[]; lessons?: LessonMap; activity?: Record<string, number>; experience?: Experience };
 const heatLabels = ["Mon", "Wed", "Fri"];
-
-// Each completed task awards XP. A level is one course chapter: finishing every lesson in the
-// current chapter fills the XP bar and advances the learner to the next chapter's level.
-const XP_PER_TASK = 25;
 
 function chapterCompletedTasks(chapter: CourseChapter, lessons: LessonMap) {
   return chapter.lessons.reduce((total, lesson) => total + Math.min(lessons[lesson.id]?.completedTasks?.length ?? 0, lesson.taskCount), 0);
-}
-
-function getLevelState(lessons: LessonMap) {
-  const chapterIndex = courseChapters.findIndex((chapter) => chapterCompletedTasks(chapter, lessons) < chapterTaskCount(chapter));
-  const graduated = chapterIndex === -1;
-  const levelIndex = graduated ? courseChapters.length - 1 : chapterIndex;
-  const chapter = courseChapters[levelIndex];
-  const xpInLevel = chapterCompletedTasks(chapter, lessons) * XP_PER_TASK;
-  const xpTarget = chapterTaskCount(chapter) * XP_PER_TASK;
-  return {
-    level: levelIndex + 1,
-    levelTitle: graduated ? "Course graduate" : chapter.title,
-    xpInLevel,
-    xpTarget,
-    xpPercent: xpTarget ? Math.min(100, Math.round((xpInLevel / xpTarget) * 100)) : 100,
-    graduated,
-  };
 }
 
 function PixelShield({ className = "" }: { className?: string }) {
@@ -154,7 +134,7 @@ export default function ProfileClient() {
   const nextTitle = !aiComplete ? "AI?" : !contextComplete ? "Context rot" : "Your project brain";
   const nextCopy = !aiComplete ? "Start with what AI is, where people use it and how a project grows from a chat into a workspace." : !contextComplete ? "Learn why a long chat starts losing the thread and how to prevent it." : "Learn how a short project overview keeps important context in one place.";
   const nextHref = !aiComplete ? "/course/basics/ai" : !contextComplete ? "/course/basics/context-rot" : "/course/basics/ai";
-  const level = getLevelState(lessons);
+  const level = progress?.experience ?? getExperience(lessons);
   const activity = progress?.activity ?? {};
   const currentMonth = localDateKey(new Date()).slice(0, 7);
   const completedThisMonth = Object.entries(activity).reduce((total, [day, count]) => day.startsWith(currentMonth) ? total + count : total, 0);
