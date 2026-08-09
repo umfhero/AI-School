@@ -4,7 +4,7 @@ Last updated: 9 August 2026
 
 ## Start here
 
-This repository contains a free course called **AI workflow course**. The homepage brand is **AI school**. It teaches beginners how to build substantial projects with AI without relying on one long, increasingly confused chat. The course starts with project memory and context management, then moves through model choice, agents, reusable skills, parallel work and shipping.
+This repository contains a free course called **AI workflow course**. The homepage brand is **AI school**. It takes a non-technical learner from what AI is and where people use it through to building substantial projects without relying on one long, increasingly confused chat. The course then moves through project memory, model choice, agents, reusable skills, parallel work and shipping.
 
 The public website is live at:
 
@@ -14,7 +14,7 @@ The GitHub repository is:
 
 `https://github.com/umfhero/AI-workflow.git`
 
-The application is inside `site/`. Run development, testing and Git commands from that directory. This `overview.md` file sits one level above the application so a new chat can read the project handover before inspecting the code.
+The application is in this repository root. Run development, testing and Git commands here. This `overview.md` file is the project handover and should be read before inspecting the code.
 
 ## Product direction
 
@@ -29,16 +29,17 @@ The visual direction is split deliberately:
 - Lesson pages use a structured reading layout with a course sidebar, clear sections and task-owned visual demonstrations.
 - Side views use the full pane without an empty frame around them. Text must stay readable, and each visual should be interactive where the subject benefits from it.
 - On mobile, the course sidebar starts closed and a task visual opens as a bottom sheet over roughly the lower half of the screen.
-- A mobile bottom sheet must actually be draggable to full screen, half and closed, not just look like one. Make the whole header bar the drag surface and put `touch-action: none` on that whole bar, not only a thin grab-bar pill — a real thumb rarely lands on a strip a few pixels tall, so the touch falls through to native page scrolling before any pointer handler runs. Lesson 1.1's side view (`site/app/course/basics/context-rot/LessonClient.tsx`) already implements this correctly; reuse that pattern for any new side view instead of re-deriving it.
+- A mobile bottom sheet must actually be draggable to full screen, half and closed, not just look like one. Make the whole header bar the drag surface and put `touch-action: none` on that whole bar, not only a thin grab-bar pill. Both built lessons implement this correctly; reuse that pattern for any new side view instead of re-deriving it.
 - Respect `prefers-reduced-motion` whenever animation is added.
 
 The course should not copy Codédex assets or layout. `references/Learn Python - For Beginners.html` is only a visual reference for the feeling of a progress-led course.
 
 ## Planned course structure
 
-The current course map assumes six chapters, four lessons per chapter and three tasks per lesson, which gives 24 lessons and 72 tasks. These totals are currently hardcoded in parts of the interface.
+The current course map has 25 lessons and 75 tasks. Chapter 1 has five lessons because the AI introduction comes before Context rot; the remaining five chapters each have four lessons. Totals are derived from `site/app/course/courseData.ts`.
 
 1. The basics
+   - AI?
    - Context rot
    - Your project brain
    - Files and handovers
@@ -69,7 +70,7 @@ The current course map assumes six chapters, four lessons per chapter and three 
    - Deployment
    - Maintaining the system
 
-Only Lesson 1.1, Context rot, has been built. The remaining lesson names are a working plan rather than finished content.
+Lessons 1.1 and 1.2 have been built. The remaining lesson names are a working plan rather than finished content.
 
 ## What has been built
 
@@ -79,22 +80,34 @@ The homepage at `/` is complete enough to use publicly. It includes:
 
 - The AI school name and custom icon set.
 - A direct explanation of what the course teaches and that no technical background is required.
-- Course figures showing one course, 24 lessons and a price of £0.
+- Course figures showing one course, 25 lessons and a price of £0.
 - A workflow console that previews `overview.md`, one-task execution, verification and handover.
 - A short author section explaining the first-class deterministic AI dissertation, university award and later AI role at Cloudflare.
 - Google sign-in and a signed-in progress strip showing the learner's current position.
 - Working links into the first lesson.
 - Favicons, mobile icons, a web manifest and social preview images.
 
-### Lesson 1.1, Context rot
+### Lesson 1.1, AI?
 
-The first lesson is live at `/course/basics/context-rot`. It now follows the intended lesson template:
+The first lesson is live at `/course/basics/ai`. It introduces a non-technical learner to AI as a family of tools that can work with language, images, code and other information. It covers browser chats (ChatGPT, Claude and Gemini), project folders, IDEs such as VS Code and Cursor, and more agent-led tools.
+
+- Section 1 explains that AI is a useful first-pass assistant rather than a magic box, why agentic AI has lowered the threshold for making software, and why a fast first version is not the same as a useful product.
+- It explicitly frames the course as building workflows that reduce hallucinations: keep important facts outside a chat, give the model suitable context and make its work checkable.
+- Section 2 explains models, settings, guardrails, training ranges and search as one way to reduce stale information.
+- Task 1 is a randomised matching exercise. Its visual connectors are measured from the actual cards, so the links stay accurate at desktop and mobile widths.
+- Task 2 orders browser chat, IDE and non-IDE agent setups. Both tasks use the full side-view surface, including the mobile bottom sheet.
+
+After every task is complete, the learner must use **Complete lesson · +100 XP**. This saves an explicit lesson completion timestamp, awards XP once, shows the pixel-style completion notice and unlocks the next lesson.
+
+### Lesson 1.2, Context rot
+
+The second lesson is live at `/course/basics/context-rot`. It follows the intended lesson template:
 
 - A large, readable course sidebar with all six planned chapters.
 - A sidebar open and close control.
 - A reading column with a title, sections, content and tasks.
 - One back-to-home control in the bottom-left lesson footer.
-- A disabled `Next lesson` button until all three tasks are complete. There is no Lesson 1.2 route yet.
+- A final **Complete lesson · +100 XP** action once all three tasks are complete. The bottom `Next lesson` control stays disabled until that explicit completion is saved. There is no built Lesson 1.3 route yet.
 - A resizable desktop side view and a mobile bottom sheet.
 - Side views stay closed until the learner starts the task that owns them.
 - Closing a side view leaves a `Resume task visual` control for the active task.
@@ -105,7 +118,7 @@ The three tasks are:
 2. `compare`: a web chat comparison. Learners switch between one large, growing course-launch GPT thread and a project view where each clean chat inherits only the shared project context. The Weeknight meals project is reserved for Task 3, so the examples do not repeat.
 3. `build`: a manual, click-through VS Code-style workspace, available only after the learner opens Task 3. It starts without `overview.md`, shows the file as the project source of truth, then shows a fresh Copilot-style chat asking `@overview.md` for a recipe and receiving a context-aware answer. There is no duplicate workspace preview in the reading section.
 
-Completing a task plays a brief success sound and confetti (unless the learner prefers reduced motion), then closes the task side view. Answers remain hidden until the learner has opened the task visual.
+Completing a task plays a brief success sound and confetti (unless the learner prefers reduced motion), then closes the task side view. Answers remain hidden until the learner has opened the task visual. Completing the lesson awards the separate 100 XP lesson reward once.
 
 The lesson uses the exact Chroma Repeated Words figure from `https://www.trychroma.com/research/context-rot`. The figure, Chroma source, ChatGPT, Claude, Gemini and the individual models named under the chart all link to their original websites. Saved research files are available in `references/context-rot/`.
 
@@ -130,10 +143,14 @@ Important files are:
 
 - `site/app/page.tsx`: homepage content and structure.
 - `site/app/globals.css`: homepage, lesson, responsive and visual styles.
-- `site/app/course/basics/context-rot/LessonClient.tsx`: lesson reading, tasks, progress state, sidebar and side-view controls, including the pointer-driven mobile bottom-sheet drag (open to full screen, half or closed) — see the mobile side-view note under Product direction before rebuilding this for another lesson.
+- `site/app/course/courseData.ts`: the shared six-chapter, 25-lesson course map and task totals.
+- `site/app/course/basics/ai/LessonClient.tsx` and `LessonVisuals.tsx`: Lesson 1.1 reading, two tasks, save state, responsive side view and actual-card-position matching connectors.
+- `site/app/course/basics/context-rot/LessonClient.tsx`: Lesson 1.2 reading, tasks, progress state, sidebar and side-view controls, including the pointer-driven mobile bottom-sheet drag (open to full screen, half or closed).
 - `site/app/course/basics/context-rot/LessonVisuals.tsx`: recipe chat, animated workflow comparison and `overview.md` workspace.
 - `site/app/components/AuthButton.tsx`: Google sign-in, name, profile photo and sign-out UI.
 - `site/app/components/SiteHeader.tsx`: the shared top navigation (brand, sign-in/profile, course CTA) rendered identically on the homepage and profile page — a genuine shared component, not two look-alike implementations.
+- `site/app/components/ExperienceBadge.tsx`: signed-in header level and XP display, refreshed after progress changes.
+- `site/app/components/LessonXpCelebration.tsx`: fixed, reduced-motion-aware pixel completion notice below the lesson header.
 - `site/app/components/PixelIcons.tsx`: shared hand-authored pixel-art SVG icons (arrow, spark, check, mascot), used across the homepage, profile page and `CourseProgress`.
 - `site/app/profile/ProfileClient.tsx`: signed-in learner profile, course overview and activity heatmap.
 - `site/app/profile/profile.module.css`: profile layout and responsive activity heatmap styling.
@@ -141,7 +158,7 @@ Important files are:
 - `site/design.md`: the pixel-art visual theme reference (palette, borders/shadows, icon technique, animation convention). Read before any homepage or profile styling change.
 - `site/lib/server/auth.ts`: OAuth cookies, sessions, profile lookup and D1 access.
 - `site/app/api/auth/`: Google login start, callback, current user and logout routes.
-- `site/app/api/progress/route.ts`: saved task progress for Lesson 1.1.
+- `site/app/api/progress/route.ts`: lesson-scoped saved progress, explicit lesson completion, XP state and an authenticated self-reset action for testing.
 - `site/db/schema.ts`: D1 schema for users, sessions and lesson progress.
 - `site/drizzle/0000_lively_sandman.sql`: current database migration.
 - `site/wrangler.jsonc`: Worker and D1 configuration.
@@ -190,9 +207,13 @@ The database has three tables:
 - `sessions`: hashed session ID, user ID and 30-day expiry.
 - `lesson_progress`: user ID, lesson ID, completed task IDs and last update time.
 
-`GET /api/progress` returns the signed-in user, completed tasks and daily activity. `PUT /api/progress` accepts only same-origin requests from a signed-in user, filters task IDs through an allow-list and upserts the result. The existing `completed_tasks` field stores a backward-compatible JSON value: legacy rows are task arrays; new rows use task IDs plus their completion timestamps. Legacy rows use their recorded `updated_at` time as the best available activity date so the profile does not show an empty history.
+`GET /api/progress` returns the signed-in user, lesson map, aggregate completed tasks, daily activity and server-derived experience. `PUT /api/progress` accepts only same-origin requests from a signed-in user, filters task IDs through a per-lesson allow-list and upserts the result. The existing `completed_tasks` field stores backward-compatible JSON: legacy rows are task arrays; current rows store task IDs, their completion timestamps, `lessonCompletedAt` and `xpAwarded`.
 
-Progress is currently limited to lesson ID `basics/context-rot` and task IDs `diagnose`, `compare` and `build`. The homepage divides these completed tasks by the planned total of 72, so it is only a temporary overall progress calculation. Started tasks, the currently open visual and sidebar preferences are local UI state and are not saved.
+The built allow-lists are `basics/ai` (`identify`, `order`) and `basics/context-rot` (`diagnose`, `compare`, `build`). A lesson must have all of its tasks and receive an explicit `completeLesson: true` request before it is marked complete. That operation is idempotent and awards 100 XP once. Current levels are chapter-based: 100 XP for every explicitly completed lesson in the chapter. The header badge, profile and completion notice all use the same server-derived experience.
+
+For the current test account only, the profile exposes **Reset test progress**. It calls the authenticated self-reset action, deletes only that account's `lesson_progress` rows and returns the profile to 0 tasks and 0 XP. It must not reset other users. Started tasks, open visuals and sidebar preferences remain local UI state.
+
+The course sidebar reads the lesson completion timestamps. A finished lesson gets a green highlight, ✓ and `COMPLETE`; a fully finished chapter gets the same treatment in its chapter header.
 
 ## Cloudflare and deployment
 
@@ -236,21 +257,20 @@ npm run lint
 npm test
 ```
 
-`npm test` builds the production application and runs two server-render tests for the homepage and Context rot lesson. These checks currently cover basic content and links, but they do not exercise OAuth, D1 or client-side visual interactions.
+`npm test` builds the production application and runs three server-render tests for the homepage, AI? and Context rot lessons. These checks cover basic content and links, but they do not exercise OAuth, D1 or client-side visual interactions.
 
 ## What still needs to be done
 
 The next work should be completed in this order:
 
-1. Build Lesson 1.2, `Your project brain`, using Lesson 1.1 as the layout and interaction template.
-2. Move the chapter, lesson and task definitions out of `LessonClient.tsx` into shared course data so each new route does not duplicate the whole shell.
-3. Generalise progress storage for every lesson and task. Replace the hardcoded `basics/context-rot` lesson ID, three-task allow-list and 72-task homepage calculation with data derived from the course map.
-4. Make sidebar lessons real links, then implement current, complete, available and locked states from saved progress.
-5. Connect the `Next lesson` button to Lesson 1.2 once that route exists.
-6. Add client-side interaction tests for starting each task, opening its assigned visual, switching Task 2 modes, saving progress and using the mobile bottom sheet.
-7. Add an authentication and D1 integration test path that does not require real Google credentials.
-8. Resolve the personal Cloudflare account and D1 ownership before allowing manual deployments. Keep using the GitHub-connected deployment until then.
-9. Write the remaining 23 lessons and their tasks. Keep each lesson grounded in original sources, and link named products, models, research and images to their original pages.
+1. Build Lesson 1.3, `Your project brain`, using the AI? and Context rot shells as the template.
+2. Extract the duplicated lesson shell and sidebar into shared course components before more lesson routes are added.
+3. Extend the lesson allow-list and progress integration when each new lesson is built. Keep task IDs unique within a lesson and retain the explicit final completion step.
+4. Connect the Context rot `Next lesson` control to Lesson 1.3 when that route exists, then make availability follow saved lesson completion rather than static paths.
+5. Add client-side interaction tests for matching links, task completion, lesson completion/XP, the fixed notice position and the mobile bottom sheet.
+6. Add an authentication and D1 integration test path that does not require real Google credentials.
+7. Resolve the personal Cloudflare account and D1 ownership before allowing manual deployments. Keep using the GitHub-connected deployment until then.
+8. Write the remaining 23 lessons and their tasks. Keep each lesson grounded in original sources, and link named products, models, research and images to their original pages.
 
 There is a profile page at `/profile`, reached by clicking the signed-in profile in the top navigation. It shows the active AI workflows course, task count, 12-week activity heatmap and links back into the first lesson. There is no admin interface, content management system, payment system, analytics service or video library. Do not add these unless the owner asks for them.
 
@@ -264,4 +284,4 @@ Use sub-agents in every new chat whenever the work can be divided into independe
 
 Before changing course copy, use `stop-slopv4`. Before changing the homepage or profile page's visual styling, read `site/design.md` first and reuse its values rather than inventing new ones. Before changing the website, use the site-building instructions. Test the production build and lint before pushing. Publish through `git push origin main`, then confirm the connected Worker updated with a read-only request. Do not use the local Wrangler session while it points at Hero Enterprise.
 
-If no more specific task has been given, the next concrete job is to design and build Lesson 1.2, `Your project brain`, while first extracting the shared lesson shell and course map so the next 22 lessons are easier to add.
+If no more specific task has been given, the next concrete job is to design and build Lesson 1.3, `Your project brain`, while first extracting the shared lesson shell so the remaining lessons are easier to add.

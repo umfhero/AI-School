@@ -166,12 +166,9 @@ button,a { font:inherit; }
   letter-spacing: -.025em;
 }
 
-.site-brand img {
-  width: 34px;
-  height: 34px;
-  object-fit: contain;
-  filter: drop-shadow(0 0 12px rgba(98, 116, 233, .22));
-}
+.site-brand .brand-star { width: 34px; height: 34px; flex: 0 0 auto; color: var(--home-blue); }
+@media (prefers-reduced-motion: no-preference) { .site-brand .brand-star { animation: brand-star-colour 2.4s steps(3,end) infinite; } }
+@keyframes brand-star-colour { 0%,100% { color: var(--home-blue); } 34% { color: var(--home-violet); } 67% { color: var(--home-pink); } }
 
 .site-brand b { font-size: .95rem; }
 .home-nav-links { gap: 8px; }
@@ -301,6 +298,9 @@ button,a { font:inherit; }
   display: inline-block;
   padding-right: .16em;
 }
+.home-page .home-hero h1 .properly-normal { letter-spacing: -.073em; }
+.home-page .home-hero h1 .properly-transition { display: inline-block; margin-left: .015em; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: .93em; font-weight: 900; letter-spacing: -.1em; text-shadow: 1px 1px 0 rgba(98,88,233,.35); }
+.home-page .home-hero h1 .properly-pixel { display: inline-block; width: 1.28em; height: .66em; margin-left: .09em; vertical-align: .02em; color: var(--home-violet); }
 .home-page .home-hero h1 .properly-spark {
   position: absolute;
   top: -.20em;

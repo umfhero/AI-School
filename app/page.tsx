@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import CourseProgress from "./components/CourseProgress";
 import SiteHeader from "./components/SiteHeader";
-import { PixelArrow, PixelSpark, PixelCheck, PixelMascot } from "./components/PixelIcons";
+import { PixelArrow, PixelSpark, PixelCheck, PixelMascot, PixelBrandStar, PixelWord } from "./components/PixelIcons";
 
 export const metadata: Metadata = {
   title: "AI school | Build properly with AI",
@@ -14,8 +14,8 @@ export const metadata: Metadata = {
 
 function Brand() {
   return (
-    <a className="site-brand" href="/" aria-label="AI school home">
-      <Image src="/ai-workflows-icon.png" alt="" width={34} height={34} priority />
+      <a className="site-brand" href="/" aria-label="AI school home">
+      <PixelBrandStar className="brand-star" />
       <b>AI school</b>
     </a>
   );
@@ -30,7 +30,7 @@ export default function Home() {
         <div className="hero-ambient" aria-hidden="true" />
         <div className="home-hero-copy">
           <h1>
-            Build serious projects with AI, <em className="properly">properly.<PixelSpark className="properly-spark" /></em>
+            Build serious projects with AI, <em className="properly" aria-label="properly."><span className="properly-normal" aria-hidden="true">pro</span><span className="properly-transition" aria-hidden="true">per</span><PixelWord text="ly." className="properly-pixel" /><PixelSpark className="properly-spark" /></em>
           </h1>
           <p>
             Learn the workflow behind substantial AI work from project memory and model choice to agents,

@@ -45,6 +45,46 @@ export function PixelSpark({ className = "" }: { className?: string }) {
   );
 }
 
+export function PixelBrandStar({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      className={`pixel-icon pixel-brand-star ${className}`.trim()}
+      viewBox="0 0 9 9"
+      width="34"
+      height="34"
+      fill="currentColor"
+      aria-hidden="true"
+      focusable="false"
+      shapeRendering="crispEdges"
+    >
+      <rect x="4" y="0" width="1" height="2" />
+      <rect x="3" y="2" width="3" height="1" />
+      <rect x="1" y="3" width="7" height="1" />
+      <rect x="0" y="4" width="9" height="1" />
+      <rect x="1" y="5" width="7" height="1" />
+      <rect x="3" y="6" width="3" height="1" />
+      <rect x="4" y="7" width="1" height="2" />
+    </svg>
+  );
+}
+
+const pixelGlyphs: Record<string, string[]> = {
+  l: ["100", "100", "100", "100", "100", "100", "111"],
+  y: ["10001", "10001", "01010", "00100", "00100", "01000", "10000"],
+  ".": ["0", "0", "0", "0", "0", "1", "1"],
+};
+
+export function PixelWord({ text, className = "" }: { text: string; className?: string }) {
+  let cursor = 0;
+  const glyphs = [...text].flatMap((character, characterIndex) => {
+    const glyph = pixelGlyphs[character] ?? pixelGlyphs["."];
+    const start = cursor;
+    cursor += glyph[0].length + (characterIndex === text.length - 1 ? 0 : 1);
+    return glyph.flatMap((row, y) => [...row].flatMap((pixel, x) => pixel === "1" ? [<rect key={`${characterIndex}-${x}-${y}`} x={start + x} y={y} width="1" height="1" />] : []));
+  });
+  return <svg className={`pixel-icon pixel-word ${className}`.trim()} viewBox={`0 0 ${cursor} 7`} fill="currentColor" aria-hidden="true" focusable="false" shapeRendering="crispEdges">{glyphs}</svg>;
+}
+
 export function PixelCheck({ className = "" }: { className?: string }) {
   return (
     <svg
