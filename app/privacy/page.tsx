@@ -35,7 +35,7 @@ export default function PrivacyPage() {
       </section>
       <section>
         <h2>Your choices and rights</h2>
-        <p>You can ask for access, correction, deletion, restriction, portability or an explanation of how your information is used. Your signed-in profile includes self-service download and deletion controls. For another request, use the Contact Majid button in the footer. We may need to confirm that a request is yours before acting on it.</p>
+        <p>You can ask for access, correction, deletion, restriction, portability or an explanation of how your information is used. Your signed-in profile includes self-service download and deletion controls. For another request, use the Contact team link in the footer. We may need to confirm that a request is yours before acting on it.</p>
       </section>
       <section>
         <h2>Cookies</h2>

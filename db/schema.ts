@@ -10,6 +10,12 @@ export const users = sqliteTable("users", {
   updatedAt: integer("updated_at").notNull(),
 });
 
+export const termsAcceptance = sqliteTable("terms_acceptance", {
+  userId: text("user_id").primaryKey().references(() => users.id, { onDelete: "cascade" }),
+  version: text("version").notNull(),
+  acceptedAt: integer("accepted_at").notNull(),
+});
+
 export const sessions = sqliteTable("sessions", {
   id: text("id").primaryKey(),
   userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),

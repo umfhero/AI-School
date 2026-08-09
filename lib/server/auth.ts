@@ -4,6 +4,7 @@ const SESSION_COOKIE = "aw_session";
 const OAUTH_STATE_COOKIE = "aw_oauth_state";
 const OAUTH_VERIFIER_COOKIE = "aw_oauth_verifier";
 const OAUTH_RETURN_COOKIE = "aw_oauth_return";
+const OAUTH_TERMS_COOKIE = "aw_oauth_terms";
 const SESSION_SECONDS = 60 * 60 * 24 * 30;
 const OAUTH_SECONDS = 60 * 10;
 
@@ -18,6 +19,8 @@ export type SessionUser = {
   email: string;
   name: string;
   pictureUrl: string | null;
+  termsVersion: string | null;
+  termsAcceptedAt: number | null;
 };
 
 export type GoogleProfile = {
@@ -32,10 +35,24 @@ function workerEnv(): WorkerEnv {
   return env as unknown as WorkerEnv;
 }
 
+let termsTableReady: Promise<void> | null = null;
+
 export function database(): D1Database {
   const db = workerEnv().DB;
   if (!db) throw new Error("The Cloudflare D1 binding `DB` is unavailable.");
   return db;
+}
+
+export function ensureTermsTable() {
+  if (!termsTableReady) {
+    termsTableReady = database().prepare(
+      "CREATE TABLE IF NOT EXISTS terms_acceptance (user_id text PRIMARY KEY NOT NULL, version text NOT NULL, accepted_at integer NOT NULL, FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE)",
+    ).run().then(() => undefined).catch((error) => {
+      termsTableReady = null;
+      throw error;
+    });
+  }
+  return termsTableReady;
 }
 
 export function googleCredentials() {
@@ -81,16 +98,17 @@ function cookie(name: string, value: string, request: Request, maxAge?: number) 
   return `${name}=${encodeURIComponent(value)}; Path=/; HttpOnly; SameSite=Lax${lifetime}${secure}`;
 }
 
-export function oauthCookies(request: Request, state: string, verifier: string, returnTo: string) {
+export function oauthCookies(request: Request, state: string, verifier: string, returnTo: string, termsVersion: string) {
   return [
     cookie(OAUTH_STATE_COOKIE, state, request, OAUTH_SECONDS),
     cookie(OAUTH_VERIFIER_COOKIE, verifier, request, OAUTH_SECONDS),
     cookie(OAUTH_RETURN_COOKIE, returnTo, request, OAUTH_SECONDS),
+    cookie(OAUTH_TERMS_COOKIE, termsVersion, request, OAUTH_SECONDS),
   ];
 }
 
 export function clearOauthCookies(request: Request) {
-  return [OAUTH_STATE_COOKIE, OAUTH_VERIFIER_COOKIE, OAUTH_RETURN_COOKIE].map((name) => cookie(name, "", request, 0));
+  return [OAUTH_STATE_COOKIE, OAUTH_VERIFIER_COOKIE, OAUTH_RETURN_COOKIE, OAUTH_TERMS_COOKIE].map((name) => cookie(name, "", request, 0));
 }
 
 export function sessionCookie(request: Request, token: string) {
@@ -106,6 +124,7 @@ export function oauthState(request: Request) {
     state: readCookie(request, OAUTH_STATE_COOKIE),
     verifier: readCookie(request, OAUTH_VERIFIER_COOKIE),
     returnTo: safeReturnPath(readCookie(request, OAUTH_RETURN_COOKIE)),
+    termsVersion: readCookie(request, OAUTH_TERMS_COOKIE),
   };
 }
 
@@ -151,12 +170,16 @@ export async function getSessionUser(request: Request): Promise<SessionUser | nu
   const id = await sha256(token);
   const row = await database().prepare(
     "SELECT users.id, users.email, users.name, users.picture_url AS pictureUrl FROM sessions JOIN users ON users.id = sessions.user_id WHERE sessions.id = ? AND sessions.expires_at > ?",
-  ).bind(id, now).first<SessionUser>();
+  ).bind(id, now).first<Omit<SessionUser, "termsVersion" | "termsAcceptedAt">>();
   if (!row) await database().prepare("DELETE FROM sessions WHERE id = ?").bind(id).run();
-  return row ?? null;
+  if (!row) return null;
+  await ensureTermsTable();
+  const acceptance = await database().prepare("SELECT version, accepted_at AS acceptedAt FROM terms_acceptance WHERE user_id = ?")
+    .bind(row.id).first<{ version: string; acceptedAt: number }>();
+  return { ...row, termsVersion: acceptance?.version ?? null, termsAcceptedAt: acceptance?.acceptedAt ?? null };
 }
 
-export async function upsertGoogleUser(profile: GoogleProfile) {
+export async function upsertGoogleUser(profile: GoogleProfile, acceptedTermsVersion?: string) {
   if (!profile.sub || !profile.email || profile.email_verified === false) {
     throw new Error("Google did not return a verified email address.");
   }
@@ -168,5 +191,10 @@ export async function upsertGoogleUser(profile: GoogleProfile) {
   await db.prepare(
     "INSERT INTO users (id, google_sub, email, name, picture_url, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT(google_sub) DO UPDATE SET email = excluded.email, name = excluded.name, picture_url = excluded.picture_url, updated_at = excluded.updated_at",
   ).bind(id, profile.sub, profile.email, name, profile.picture ?? null, now, now).run();
+  if (acceptedTermsVersion) {
+    await ensureTermsTable();
+    await db.prepare("INSERT INTO terms_acceptance (user_id, version, accepted_at) VALUES (?, ?, ?) ON CONFLICT(user_id) DO UPDATE SET version = excluded.version, accepted_at = excluded.accepted_at")
+      .bind(id, acceptedTermsVersion, now).run();
+  }
   return id;
 }

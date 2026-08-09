@@ -8,6 +8,7 @@ import {
   upsertGoogleUser,
   type GoogleProfile,
 } from "@/lib/server/auth";
+import { TERMS_VERSION } from "@/lib/terms";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -43,7 +44,7 @@ export async function GET(request: Request) {
     });
     if (!profileResponse.ok) throw new Error("Google profile lookup failed.");
     const profile = await profileResponse.json() as GoogleProfile;
-    const userId = await upsertGoogleUser(profile);
+    const userId = await upsertGoogleUser(profile, stored.termsVersion === TERMS_VERSION ? TERMS_VERSION : undefined);
     const token = await createSession(userId);
 
     const headers = new Headers({ Location: new URL(stored.returnTo, url.origin).toString(), "Cache-Control": "no-store" });

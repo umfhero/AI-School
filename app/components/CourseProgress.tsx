@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { getLesson, totalCourseLessons, totalCourseTasks } from "../course/courseData";
 import { PixelArrow } from "./PixelIcons";
+import AuthButton from "./AuthButton";
 
 type ProgressResponse = {
   user: { name: string } | null;
@@ -46,7 +47,7 @@ export default function CourseProgress() {
     return (
       <section className="home-progress home-progress-message" aria-label="Course progress">
         <div><span>YOUR COURSE PROGRESS</span><b>Pick up where you left off on any device.</b></div>
-        <a href="/api/auth/google/start?returnTo=%2F">Sign in with Google to track progress <PixelArrow /></a>
+        <AuthButton className="course-progress-sign-in" actionLabel="Sign in with Google to track progress" />
       </section>
     );
   }

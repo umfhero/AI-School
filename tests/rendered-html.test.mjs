@@ -89,3 +89,10 @@ test("server-renders the privacy and terms pages", async () => {
   assert.equal(terms.status, 200);
   assert.match(await terms.text(), /Terms of use/i);
 });
+
+test("routes team contact through a non-indexed compose link", async () => {
+  const response = await render("/contact");
+  assert.equal(response.status, 302);
+  assert.match(response.headers.get("location") ?? "", /^https:\/\/mail\.google\.com\/mail\//);
+  assert.equal(response.headers.get("x-robots-tag"), "noindex, nofollow");
+});

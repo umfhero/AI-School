@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import styles from "./profile.module.css";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
+import AuthButton from "../components/AuthButton";
 import { PixelArrow, PixelSpark } from "../components/PixelIcons";
 import { chapterTaskCount, courseChapters, getLesson, totalCourseTasks, type CourseChapter } from "../course/courseData";
 import { getExperience, type Experience } from "../lib/experience";
@@ -174,7 +175,7 @@ export default function ProfileClient() {
   }
 
   if (isLoading) return <main className={styles.page}><SiteHeader /><div className={styles.loading}>Loading your learning profile…</div></main>;
-  if (!progress?.user) return <main className={styles.page} id="top"><SiteHeader /><section className={styles.signedOut}><p className={styles.eyebrow}>YOUR AI SCHOOL</p><h1>Your learning profile is waiting.</h1><p>Sign in to keep your course progress and build a daily learning streak.</p><a href="/api/auth/google/start?returnTo=%2Fprofile">Sign in with Google <PixelArrow /></a><a href="/">Back to AI school</a></section><SiteFooter /></main>;
+  if (!progress?.user) return <main className={styles.page} id="top"><SiteHeader /><section className={styles.signedOut}><p className={styles.eyebrow}>YOUR AI SCHOOL</p><h1>Your learning profile is waiting.</h1><p>Sign in to keep your course progress and build a daily learning streak.</p><AuthButton returnTo="/profile" className={styles.profileSignIn} actionLabel="Sign in with Google" /><a href="/">Back to AI school</a></section><SiteFooter /></main>;
 
   const avatarStyle = progress.user.pictureUrl ? { backgroundImage: `url(${progress.user.pictureUrl})` } : undefined;
   return <main className={styles.page} id="top">

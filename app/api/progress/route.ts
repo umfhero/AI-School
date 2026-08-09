@@ -1,6 +1,7 @@
 import { database, getSessionUser, isSameOrigin, noStoreJson } from "@/lib/server/auth";
 import { getLesson } from "@/app/course/courseData";
 import { getExperience } from "@/app/lib/experience";
+import { hasAcceptedCurrentTerms } from "@/lib/terms";
 
 const allowedTasksByLesson: Record<string, Set<string>> = {
   "basics/ai": new Set(["identify", "order"]),
@@ -37,6 +38,7 @@ export async function PUT(request: Request) {
   try {
     const user = await getSessionUser(request);
     if (!user) return noStoreJson({ error: "Sign in to save progress." }, { status: 401 });
+    if (!hasAcceptedCurrentTerms(user.termsVersion)) return noStoreJson({ error: "Accept the current terms to save progress." }, { status: 428 });
     const payload = await request.json() as { lessonId?: unknown; completedTasks?: unknown; completeLesson?: unknown; resetProgress?: unknown };
     if (payload.resetProgress === true) {
       await database().prepare("DELETE FROM lesson_progress WHERE user_id = ?").bind(user.id).run();
