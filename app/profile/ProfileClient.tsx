@@ -114,6 +114,7 @@ function CourseProgress({ completedTasks, lessons }: { completedTasks: number; l
 export default function ProfileClient() {
   const [progress, setProgress] = useState<Progress | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [resettingTestProgress, setResettingTestProgress] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -141,6 +142,21 @@ export default function ProfileClient() {
   let dayStreak = 0;
   for (let date = new Date(); activity[localDateKey(date)] > 0; date.setDate(date.getDate() - 1)) dayStreak += 1;
   const initial = useMemo(() => progress?.user?.name?.trim().charAt(0).toUpperCase() || "A", [progress?.user?.name]);
+  const canResetTestProgress = progress?.user?.email.toLowerCase() === "umfhero@gmail.com";
+
+  async function resetTestProgress() {
+    if (!canResetTestProgress || resettingTestProgress) return;
+    setResettingTestProgress(true);
+    try {
+      const response = await fetch("/api/progress", { method: "PUT", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ resetProgress: true }) });
+      if (!response.ok) throw new Error("Reset failed");
+      const data = await response.json() as Pick<Progress, "completedTasks" | "lessons" | "activity" | "experience">;
+      setProgress((current) => current ? { ...current, ...data } : current);
+      window.dispatchEvent(new Event("progress-changed"));
+    } finally {
+      setResettingTestProgress(false);
+    }
+  }
 
   if (isLoading) return <main className={styles.page}><SiteHeader /><div className={styles.loading}>Loading your learning profile…</div></main>;
   if (!progress?.user) return <main className={styles.page}><SiteHeader /><section className={styles.signedOut}><p className={styles.eyebrow}>YOUR AI SCHOOL</p><h1>Your learning profile is waiting.</h1><p>Sign in to keep your course progress and build a daily learning streak.</p><a href="/api/auth/google/start?returnTo=%2Fprofile">Sign in with Google <PixelArrow /></a><a href="/">Back to AI school</a></section></main>;
@@ -154,6 +170,7 @@ export default function ProfileClient() {
         <div className={styles.identity}><span className={styles.avatar} style={avatarStyle}>{progress.user.pictureUrl ? null : initial}</span><div><p className={styles.eyebrow}>LEARNER PROFILE</p><h1>{progress.user.name}</h1><p>{progress.user.email}</p></div></div>
         <div className={styles.stat}><strong>{completedTasks}</strong><span>tasks completed</span></div>
         <div className={styles.stat}><strong>{dayStreak}</strong><span>day streak</span></div>
+        {canResetTestProgress ? <button className={styles.testReset} type="button" onClick={resetTestProgress} disabled={resettingTestProgress}>{resettingTestProgress ? "Resetting…" : "Reset test progress"}</button> : null}
       </div>
       <div className={styles.levelBar}>
         <div className={styles.levelPill}><PixelSpark className={styles.levelIcon} /><span>LV {level.level}</span></div>
