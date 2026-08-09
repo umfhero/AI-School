@@ -17,6 +17,7 @@ export function SetupMatchingVisual({ onComplete }: { onComplete: () => void }) 
   const [selectedLeft, setSelectedLeft] = useState<string | null>(null);
   const [matches, setMatches] = useState<Record<string, string>>({});
   const [checked, setChecked] = useState(false);
+  const [rightOptions] = useState(() => [...matchingPairs].sort(() => Math.random() - 0.5));
 
   const correctCount = matchingPairs.filter((pair) => matches[pair.left] === pair.right).length;
   const allMatched = Object.keys(matches).length === matchingPairs.length;
@@ -35,17 +36,27 @@ export function SetupMatchingVisual({ onComplete }: { onComplete: () => void }) 
 
   return <div className="ai-match-visual">
     <header><span>Task 01</span><b>Connect each setup to the right description.</b><small>Select a card on the left, then its match on the right.</small></header>
+    <div className="ai-match-board">
+      <svg className="ai-match-connections" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        {matchingPairs.map((pair, leftIndex) => {
+          const rightIndex = rightOptions.findIndex((option) => option.right === matches[pair.left]);
+          if (rightIndex < 0) return null;
+          const leftY = 12.5 + leftIndex * 25;
+          const rightY = 12.5 + rightIndex * 25;
+          return <path key={pair.left} d={`M 42 ${leftY} C 48 ${leftY}, 52 ${rightY}, 58 ${rightY}`} />;
+        })}
+      </svg>
     <div className="ai-match-columns">
       <div className="ai-match-stack" aria-label="AI setup types">
         {matchingPairs.map((pair) => <button key={pair.left} type="button" className={`${selectedLeft === pair.left ? "selected" : ""} ${matches[pair.left] ? "linked" : ""}`} onClick={() => { setSelectedLeft(pair.left); setChecked(false); }}><span>{matches[pair.left] ? "Linked" : "Choose"}</span>{pair.left}</button>)}
       </div>
-      <div className="ai-match-line" aria-hidden="true"><span /></div>
       <div className="ai-match-stack answers" aria-label="Setup descriptions">
-        {matchingPairs.map((pair) => {
+        {rightOptions.map((pair) => {
           const taken = Object.values(matches).includes(pair.right);
           return <button key={pair.right} type="button" disabled={!selectedLeft || taken} className={checked && Object.entries(matches).some(([left, right]) => left === pair.left && right === pair.right) ? "right" : ""} onClick={() => selectRight(pair.right)}>{pair.right}</button>;
         })}
       </div>
+    </div>
     </div>
     <footer><div><b>{checked ? `${correctCount} / 4 correct` : `${Object.keys(matches).length} / 4 linked`}</b><span>{checked && correctCount < 4 ? "Adjust the links and check again." : ""}</span></div><button type="button" disabled={!allMatched} onClick={checkMatches}>{checked && correctCount === 4 ? "Task complete" : "Check matches"}</button></footer>
   </div>;
