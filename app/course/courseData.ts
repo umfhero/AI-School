@@ -31,7 +31,7 @@ export const courseChapters: CourseChapter[] = [
       { id: "basics/context-rot", title: "Context rot", path: "/course/basics/context-rot", taskCount: 3 },
       { id: "basics/project-brain", title: "Your project brain", path: "/course/basics/project-brain", taskCount: 3 },
       { id: "basics/files-handovers", title: "Files and handovers", path: "/course/basics/files-handovers", taskCount: 3 },
-      { id: "basics/clean-workflow", title: "A clean first workflow", taskCount: 3 },
+      { id: "basics/clean-workflow", title: "A clean first workflow", path: "/course/basics/clean-workflow", taskCount: 3 },
     ],
   },
   { title: "Pick the right model", lessons: [
