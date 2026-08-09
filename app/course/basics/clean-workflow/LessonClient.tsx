@@ -315,45 +315,62 @@ export default function CleanWorkflowLessonClient() {
           </div>
         </article>
         {open ? (
+          <div className="lesson-resize-handle" aria-hidden="true">
+            <span>⋮</span>
+          </div>
+        ) : null}
+        {open ? (
           <aside
-            className="lesson-visual workflow-quiz"
+            className="lesson-visual context-visual workflow-quiz"
             aria-label="Chapter 1 quiz"
           >
-            <header>
-              <span>CHAPTER 01 QUIZ</span>
-              <button type="button" onClick={() => setOpen(false)}>
+            <header className="visual-switcher task-visual-header">
+              <div>
+                <span>Side view</span>
+                <b>Chapter 1 quiz</b>
+              </div>
+              <span className="task-visual-context">80% to pass</span>
+              <button
+                className="close-visual"
+                type="button"
+                onClick={() => setOpen(false)}
+                aria-label="Close chapter quiz"
+              >
                 ×
               </button>
             </header>
-            {questions.map(([text], i) => (
-              <div className="quiz-question" key={text}>
-                <b>
-                  {i + 1}. {text}
-                </b>
-                <div>
-                  <button
-                    className={answers[i] === true ? "selected" : ""}
-                    onClick={() => setAnswers({ ...answers, [i]: true })}
-                  >
-                    True
-                  </button>
-                  <button
-                    className={answers[i] === false ? "selected" : ""}
-                    onClick={() => setAnswers({ ...answers, [i]: false })}
-                  >
-                    False
-                  </button>
+            <div className="workflow-quiz-content">
+              <p>Answer all five questions, then submit your quiz.</p>
+              {questions.map(([text], i) => (
+                <div className="quiz-question" key={text}>
+                  <b>
+                    {i + 1}. {text}
+                  </b>
+                  <div>
+                    <button
+                      className={answers[i] === true ? "selected" : ""}
+                      onClick={() => setAnswers({ ...answers, [i]: true })}
+                    >
+                      True
+                    </button>
+                    <button
+                      className={answers[i] === false ? "selected" : ""}
+                      onClick={() => setAnswers({ ...answers, [i]: false })}
+                    >
+                      False
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
-            <button
-              className="complete-lesson-button"
-              type="button"
-              disabled={Object.keys(answers).length !== 5}
-              onClick={passQuiz}
-            >
-              Submit quiz
-            </button>
+              ))}
+              <button
+                className="complete-lesson-button"
+                type="button"
+                disabled={Object.keys(answers).length !== 5}
+                onClick={passQuiz}
+              >
+                Submit quiz
+              </button>
+            </div>
           </aside>
         ) : null}
       </div>
