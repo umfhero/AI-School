@@ -8,6 +8,28 @@ Read this file first. It is an internal routing guide, not public documentation.
 - The live site is `https://ai-workflow.umfhero-961.workers.dev/`. The app root is this repository.
 - Stack: React, TypeScript, Vinext, Cloudflare Workers, D1 and Google OAuth.
 
+## Cloudflare Free-tier capacity constraints
+
+These are hard operating constraints, not aspirational targets. Recalculate the per-user figures before adding any API call, database query, polling, analytics, public counter, upload or social feature. All limits are shared across the Cloudflare account, reset at **00:00 UTC** where stated, and traffic spikes do not carry into a quieter day.
+
+| Resource | Free-plan limit | Planning rule for AI school |
+| --- | ---: | --- |
+| Worker invocations | 100,000/day | Plan for **5,000 daily active learning sessions** at most, keeping roughly 50% headroom for public visitors, crawlers, retries and spikes. Around 10,000 DAU is fragile; never treat the 100,000-request ceiling as usable capacity. |
+| D1 rows read | 5,000,000/day | Indexed account/progress use is normally not the first limit. Avoid scans, unbounded lists, `COUNT(*)` on growing tables, and per-visit analytics queries. |
+| D1 rows written | 100,000/day | A typical completed lesson currently causes several progress saves. Batch/debounce new high-frequency writes and account for index writes. |
+| D1 storage | 5 GB total | Current text-only accounts and progress are likely sustainable for roughly 0.5–1 million accounts, not indefinitely. Tables **and indexes** count. Sessions accumulate unless deliberately cleaned up. |
+
+- Static asset requests are free; SSR pages and API routes consume Worker invocations. Do not make a public page dynamic or add client API calls without adding them to the request estimate.
+- A typical signed-in lesson session currently makes approximately 8–12 Worker invocations, 20–40 D1 row reads and 4–8 D1 row writes. Treat these as a baseline to update, not a guarantee.
+- D1 does not have a monthly free allowance to smooth usage: the practical capacity is determined by the busiest day. As a loose guide, a 5,000-DAU service supports roughly 15,000–40,000 MAU depending on how often learners return.
+
+### Public counts, caching and failure safety
+
+- `GET /api/community` powers the homepage “signed up” number. Its response must remain a public aggregate only: never add emails, identities or other account data, and do not cache personal API responses.
+- The direct `SELECT COUNT(*) FROM users` is safe for the current small audience but can become a D1 read bottleneck as the users table grows. Before audience growth, replace it with a pre-computed public aggregate or a **deployment-verified** cache with a direct-D1 fallback.
+- Do **not** make the count dependent on `caches.default` in this Vinext Worker without proving the exact deployed route works. An unverified Cache API integration caused a production `1101 Worker threw exception`, leaving the homepage stuck on “... signed up”. A cache outage must degrade to a fresh count, never a failed endpoint.
+- After any change to this route, verify both `/api/community` returns JSON and the live homepage resolves the count. A successful Git push is not proof that the connected Cloudflare build is serving the new Worker.
+
 ## Required reading by task
 
 | If the task involves… | Read first | Why |
@@ -31,4 +53,5 @@ Read more than one document whenever the change crosses boundaries. For example,
 - Run `npm test` and relevant lint checks before publishing. For every new or changed lesson shell, also inspect the live lesson in a browser: confirm the contents toggle is visible, closes the sidebar, reopens it and correctly changes its accessible label between “Hide contents” and “Show contents”.
 - **Shared-work rule:** before starting work, sync with `main`. Once a feature is complete and its relevant checks pass, make one intentional commit and push it to `main` before handing off. Do not bundle another contributor's unrelated work, force-push, or leave a finished feature only on one machine; this keeps the shared baseline current and reduces merge conflicts.
 - Production deploys through `git push origin main` and the connected GitHub build. Do **not** run Wrangler deployment commands or mutate the Cloudflare account: local Wrangler is linked to the employee account named **Hero Enterprise**.
+- A release is complete only after the live route/page affected by the change has been checked. If the public site shows a Cloudflare `1101` error, do not assume a later push has deployed; inspect the connected build or ask the owner to trigger/review it. Do not use local Wrangler to work around it.
 - Do not enable paid Cloudflare products. If a change needs new external authority, credentials, spending or a legal decision, stop and ask the owner.
