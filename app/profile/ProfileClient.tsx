@@ -132,7 +132,7 @@ export default function ProfileClient() {
   const lessons = progress?.lessons ?? {};
   const nextLesson = getCourseResumeLesson(lessons);
   const nextTitle = nextLesson.title;
-  const nextCopy = nextLesson.id === "intro" ? "See how the course is organised, who it is for and the workflow habits you will practise." : nextLesson.id === "basics/ai" ? "Start with what AI is, where people use it and how a project grows from a chat into a workspace." : nextLesson.id === "basics/context-rot" ? "Learn why a long chat starts losing the thread and how to prevent it." : "Learn how a short project overview keeps important context in one place.";
+  const nextCopy = nextLesson.id === "intro" ? "See how the course is organised, who it is for and the workflow habits you will practise." : nextLesson.id === "basics/ai" ? "Start with what AI is, where people use it and how a project grows from a chat into a workspace." : nextLesson.id === "basics/context-rot" ? "Learn why a long chat starts losing the thread and how to prevent it." : nextLesson.id === "basics/project-brain" ? "Learn how a short project overview keeps important context in one place." : "Learn how files and handovers make work understandable after a break.";
   const nextHref = nextLesson.path;
   const level = progress?.experience ?? getExperience(lessons);
   const activity = progress?.activity ?? {};

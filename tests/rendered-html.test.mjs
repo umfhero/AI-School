@@ -91,6 +91,16 @@ test("server-renders the project brain lesson", async () => {
   assert.match(html, /not sent to your account/i);
 });
 
+test("server-renders the files and handovers lesson", async () => {
+  const response = await render("/course/basics/files-handovers");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /Files and handovers/i);
+  assert.match(html, /Give each kind of information a home/i);
+  assert.match(html, /TASK 03 · WRITE A HANDOVER/i);
+  assert.match(html, /not sent to your account/i);
+});
+
 test("publishes crawl and AI-discovery files for the active host", async () => {
   const robots = await render("/robots.txt");
   assert.equal(robots.status, 200);

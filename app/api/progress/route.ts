@@ -8,6 +8,7 @@ const allowedTasksByLesson: Record<string, Set<string>> = {
   "basics/ai": new Set(["identify", "order"]),
   "basics/context-rot": new Set(["diagnose", "compare", "build"]),
   "basics/project-brain": new Set(["identify", "maintain", "draft"]),
+  "basics/files-handovers": new Set(["places", "record", "handover"]),
 };
 
 export async function GET(request: Request) {
