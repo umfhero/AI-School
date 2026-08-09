@@ -1,30 +1,66 @@
-/* eslint-disable @next/next/no-html-link-for-pages -- Native navigation is required by the deployed Vinext Worker router. */
-
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import Image from "next/image";
 import CourseProgress from "./components/CourseProgress";
+import SiteFooter from "./components/SiteFooter";
 import SiteHeader from "./components/SiteHeader";
 import SignupCount from "./components/SignupCount";
 import { PixelArrow, PixelSpark, PixelCheck, PixelMascot, PixelWord } from "./components/PixelIcons";
 
 export const metadata: Metadata = {
-  title: "AI school | Build properly with AI",
+  title: "Free course for building projects with AI",
   description:
-    "A free, visual course that takes you from your first AI project to agents, skills and parallel workflows.",
+    "Learn how to build reliable AI projects with project memory, model choice, agents, reusable skills and parallel workflows. Free, visual and made for beginners.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "AI school | Free course for building projects with AI",
+    description: "Learn practical AI workflows, from project memory and model choice to agents, skills and parallel work.",
+    url: "/",
+  },
 };
 
-function Brand() {
-  return (
-      <a className="site-brand" href="/" aria-label="AI school home">
-      <PixelSpark className="brand-star" />
-      <b>AI school</b>
-    </a>
-  );
-}
+export default async function Home() {
+  const requestHeaders = await headers();
+  const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host") ?? "ai-workflow.umfhero-961.workers.dev";
+  const protocol = requestHeaders.get("x-forwarded-proto") ?? "https";
+  const siteUrl = `${protocol}://${host}`;
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": `${siteUrl}/#organisation`,
+        name: "AI school",
+        url: siteUrl,
+        logo: `${siteUrl}/icon-512.png`,
+        sameAs: ["https://github.com/umfhero/AI-workflow"],
+      },
+      {
+        "@type": "Course",
+        "@id": `${siteUrl}/#course`,
+        name: "AI workflow course",
+        description: "A free visual course for beginners who want to build reliable, substantial projects with AI.",
+        url: siteUrl,
+        isAccessibleForFree: true,
+        inLanguage: "en-GB",
+        educationalLevel: "Beginner",
+        provider: { "@id": `${siteUrl}/#organisation` },
+        hasCourseInstance: {
+          "@type": "CourseInstance",
+          courseMode: "online",
+          isAccessibleForFree: true,
+        },
+        hasPart: [
+          { "@type": "Course", name: "AI?", url: `${siteUrl}/course/basics/ai` },
+          { "@type": "Course", name: "Context rot", url: `${siteUrl}/course/basics/context-rot` },
+        ],
+      },
+    ],
+  };
 
-export default function Home() {
   return (
     <main className="home-page" id="top">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
       <SiteHeader />
 
       <section className="home-hero">
@@ -117,12 +153,7 @@ export default function Home() {
         <a className="button-primary light" href="/course/basics/ai">Start the free course <PixelArrow /></a>
       </section>
 
-      <footer className="home-footer">
-        <PixelSpark className="corner-spark" />
-        <Brand />
-        <p>Free lessons for building substantial projects with AI.</p>
-        <a className="back-to-top" href="#top">Back to top <PixelArrow className="pixel-arrow-up" /></a>
-      </footer>
+      <SiteFooter />
     </main>
   );
 }

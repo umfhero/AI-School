@@ -75,9 +75,10 @@ export function readCookie(request: Request, name: string) {
   return null;
 }
 
-function cookie(name: string, value: string, request: Request, maxAge: number) {
+function cookie(name: string, value: string, request: Request, maxAge?: number) {
   const secure = new URL(request.url).protocol === "https:" ? "; Secure" : "";
-  return `${name}=${encodeURIComponent(value)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${secure}`;
+  const lifetime = typeof maxAge === "number" ? `; Max-Age=${maxAge}` : "";
+  return `${name}=${encodeURIComponent(value)}; Path=/; HttpOnly; SameSite=Lax${lifetime}${secure}`;
 }
 
 export function oauthCookies(request: Request, state: string, verifier: string, returnTo: string) {
@@ -93,7 +94,7 @@ export function clearOauthCookies(request: Request) {
 }
 
 export function sessionCookie(request: Request, token: string) {
-  return cookie(SESSION_COOKIE, token, request, SESSION_SECONDS);
+  return cookie(SESSION_COOKIE, token, request);
 }
 
 export function clearSessionCookie(request: Request) {

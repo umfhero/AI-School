@@ -17,6 +17,9 @@ test("server-renders the course home page", async () => {
   assert.match(html, /AI school/i);
   assert.match(html, /Start chapter one/i);
   assert.match(html, /signed up/i);
+  assert.match(html, /href="\/privacy"/i);
+  assert.match(html, /href="\/terms"/i);
+  assert.equal(response.headers.get("x-frame-options"), "DENY");
   assert.doesNotMatch(html, /Your route/i);
 });
 
@@ -61,4 +64,28 @@ test("server-renders the AI introduction lesson", async () => {
   assert.match(html, /TASK 01 · MATCH THE SETUPS/i);
   assert.match(html, /TASK 02 · ORDER THE SETUPS/i);
   assert.match(html, /Context rot/i);
+});
+
+test("publishes crawl and AI-discovery files for the active host", async () => {
+  const robots = await render("/robots.txt");
+  assert.equal(robots.status, 200);
+  assert.match(await robots.text(), /User-agent: OAI-SearchBot/i);
+
+  const sitemap = await render("/sitemap.xml");
+  assert.equal(sitemap.status, 200);
+  assert.match(await sitemap.text(), /http:\/\/localhost\/course\/basics\/context-rot/);
+
+  const llms = await render("/llms.txt");
+  assert.equal(llms.status, 200);
+  assert.match(await llms.text(), /A free, visual course/i);
+});
+
+test("server-renders the privacy and terms pages", async () => {
+  const privacy = await render("/privacy");
+  assert.equal(privacy.status, 200);
+  assert.match(await privacy.text(), /What we collect/i);
+
+  const terms = await render("/terms");
+  assert.equal(terms.status, 200);
+  assert.match(await terms.text(), /Terms of use/i);
 });

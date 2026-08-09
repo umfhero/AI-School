@@ -4,6 +4,7 @@
 import { useEffect, useMemo, useState } from "react";
 import styles from "./profile.module.css";
 import SiteHeader from "../components/SiteHeader";
+import SiteFooter from "../components/SiteFooter";
 import { PixelArrow, PixelSpark } from "../components/PixelIcons";
 import { chapterTaskCount, courseChapters, getLesson, totalCourseTasks, type CourseChapter } from "../course/courseData";
 import { getExperience, type Experience } from "../lib/experience";
@@ -115,6 +116,7 @@ export default function ProfileClient() {
   const [progress, setProgress] = useState<Progress | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [resettingTestProgress, setResettingTestProgress] = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -158,11 +160,24 @@ export default function ProfileClient() {
     }
   }
 
+  async function deleteAccount() {
+    if (deletingAccount || !window.confirm("Delete your AI school account and saved progress? This cannot be undone.")) return;
+    setDeletingAccount(true);
+    try {
+      const response = await fetch("/api/account", { method: "DELETE", credentials: "same-origin" });
+      if (!response.ok) throw new Error("Account deletion failed");
+      window.location.assign("/");
+    } catch {
+      setDeletingAccount(false);
+      window.alert("Your account could not be deleted right now. Please try again later.");
+    }
+  }
+
   if (isLoading) return <main className={styles.page}><SiteHeader /><div className={styles.loading}>Loading your learning profile…</div></main>;
-  if (!progress?.user) return <main className={styles.page}><SiteHeader /><section className={styles.signedOut}><p className={styles.eyebrow}>YOUR AI SCHOOL</p><h1>Your learning profile is waiting.</h1><p>Sign in to keep your course progress and build a daily learning streak.</p><a href="/api/auth/google/start?returnTo=%2Fprofile">Sign in with Google <PixelArrow /></a><a href="/">Back to AI school</a></section></main>;
+  if (!progress?.user) return <main className={styles.page} id="top"><SiteHeader /><section className={styles.signedOut}><p className={styles.eyebrow}>YOUR AI SCHOOL</p><h1>Your learning profile is waiting.</h1><p>Sign in to keep your course progress and build a daily learning streak.</p><a href="/api/auth/google/start?returnTo=%2Fprofile">Sign in with Google <PixelArrow /></a><a href="/">Back to AI school</a></section><SiteFooter /></main>;
 
   const avatarStyle = progress.user.pictureUrl ? { backgroundImage: `url(${progress.user.pictureUrl})` } : undefined;
-  return <main className={styles.page}>
+  return <main className={styles.page} id="top">
     <SiteHeader />
     <div className={styles.shell}>
     <header className={styles.profileHeader}>
@@ -181,6 +196,6 @@ export default function ProfileClient() {
       </div>
     </header>
     <ChapterBadges lessons={lessons} />
-    <div className={styles.grid}><CourseProgress completedTasks={completedTasks} lessons={lessons} /><aside className={styles.side}><section className={styles.activityCard}><PixelSpark className={styles.cornerSpark} /><div className={styles.activityTitle}><div><p className={styles.eyebrow}>CONSISTENCY</p><h2>Learning activity</h2></div><b>{completedThisMonth} this month</b></div><ActivityGrid activity={activity} /><div className={styles.legend}><span>Less</span>{[0, 1, 2, 3, 4].map((tier) => <i key={tier} className={`${styles.day} ${styles[`level${tier}`]}`} />)}<span>More</span></div></section><section className={styles.next}><PixelSpark className={styles.cornerSparkNext} /><p className={styles.eyebrow}>UP NEXT</p><h2>{nextTitle}</h2><p>{nextCopy}</p><a href={nextHref}>Open lesson <PixelArrow /></a></section></aside></div>
-  </div></main>;
+    <div className={styles.grid}><CourseProgress completedTasks={completedTasks} lessons={lessons} /><aside className={styles.side}><section className={styles.activityCard}><PixelSpark className={styles.cornerSpark} /><div className={styles.activityTitle}><div><p className={styles.eyebrow}>CONSISTENCY</p><h2>Learning activity</h2></div><b>{completedThisMonth} this month</b></div><ActivityGrid activity={activity} /><div className={styles.legend}><span>Less</span>{[0, 1, 2, 3, 4].map((tier) => <i key={tier} className={`${styles.day} ${styles[`level${tier}`]}`} />)}<span>More</span></div></section><section className={styles.next}><PixelSpark className={styles.cornerSparkNext} /><p className={styles.eyebrow}>UP NEXT</p><h2>{nextTitle}</h2><p>{nextCopy}</p><a href={nextHref}>Open lesson <PixelArrow /></a></section><section className={styles.accountData}><p className={styles.eyebrow}>ACCOUNT DATA</p><h2>Your information</h2><p>Download a copy of your account and saved progress, or permanently delete them.</p><a href="/api/account">Download my data</a><button type="button" onClick={deleteAccount} disabled={deletingAccount}>{deletingAccount ? "Deleting account…" : "Delete my account"}</button></section></aside></div>
+  </div><SiteFooter /></main>;
 }

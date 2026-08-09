@@ -22,6 +22,20 @@ Read `overview.md` (project context, constraints, existing auth/progress system)
 - Visual style must follow `design.md` (flat pixel-art theme) — new UI (search results, request cards, notification list, level badge, graph) should reuse its palette/border/shadow/icon conventions, not invent new ones.
 - British English, no admin/CMS/payment/analytics scope creep beyond what's listed above.
 
+## Privacy and safety requirements before launch
+
+This feature handles profile, relationship and learning-activity data. Treat these as release blockers, not polish work.
+
+- Never expose a learner's email address in search, profiles, friend lists, requests, notifications or comparison views. Remove the earlier idea that an accepted friendship reveals email addresses. Friendship only needs an internal user ID.
+- Profiles must be private by default. Do not create a public member directory, public profile URLs or unauthenticated profile API. A learner must explicitly opt in before they can be found by another learner.
+- Prefer an exact friend code or an invite link over broad name search. If name search is retained, search only opted-in display names, require a short query and return the minimum result: display name, chosen avatar and level.
+- Let learners choose a display name and a generated pixel avatar for social surfaces. Do not automatically make a Google name or Google profile photo visible to other people.
+- Only accepted friends may see comparison data. Start with a level and broad task totals or weekly totals. Do not share the detailed activity heatmap, exact timestamps or lesson answers by default.
+- Provide remove friend, cancel request, decline request and block controls. A block must prevent future requests and remove the connection from both accounts.
+- Rate-limit searches and friend requests, reject duplicate or self requests, and keep request state server-side. Do not trust a client-supplied user ID to authorise a comparison.
+- Account deletion must remove the user's friendships, pending requests and notifications as well as sessions and learning progress. Other users should only see that the connection is no longer available.
+- Record the data flow and complete a short privacy risk assessment before launch. If the service is likely to be accessed by under-18s, apply high-privacy defaults to every learner unless the product has an appropriate age approach.
+
 ## Rough shape (for the planning pass to confirm or replace)
 
 **New data needed**, concept-level only:

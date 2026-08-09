@@ -9,10 +9,28 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     metadataBase: new URL(`${protocol}://${host}`),
-    title: "AI workflow course | Build serious projects with AI",
-    description: "A free visual course that takes you from messy chats to agents, skills and working AI systems.",
-    openGraph: { title: "Build serious projects with AI, properly.", description: "A free course covering project memory, models, agents, skills and parallel workflows.", images: ["/og-home.png"] },
-    twitter: { card: "summary_large_image", title: "Build serious projects with AI, properly.", images: ["/og-home.png"] },
+    title: {
+      default: "AI school | Free course for building projects with AI",
+      template: "%s | AI school",
+    },
+    description: "A free visual course for learning how to build reliable AI projects with project memory, model choice, agents, reusable skills and parallel workflows.",
+    applicationName: "AI school",
+    category: "Education",
+    alternates: { canonical: "/" },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
+    },
+    openGraph: {
+      type: "website",
+      locale: "en_GB",
+      siteName: "AI school",
+      title: "Build serious projects with AI, properly.",
+      description: "A free course covering project memory, models, agents, skills and parallel workflows.",
+      images: [{ url: "/og-home.png", width: 1200, height: 630, alt: "AI school, a free course for building projects with AI" }],
+    },
+    twitter: { card: "summary_large_image", title: "Build serious projects with AI, properly.", description: "A free course covering project memory, models, agents, skills and parallel workflows.", images: ["/og-home.png"] },
     manifest: "/site.webmanifest",
     icons: {
       icon: [
