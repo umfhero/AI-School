@@ -156,6 +156,12 @@ No hyphens, en dashes or em dashes anywhere in visible homepage text (including 
 
 Each lesson paragraph directly inside a lesson section needs a visible gap below it. Use a `19px` bottom margin alongside the existing `1.75` line height, through the shared `.lesson-reading section > p:not(.reading-kicker)` rule in `app/globals.css`. Do not remove this spacing for a new lesson or add a one-off override, because the gap separates ideas in long teaching sections and prevents the copy from reading as one block.
 
+## Course lesson shell
+
+Every course lesson uses the same left-hand course contents sidebar. It is not optional, even for a chapter-ending quiz or a lesson with its own right-side visual panel. The header must include the shared `sidebar-toggle`, connected to the sidebar with `aria-controls="course-contents"`; its text must change between **Hide contents** and **Show contents**, with matching `aria-expanded` state. The sidebar needs the `course-sidebar` class and `id="course-contents"`, while the workspace applies `sidebar-closed` only when the toggle is closed.
+
+Implement this with React state and the existing responsive pattern used by the working lesson pages: keep the sidebar open on desktop, close it by default at `max-width: 920px`, and let learners reopen it. Do not create a static sidebar, inject controls directly into the DOM or make a one-off lesson layout. Before publishing a changed lesson, test the live page at least once: hide the contents, confirm the reading area expands, then show the contents again and confirm the sidebar returns.
+
 ## A specific gotcha: overriding shared components
 
 `AuthButton.tsx` (`.auth-sign-in`, `.auth-user`) is shared between the dark lesson header and the light homepage/profile pages, so it has a dark base style plus a `.home-page .auth-sign-in` override for the light context. The homepage retheme once only overrode `background`/`border-radius` and left the base rule's near-white `color` in place, producing invisible white-on-white text — a real bug that shipped and had to be fixed later. When overriding a shared component's colours for a specific page context, override every colour-related property together (`color`, `background`, `border`, any child element's colours), not just the ones that visibly differ at a glance — a partial override can leave an inherited value that only becomes illegible in the new context.

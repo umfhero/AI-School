@@ -5,6 +5,373 @@ import AuthButton from "../../../components/AuthButton";
 import ExperienceBadge from "../../../components/ExperienceBadge";
 import LessonXpCelebration from "../../../components/LessonXpCelebration";
 import { PixelArrow, PixelSpark } from "../../../components/PixelIcons";
-const lessonId = "basics/clean-workflow"; const taskIds = ["define", "check", "update"];
-const questions = [["A clear task should say what success looks like.", true], ["Once AI changes a project, checking the result is unnecessary.", false], ["A fresh chat should receive the project context it needs.", true], ["A project brain should stay unchanged after new decisions.", false], ["One contained change is easier to review than several unrelated changes.", true]] as const;
-export default function CleanWorkflowLessonClient() { const [tasks,setTasks]=useState<string[]>([]); const [signedIn,setSignedIn]=useState<boolean|null>(null); const [complete,setComplete]=useState(false); const [open,setOpen]=useState(false); const [answers,setAnswers]=useState<Record<number,boolean>>({}); const [score,setScore]=useState<number|null>(null); const [finish,setFinish]=useState(false); const progress=Math.round(tasks.length/3*100); useEffect(()=>{fetch("/api/progress",{credentials:"same-origin"}).then((r)=>r.json()).then((d:{user:unknown;lessons?:Record<string,{completedTasks?:string[];lessonCompletedAt?:number}>})=>{setSignedIn(Boolean(d.user));setTasks(d.lessons?.[lessonId]?.completedTasks??[]);setComplete(Boolean(d.lessons?.[lessonId]?.lessonCompletedAt));});},[]); async function passQuiz(){const correct=questions.filter(([_,answer],i)=>answers[i]===answer).length;setScore(correct);if(correct<4)return;const next=taskIds;setTasks(next);if(signedIn){await fetch("/api/progress",{method:"PUT",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({lessonId,completedTasks:next})});window.dispatchEvent(new Event("progress-changed"));}setOpen(false);} async function completeLesson(){if(!signedIn||tasks.length!==3||complete)return;const r=await fetch("/api/progress",{method:"PUT",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({lessonId,completedTasks:tasks,completeLesson:true})});const d=await r.json() as {lesson?:{lessonCompletedAt?:number};newlyCompleted?:boolean};if(d.lesson?.lessonCompletedAt){setComplete(true);setFinish(Boolean(d.newlyCompleted));window.dispatchEvent(new Event("progress-changed"));}} return <main className="lesson-page"><LessonXpCelebration trigger={finish?1:0} nextLessonHref="/profile#courses"/><header className="lesson-header"><div className="lesson-header-left"><a className="lesson-brand" href="/profile#courses"><PixelSpark className="lesson-brand-star"/><b>AI school</b></a></div><div className="lesson-crumb"><span>Chapter 01 · The basics</span><span>/</span><b>A clean first workflow</b></div><div className="lesson-account"><div className="lesson-progress"><span><i style={{width:`${Math.max(4,progress)}%`}}/></span><b>{tasks.length}/3 tasks</b></div><ExperienceBadge compact/><AuthButton returnTo="/course/basics/clean-workflow" compact/></div></header><div className="lesson-workspace visual-closed sidebar-closed"><article className="lesson-reading"><div className="lesson-reading-inner"><p className="reading-kicker">Lesson 01.5</p><h1>A clean first workflow.</h1><p className="lesson-lede">A clean workflow gives AI one bounded task, the project context it needs and a clear way to check the result. It takes a little more care at the start, although it prevents much more confused work later.</p><div className="lesson-rule"/><section><p className="reading-kicker">The routine</p><h2>Define, give context, change, check, record.</h2><p>Start by naming one outcome and the limits that matter. Give the fresh chat the project brain and only the files or facts it needs for this task.</p><p>Then make one contained change, check it against the task and update the project brain or handover with anything the next task needs to know. This keeps you responsible for the work, while AI helps with the parts that benefit from speed.</p><ol className="intro-course-map"><li><b>Define one task.</b> State the goal, constraints and what a good result looks like.</li><li><b>Give the right context.</b> Start from the project brain and the relevant files.</li><li><b>Make and check one change.</b> Compare the result with the task before accepting it.</li><li><b>Record what changed.</b> Update the project brain or leave a handover.</li></ol></section><section className="inline-task build-task"><div className="task-heading"><span>CHAPTER QUIZ · TRUE OR FALSE</span><b>{tasks.length===3?"PASSED ✓":"80% REQUIRED"}</b></div><h3>Check that the Chapter 1 workflow makes sense.</h3><p>You need at least 4 out of 5 correct to finish this lesson and unlock the next chapter.</p><button className="start-task-button" type="button" onClick={()=>{setOpen(true);setScore(null);}}>Open chapter quiz</button>{score!==null&&score<4?<p className="completion-error">You scored {score}/5. Review the lesson, then retake the quiz.</p>:null}</section>{tasks.length===3?<section className={`lesson-complete-card ${complete?"complete":""}`}><span>{complete?"CHAPTER COMPLETE":"READY TO COMPLETE"}</span><h2>{complete?"You have a clean first workflow.":"Finish Chapter 1 and collect your XP."}</h2><p>{complete?"Chapter 2 is ready when you are.":signedIn?"You passed the chapter quiz. Confirm this lesson to add 100 XP.":"Sign in to save the quiz result and collect your XP."}</p>{complete?null:<button className="complete-lesson-button" type="button" disabled={!signedIn} onClick={completeLesson}>Complete lesson · +100 XP</button>}</section>:null}</div></article>{open?<aside className="lesson-visual workflow-quiz" aria-label="Chapter 1 quiz"><header><span>CHAPTER 01 QUIZ</span><button type="button" onClick={()=>setOpen(false)}>×</button></header>{questions.map(([text],i)=><div className="quiz-question" key={text}><b>{i+1}. {text}</b><div><button className={answers[i]===true?"selected":""} onClick={()=>setAnswers({...answers,[i]:true})}>True</button><button className={answers[i]===false?"selected":""} onClick={()=>setAnswers({...answers,[i]:false})}>False</button></div></div>)}<button className="complete-lesson-button" type="button" disabled={Object.keys(answers).length!==5} onClick={passQuiz}>Submit quiz</button></aside>:null}</div><nav className="lesson-bottom"><a className="lesson-home-back" href="/"><b>Back to home</b></a><div><span>CHAPTER 01</span><b>{tasks.length===3?"Quiz passed":"Quiz required"}</b></div><a className={`lesson-next ${!complete?"disabled":""}`} href={complete?"/profile#courses":"/course/basics/clean-workflow"}>Course overview <PixelArrow/></a></nav></main>; }
+import { courseChapters, courseIntroLesson } from "../../courseData";
+
+const lessonId = "basics/clean-workflow";
+const taskIds = ["define", "check", "update"];
+type Lessons = Record<
+  string,
+  { completedTasks?: string[]; lessonCompletedAt?: number }
+>;
+const questions = [
+  ["A clear task should say what success looks like.", true],
+  ["Once AI changes a project, checking the result is unnecessary.", false],
+  ["A fresh chat should receive the project context it needs.", true],
+  ["A project brain should stay unchanged after new decisions.", false],
+  [
+    "One contained change is easier to review than several unrelated changes.",
+    true,
+  ],
+] as const;
+export default function CleanWorkflowLessonClient() {
+  const [tasks, setTasks] = useState<string[]>([]);
+  const [signedIn, setSignedIn] = useState<boolean | null>(null);
+  const [lessons, setLessons] = useState<Lessons>({});
+  const [complete, setComplete] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [openChapter, setOpenChapter] = useState(0);
+  const [answers, setAnswers] = useState<Record<number, boolean>>({});
+  const [score, setScore] = useState<number | null>(null);
+  const [finish, setFinish] = useState(false);
+  const progress = Math.round((tasks.length / 3) * 100);
+  useEffect(() => {
+    fetch("/api/progress", { credentials: "same-origin" })
+      .then((r) => r.json())
+      .then(
+        (d: {
+          user: unknown;
+          lessons?: Lessons;
+        }) => {
+          setSignedIn(Boolean(d.user));
+          setLessons(d.lessons ?? {});
+          setTasks(d.lessons?.[lessonId]?.completedTasks ?? []);
+          setComplete(Boolean(d.lessons?.[lessonId]?.lessonCompletedAt));
+        },
+      );
+  }, []);
+  useEffect(() => {
+    const mobileQuery = window.matchMedia("(max-width: 920px)");
+    const closeOnMobile = () => setSidebarOpen(!mobileQuery.matches);
+    closeOnMobile();
+    mobileQuery.addEventListener("change", closeOnMobile);
+    return () => mobileQuery.removeEventListener("change", closeOnMobile);
+  }, []);
+  async function passQuiz() {
+    const correct = questions.filter(([, answer], i) => answers[i] === answer)
+      .length;
+    setScore(correct);
+    if (correct < 4) return;
+    const next = taskIds;
+    setTasks(next);
+    if (signedIn) {
+      await fetch("/api/progress", {
+        method: "PUT",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lessonId, completedTasks: next }),
+      });
+      window.dispatchEvent(new Event("progress-changed"));
+    }
+    setOpen(false);
+  }
+  async function completeLesson() {
+    if (!signedIn || tasks.length !== 3 || complete) return;
+    const r = await fetch("/api/progress", {
+      method: "PUT",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        lessonId,
+        completedTasks: tasks,
+        completeLesson: true,
+      }),
+    });
+    const d = (await r.json()) as {
+      lesson?: { lessonCompletedAt?: number };
+      newlyCompleted?: boolean;
+    };
+    if (d.lesson?.lessonCompletedAt) {
+      setComplete(true);
+      setFinish(Boolean(d.newlyCompleted));
+      window.dispatchEvent(new Event("progress-changed"));
+    }
+  }
+  return (
+    <main className="lesson-page">
+      <LessonXpCelebration
+        trigger={finish ? 1 : 0}
+        nextLessonHref="/profile#courses"
+      />
+      <header className="lesson-header">
+        <div className="lesson-header-left">
+          <button
+            className="sidebar-toggle"
+            type="button"
+            onClick={() => setSidebarOpen((isOpen) => !isOpen)}
+            aria-expanded={sidebarOpen}
+            aria-controls="course-contents"
+          >
+            <span aria-hidden="true">{sidebarOpen ? "×" : "☰"}</span>
+            <b>{sidebarOpen ? "Hide contents" : "Show contents"}</b>
+          </button>
+          <a className="lesson-brand" href="/profile#courses">
+            <PixelSpark className="lesson-brand-star" />
+            <b>AI school</b>
+          </a>
+        </div>
+        <div className="lesson-crumb">
+          <span>Chapter 01 · The basics</span>
+          <span>/</span>
+          <b>A clean first workflow</b>
+        </div>
+        <div className="lesson-account">
+          <div className="lesson-progress">
+            <span>
+              <i style={{ width: `${Math.max(4, progress)}%` }} />
+            </span>
+            <b>{tasks.length}/3 tasks</b>
+          </div>
+          <ExperienceBadge compact />
+          <AuthButton returnTo="/course/basics/clean-workflow" compact />
+        </div>
+      </header>
+      <div
+        className={`lesson-workspace visual-closed ${sidebarOpen ? "" : "sidebar-closed"}`}
+      >
+        <aside
+          className="course-sidebar"
+          id="course-contents"
+          aria-label="Course contents"
+        >
+          <div className="course-side-head">
+            <p>AI workflow course</p>
+            <h2>Course contents</h2>
+            <div>
+              <span style={{ width: `${Math.max(4, progress)}%` }} />
+              <small>{progress}% of this lesson</small>
+            </div>
+          </div>
+          <nav>
+            <a
+              className={`course-intro-link ${lessons.intro?.lessonCompletedAt ? "complete" : ""}`}
+              href={courseIntroLesson.path}
+            >
+              <span>{lessons.intro?.lessonCompletedAt ? "✓" : "○"}</span>
+              <div>
+                <small>COURSE INTRO</small>
+                <b>{courseIntroLesson.title}</b>
+              </div>
+            </a>
+            {courseChapters.map((chapter, chapterIndex) => (
+              <div
+                className={`side-chapter ${chapterIndex === 0 ? "current" : ""}`}
+                key={chapter.title}
+              >
+                <button
+                  type="button"
+                  onClick={() =>
+                    setOpenChapter((current) =>
+                      current === chapterIndex ? -1 : chapterIndex,
+                    )
+                  }
+                  aria-expanded={openChapter === chapterIndex}
+                >
+                  <span>{String(chapterIndex + 1).padStart(2, "0")}</span>
+                  <b>{chapter.title}</b>
+                  <i>{openChapter === chapterIndex ? "−" : "+"}</i>
+                </button>
+                {openChapter === chapterIndex ? (
+                  <ol>
+                    {chapter.lessons.map((lesson, lessonIndex) => (
+                      <li
+                        className={`${lesson.id === lessonId ? "active" : ""} ${lessons[lesson.id]?.lessonCompletedAt ? "complete" : ""}`}
+                        key={lesson.id}
+                      >
+                        <span>
+                          {lessons[lesson.id]?.lessonCompletedAt
+                            ? "✓"
+                            : lesson.id === lessonId
+                              ? "●"
+                              : "○"}
+                        </span>
+                        <div>
+                          <small>Lesson 1.{lessonIndex + 1}</small>
+                          {lesson.path ? (
+                            <a href={lesson.path}>{lesson.title}</a>
+                          ) : (
+                            <b>{lesson.title}</b>
+                          )}
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                ) : null}
+              </div>
+            ))}
+          </nav>
+        </aside>
+        <article className="lesson-reading">
+          <div className="lesson-reading-inner">
+            <p className="reading-kicker">Lesson 01.5</p>
+            <h1>A clean first workflow.</h1>
+            <p className="lesson-lede">
+              A clean workflow gives AI one bounded task, the project context it
+              needs and a clear way to check the result. It takes a little more
+              care at the start, although it prevents much more confused work
+              later.
+            </p>
+            <div className="lesson-rule" />
+            <section>
+              <p className="reading-kicker">The routine</p>
+              <h2>Define, give context, change, check, record.</h2>
+              <p>
+                Start by naming one outcome and the limits that matter. Give the
+                fresh chat the project brain and only the files or facts it
+                needs for this task.
+              </p>
+              <p>
+                Then make one contained change, check it against the task and
+                update the project brain or handover with anything the next task
+                needs to know. This keeps you responsible for the work, while AI
+                helps with the parts that benefit from speed.
+              </p>
+              <ol className="intro-course-map">
+                <li>
+                  <b>Define one task.</b> State the goal, constraints and what a
+                  good result looks like.
+                </li>
+                <li>
+                  <b>Give the right context.</b> Start from the project brain
+                  and the relevant files.
+                </li>
+                <li>
+                  <b>Make and check one change.</b> Compare the result with the
+                  task before accepting it.
+                </li>
+                <li>
+                  <b>Record what changed.</b> Update the project brain or leave
+                  a handover.
+                </li>
+              </ol>
+            </section>
+            <section className="inline-task build-task">
+              <div className="task-heading">
+                <span>CHAPTER QUIZ · TRUE OR FALSE</span>
+                <b>{tasks.length === 3 ? "PASSED ✓" : "80% REQUIRED"}</b>
+              </div>
+              <h3>Check that the Chapter 1 workflow makes sense.</h3>
+              <p>
+                You need at least 4 out of 5 correct to finish this lesson and
+                unlock the next chapter.
+              </p>
+              <button
+                className="start-task-button"
+                type="button"
+                onClick={() => {
+                  setOpen(true);
+                  setScore(null);
+                }}
+              >
+                Open chapter quiz
+              </button>
+              {score !== null && score < 4 ? (
+                <p className="completion-error">
+                  You scored {score}/5. Review the lesson, then retake the quiz.
+                </p>
+              ) : null}
+            </section>
+            {tasks.length === 3 ? (
+              <section
+                className={`lesson-complete-card ${complete ? "complete" : ""}`}
+              >
+                <span>
+                  {complete ? "CHAPTER COMPLETE" : "READY TO COMPLETE"}
+                </span>
+                <h2>
+                  {complete
+                    ? "You have a clean first workflow."
+                    : "Finish Chapter 1 and collect your XP."}
+                </h2>
+                <p>
+                  {complete
+                    ? "Chapter 2 is ready when you are."
+                    : signedIn
+                      ? "You passed the chapter quiz. Confirm this lesson to add 100 XP."
+                      : "Sign in to save the quiz result and collect your XP."}
+                </p>
+                {complete ? null : (
+                  <button
+                    className="complete-lesson-button"
+                    type="button"
+                    disabled={!signedIn}
+                    onClick={completeLesson}
+                  >
+                    Complete lesson · +100 XP
+                  </button>
+                )}
+              </section>
+            ) : null}
+          </div>
+        </article>
+        {open ? (
+          <aside
+            className="lesson-visual workflow-quiz"
+            aria-label="Chapter 1 quiz"
+          >
+            <header>
+              <span>CHAPTER 01 QUIZ</span>
+              <button type="button" onClick={() => setOpen(false)}>
+                ×
+              </button>
+            </header>
+            {questions.map(([text], i) => (
+              <div className="quiz-question" key={text}>
+                <b>
+                  {i + 1}. {text}
+                </b>
+                <div>
+                  <button
+                    className={answers[i] === true ? "selected" : ""}
+                    onClick={() => setAnswers({ ...answers, [i]: true })}
+                  >
+                    True
+                  </button>
+                  <button
+                    className={answers[i] === false ? "selected" : ""}
+                    onClick={() => setAnswers({ ...answers, [i]: false })}
+                  >
+                    False
+                  </button>
+                </div>
+              </div>
+            ))}
+            <button
+              className="complete-lesson-button"
+              type="button"
+              disabled={Object.keys(answers).length !== 5}
+              onClick={passQuiz}
+            >
+              Submit quiz
+            </button>
+          </aside>
+        ) : null}
+      </div>
+      <nav className="lesson-bottom">
+        <a className="lesson-home-back" href="/">
+          <b>Back to home</b>
+        </a>
+        <div>
+          <span>CHAPTER 01</span>
+          <b>{tasks.length === 3 ? "Quiz passed" : "Quiz required"}</b>
+        </div>
+        <a
+          className={`lesson-next ${!complete ? "disabled" : ""}`}
+          href={complete ? "/profile#courses" : "/course/basics/clean-workflow"}
+        >
+          Course overview <PixelArrow />
+        </a>
+      </nav>
+    </main>
+  );
+}

@@ -24,11 +24,11 @@ Read more than one document whenever the change crosses boundaries. For example,
 - Google OAuth uses PKCE and state validation. Sessions are HttpOnly and hashed in D1. Do not expose emails, OAuth values, tokens or secrets in pages, bundles or logs.
 - Accounts must accept the current Terms version before account features continue. Keep acceptance versioned if Terms change.
 - D1 schema is in `db/schema.ts`; generate and inspect a Drizzle migration for schema changes. The terms-acceptance table also initialises safely on first use because the connected deployment does not apply migrations automatically.
-- Only Lessons 1.1 (`AI?`) and 1.2 (`Context rot`) are built. Use their existing shell and task patterns when extending the course.
+- Every published lesson must use the complete lesson shell: header, `sidebar-toggle`, `course-sidebar` (`id="course-contents"`), lesson reading area and bottom navigation. Do not ship a lesson with a reading area alone or a permanently visible contents panel. Reuse a working lesson shell, including the responsive `sidebarOpen` state, before adding lesson-specific tasks or visuals.
 
 ## Build, release and safety
 
-- Run `npm test` and relevant lint checks before publishing.
+- Run `npm test` and relevant lint checks before publishing. For every new or changed lesson shell, also inspect the live lesson in a browser: confirm the contents toggle is visible, closes the sidebar, reopens it and correctly changes its accessible label between “Hide contents” and “Show contents”.
 - **Shared-work rule:** before starting work, sync with `main`. Once a feature is complete and its relevant checks pass, make one intentional commit and push it to `main` before handing off. Do not bundle another contributor's unrelated work, force-push, or leave a finished feature only on one machine; this keeps the shared baseline current and reduces merge conflicts.
 - Production deploys through `git push origin main` and the connected GitHub build. Do **not** run Wrangler deployment commands or mutate the Cloudflare account: local Wrangler is linked to the employee account named **Hero Enterprise**.
 - Do not enable paid Cloudflare products. If a change needs new external authority, credentials, spending or a legal decision, stop and ask the owner.
