@@ -45,6 +45,20 @@ export function PixelSpark({ className = "" }: { className?: string }) {
   );
 }
 
+const badgeGlyphs = [
+  ["0011100", "0111110", "1111111", "1111111", "0111110", "0011100", "0001000"],
+  ["0111110", "1100011", "1011101", "1010101", "1011101", "1100011", "0111110"],
+  ["0011100", "0100010", "1011101", "1111111", "1011101", "0100010", "0100010"],
+  ["0100000", "0111010", "1111111", "0111010", "0100000", "0010000", "0000000"],
+  ["1000001", "0100010", "0010100", "0001000", "0010100", "0100010", "1000001"],
+  ["0001000", "0011100", "0111110", "0111110", "1111111", "0010100", "0100010"],
+];
+
+export function PixelTierBadge({ tier, className = "" }: { tier: number; className?: string }) {
+  const glyph = badgeGlyphs[tier] ?? badgeGlyphs[0];
+  return <svg className={`pixel-icon ${className}`.trim()} viewBox="0 0 7 7" width="28" height="28" fill="currentColor" aria-hidden="true" focusable="false" shapeRendering="crispEdges">{glyph.flatMap((row, y) => [...row].flatMap((pixel, x) => pixel === "1" ? <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" /> : []))}</svg>;
+}
+
 const pixelGlyphs: Record<string, string[]> = {
   p: ["11110", "10001", "10001", "11110", "10000", "10000", "10000"],
   r: ["11110", "10001", "10000", "10000", "10000", "10000", "10000"],

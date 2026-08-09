@@ -3,10 +3,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import styles from "./profile.module.css";
+import badgeStyles from "./badge-tiers.module.css";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 import AuthButton from "../components/AuthButton";
-import { PixelArrow, PixelSpark } from "../components/PixelIcons";
+import { PixelArrow, PixelSpark, PixelTierBadge } from "../components/PixelIcons";
 import { chapterTaskCount, courseChapters, getCourseResumeLesson, totalCourseProgressItems, type CourseChapter } from "../course/courseData";
 import { getExperience, type Experience } from "../lib/experience";
 
@@ -19,37 +20,17 @@ function chapterCompletedTasks(chapter: CourseChapter, lessons: LessonMap) {
   return chapter.lessons.reduce((total, lesson) => total + Math.min(lessons[lesson.id]?.completedTasks?.length ?? 0, lesson.taskCount), 0);
 }
 
-function PixelShield({ className = "" }: { className?: string }) {
-  return (
-    <svg
-      className={`pixel-icon ${className}`.trim()}
-      viewBox="0 0 7 8"
-      width="20"
-      height="22"
-      fill="currentColor"
-      aria-hidden="true"
-      focusable="false"
-      shapeRendering="crispEdges"
-    >
-      <rect x="1" y="0" width="5" height="1" />
-      <rect x="0" y="1" width="7" height="1" />
-      <rect x="0" y="2" width="7" height="3" />
-      <rect x="1" y="5" width="5" height="1" />
-      <rect x="2" y="6" width="3" height="1" />
-      <rect x="3" y="7" width="1" height="1" />
-    </svg>
-  );
-}
+const badgeTierNames = ["Foundation", "Model sense", "Agent builder", "Skill maker", "Fleet lead", "Ship shape"];
 
 function ChapterBadges({ lessons }: { lessons: LessonMap }) {
   const unlockedCount = courseChapters.filter((chapter) => chapterCompletedTasks(chapter, lessons) >= chapterTaskCount(chapter)).length;
   return <section className={styles.badgesCard}>
     <div className={styles.badgesTop}><div><p className={styles.eyebrow}>ACHIEVEMENTS</p><h2>Chapter badges</h2></div><span className={styles.badgesCount}>{unlockedCount} of {courseChapters.length}</span></div>
-    <div className={styles.badgeRow}>{courseChapters.map((chapter) => {
+    <div className={styles.badgeRow}>{courseChapters.map((chapter, tier) => {
       const done = chapterCompletedTasks(chapter, lessons);
       const total = chapterTaskCount(chapter);
       const unlocked = done >= total;
-      return <div key={chapter.title} className={`${styles.badge} ${unlocked ? styles.badgeUnlocked : ""}`} title={`${chapter.title}: ${done} of ${total} tasks complete`}><PixelShield className={styles.badgeIcon} /><span>{chapter.title}</span></div>;
+      return <div key={chapter.title} className={`${styles.badge} ${badgeStyles.badge} ${badgeStyles[`tier${tier + 1}`]} ${unlocked ? `${styles.badgeUnlocked} ${badgeStyles.unlocked}` : ""}`} title={`${chapter.title}: ${done} of ${total} tasks complete`}><span className={badgeStyles.tier}>Tier {String(tier + 1).padStart(2, "0")}</span><PixelTierBadge tier={tier} className={`${styles.badgeIcon} ${badgeStyles.icon}`} /><strong>{badgeTierNames[tier] ?? "Course badge"}</strong><span>{chapter.title}</span></div>;
     })}</div>
   </section>;
 }
