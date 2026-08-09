@@ -47,6 +47,7 @@ export default function LessonClient() {
   const [openChapter, setOpenChapter] = useState(0);
   const [quizAnswer, setQuizAnswer] = useState<string | null>(null);
   const [completedTasks, setCompletedTasks] = useState<string[]>([]);
+  const [lessonProgress, setLessonProgress] = useState<Record<string, { lessonCompletedAt?: number }>>({});
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -83,7 +84,7 @@ export default function LessonClient() {
       })
       .then((data) => {
         setSignedIn(Boolean(data.user));
-        if (data.user) { setCompletedTasks(data.lessons?.["basics/context-rot"]?.completedTasks ?? []); setLessonCompletedAt(data.lessons?.["basics/context-rot"]?.lessonCompletedAt ?? null); }
+        if (data.user) { setLessonProgress(data.lessons ?? {}); setCompletedTasks(data.lessons?.["basics/context-rot"]?.completedTasks ?? []); setLessonCompletedAt(data.lessons?.["basics/context-rot"]?.lessonCompletedAt ?? null); }
       })
       .catch((error: unknown) => {
         if (!(error instanceof DOMException && error.name === "AbortError")) setSaveStatus("error");
@@ -222,6 +223,9 @@ export default function LessonClient() {
     setSheetHeight(event.key === "ArrowUp" ? 88 : 52);
   }
 
+  function lessonIsComplete(id: string) { return Boolean(id === "basics/context-rot" ? lessonCompletedAt : lessonProgress[id]?.lessonCompletedAt); }
+  function chapterIsComplete(chapter: typeof courseChapters[number]) { return chapter.lessons.every((lesson) => lessonIsComplete(lesson.id)); }
+
   return (
     <main className="lesson-page">
       <LessonCelebration trigger={celebrationKey} />
@@ -242,12 +246,10 @@ export default function LessonClient() {
         <aside className="course-sidebar" id="course-contents" aria-label="Course contents">
           <div className="course-side-head"><p>AI workflow course</p><h2>Course contents</h2><div><span style={{ width: `${Math.max(4, progress)}%` }} /><small>{progress}% of this lesson</small></div></div>
           <nav>
-            {courseChapters.map((chapter, chapterIndex) => (
-              <div className={`side-chapter ${chapterIndex === 0 ? "current" : ""}`} key={chapter.title}>
-                <button onClick={() => setOpenChapter(openChapter === chapterIndex ? -1 : chapterIndex)} aria-expanded={openChapter === chapterIndex}><span>{String(chapterIndex + 1).padStart(2, "0")}</span><b>{chapter.title}</b><i aria-hidden="true">{openChapter === chapterIndex ? "−" : "+"}</i></button>
-                {openChapter === chapterIndex ? <ol>{chapter.lessons.map((lesson, lessonIndex) => <li className={lesson.id === "basics/context-rot" ? "active" : ""} key={lesson.id}><span>{lesson.id === "basics/context-rot" ? "●" : "○"}</span><div><small>Lesson {chapterIndex + 1}.{lessonIndex + 1}</small>{lesson.path ? <a href={lesson.path}>{lesson.title}</a> : <b>{lesson.title}</b>}</div>{!lesson.path ? <i>LOCKED</i> : null}</li>)}</ol> : null}
-              </div>
-            ))}
+            {courseChapters.map((chapter, chapterIndex) => { const chapterComplete = chapterIsComplete(chapter); return <div className={`side-chapter ${chapterIndex === 0 ? "current" : ""} ${chapterComplete ? "complete" : ""}`} key={chapter.title}>
+              <button onClick={() => setOpenChapter(openChapter === chapterIndex ? -1 : chapterIndex)} aria-expanded={openChapter === chapterIndex}><span>{chapterComplete ? "✓" : String(chapterIndex + 1).padStart(2, "0")}</span><b>{chapter.title}</b><i aria-label={chapterComplete ? "Chapter complete" : undefined}>{chapterComplete ? "COMPLETE" : openChapter === chapterIndex ? "−" : "+"}</i></button>
+              {openChapter === chapterIndex ? <ol>{chapter.lessons.map((lesson, lessonIndex) => { const lessonDone = lessonIsComplete(lesson.id); return <li className={`${lesson.id === "basics/context-rot" ? "active" : ""} ${lessonDone ? "complete" : ""}`} key={lesson.id}><span>{lessonDone ? "✓" : lesson.id === "basics/context-rot" ? "●" : "○"}</span><div><small>Lesson {chapterIndex + 1}.{lessonIndex + 1}</small>{lesson.path ? <a href={lesson.path}>{lesson.title}</a> : <b>{lesson.title}</b>}</div>{lessonDone ? <i>COMPLETE</i> : !lesson.path ? <i>LOCKED</i> : null}</li>; })}</ol> : null}
+            </div>; })}
           </nav>
           <div className="chapter-project"><span>CHAPTER PROJECT</span><b>Build your project brain</b><p>Unlocks after all five lessons.</p><small>0 / 5 lessons</small></div>
         </aside>
