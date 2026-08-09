@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import CourseProgress from "./components/CourseProgress";
 import SiteHeader from "./components/SiteHeader";
-import { PixelArrow, PixelSpark, PixelCheck, PixelMascot, PixelBrandStar, PixelWord } from "./components/PixelIcons";
+import { PixelArrow, PixelSpark, PixelCheck, PixelMascot, PixelWord } from "./components/PixelIcons";
 
 export const metadata: Metadata = {
   title: "AI school | Build properly with AI",
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 function Brand() {
   return (
       <a className="site-brand" href="/" aria-label="AI school home">
-      <PixelBrandStar className="brand-star" />
+      <PixelSpark className="brand-star" />
       <b>AI school</b>
     </a>
   );

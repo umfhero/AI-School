@@ -2,13 +2,13 @@
 
 import AuthButton from "./AuthButton";
 import ExperienceBadge from "./ExperienceBadge";
-import { PixelArrow, PixelBrandStar } from "./PixelIcons";
+import { PixelArrow, PixelSpark } from "./PixelIcons";
 
 export default function SiteHeader() {
   return (
     <nav className="home-nav" aria-label="Main navigation">
       <a className="site-brand" href="/" aria-label="AI school home">
-        <PixelBrandStar className="brand-star" />
+        <PixelSpark className="brand-star" />
         <b>AI school</b>
       </a>
       <div className="home-nav-actions">

@@ -1588,3 +1588,6 @@ button,a { font:inherit; }
 /* Sidebar completion states use the same clear check, green success colour and hard boundaries across every lesson. */
 .side-chapter.complete > button { background: #e4f6ea; color: #16583b; box-shadow: inset 4px 0 0 #2aa36b; }.side-chapter.complete > button:hover { background: #d6f0df; }.side-chapter.complete > button span,.side-chapter.complete > button i { color: #198354; }.side-chapter.complete > button i { font: 800 .48rem monospace; letter-spacing: .06em; }
 .side-chapter li.complete { background: #edf9f1; color: #185439; }.side-chapter li.complete > span,.side-chapter li.complete small,.side-chapter li.complete > i { color: #198354; }.side-chapter li.complete > i { font-weight: 800; letter-spacing: .04em; }.side-chapter li.complete.active { background: #e2f6e9; border-left-color: #2aa36b; color: #123f2c; }
+
+/* The header and footer reuse the page's familiar pixel spark as their brand mark. */
+@media (prefers-reduced-motion: no-preference) { .home-page .site-brand .brand-star { animation: brand-star-colour 2.4s steps(3,end) infinite; } }

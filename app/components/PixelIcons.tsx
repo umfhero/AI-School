@@ -45,31 +45,6 @@ export function PixelSpark({ className = "" }: { className?: string }) {
   );
 }
 
-export function PixelBrandStar({ className = "" }: { className?: string }) {
-  return (
-    <svg
-      className={`pixel-icon pixel-brand-star ${className}`.trim()}
-      viewBox="0 0 11 11"
-      width="34"
-      height="34"
-      fill="currentColor"
-      aria-hidden="true"
-      focusable="false"
-      shapeRendering="crispEdges"
-    >
-      <rect x="5" y="0" width="1" height="2" />
-      <rect x="4" y="2" width="3" height="1" />
-      <rect x="3" y="3" width="5" height="1" />
-      <rect x="0" y="4" width="11" height="1" />
-      <rect x="2" y="5" width="7" height="1" />
-      <rect x="0" y="6" width="11" height="1" />
-      <rect x="3" y="7" width="5" height="1" />
-      <rect x="4" y="8" width="3" height="1" />
-      <rect x="5" y="9" width="1" height="2" />
-    </svg>
-  );
-}
-
 const pixelGlyphs: Record<string, string[]> = {
   p: ["11110", "10001", "10001", "11110", "10000", "10000", "10000"],
   r: ["11110", "10001", "10000", "10000", "10000", "10000", "10000"],
