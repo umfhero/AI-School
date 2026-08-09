@@ -1185,6 +1185,7 @@ button,a { font:inherit; }
 .task-visual-context { padding: 6px 8px; border: 1px solid #435574; color: #9eb7f1; font: 700 .54rem monospace; text-transform: uppercase; letter-spacing: .07em; }
 .close-visual { width: 32px; height: 32px; border: 1px solid #40516c; background: transparent; color: #a8b6ca; cursor: pointer; font-size: 1.15rem; }
 .close-visual:hover,.close-visual:focus-visible { color: white; border-color: #7894d1; outline: none; }
+.sheet-grab-handle { display: none; }
 .context-visual-stage { min-height: 0; flex: 1; overflow: hidden; padding: 0; scrollbar-color: #4a5f80 #071020; }
 .context-visual-stage > * { width: 100%; max-width: none; margin: 0; }
 .reopen-visual { position: absolute; z-index: 8; top: 15px; right: 18px; min-height: 46px; padding: 7px 12px; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; border: 1px solid #5a7094; background: #0d1930; color: white; cursor: pointer; box-shadow: 5px 5px 0 rgba(53,97,220,.18); }
@@ -1296,7 +1297,7 @@ button,a { font:inherit; }
 @keyframes context-orbit { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) {
   .context-packet.current,.project-chat-node.current,.context-orbit { animation: none; }
-  .context-packet,.project-chat-node,.attention-readout > i span,.single-context-core > div:last-child > i { transition: none; }
+  .context-packet,.project-chat-node,.attention-readout > i span,.single-context-core > div:last-child > i,.context-visual { transition: none; }
 }
 
 .overview-workspace-visual { height: 100%; min-height: 660px; display: flex; flex-direction: column; overflow: auto; background: #0c1424; }
@@ -1377,9 +1378,11 @@ button,a { font:inherit; }
   .lesson-resize-handle { display: none; }
   .context-visual {
     width: 100%;
-    height: 52vh;
-    height: 52dvh;
+    height: var(--sheet-height, 52vh);
+    height: var(--sheet-height-dvh, 52dvh);
     min-height: 0;
+    max-height: 92vh;
+    max-height: 92dvh;
     position: fixed;
     z-index: 26;
     top: auto;
@@ -1388,9 +1391,15 @@ button,a { font:inherit; }
     border-top: 1px solid #59719a;
     border-radius: 14px 14px 0 0;
     box-shadow: 0 -18px 45px rgba(5,10,25,.38);
+    transition: height .22s cubic-bezier(.32,.72,0,1);
   }
-  .visual-switcher { position: relative; padding-top: 18px; border-radius: 14px 14px 0 0; }
-  .visual-switcher:before { content: ""; position: absolute; top: 7px; left: 50%; width: 42px; height: 4px; border-radius: 4px; background: #536985; transform: translateX(-50%); }
+  .context-visual.sheet-dragging { transition: none; }
+  .visual-switcher { position: relative; padding-top: 20px; border-radius: 14px 14px 0 0; }
+  .sheet-grab-handle { position: absolute; z-index: 2; top: 0; left: 0; display: flex; align-items: center; justify-content: center; width: 100%; height: 24px; cursor: grab; touch-action: none; }
+  .sheet-grab-handle:active { cursor: grabbing; }
+  .sheet-grab-handle span { width: 42px; height: 4px; border-radius: 4px; background: #536985; }
+  .sheet-grab-handle:hover span,.sheet-grab-handle:focus-visible span { background: var(--acid); }
+  .sheet-grab-handle:focus-visible { outline: none; }
   .context-visual-stage { overscroll-behavior: contain; }
   .lesson-workspace:not(.visual-closed) .context-rot-reading { padding-bottom: calc(52dvh + 90px); }
   .reopen-visual { position: fixed; top: auto; right: 12px; bottom: 76px; }

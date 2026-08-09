@@ -61,9 +61,19 @@ export default function LessonClient() {
   const [celebrationKey, setCelebrationKey] = useState(0);
   const [visualWidth, setVisualWidth] = useState(620);
   const resizing = useRef(false);
+  const [sheetHeight, setSheetHeightRaw] = useState(52);
+  const [sheetDragging, setSheetDragging] = useState(false);
+  const sheetHeightRef = useRef(52);
+  const sheetDrag = useRef<{ startY: number; startHeight: number } | null>(null);
 
   const progress = Math.round((completedTasks.length / 3) * 100);
-  const workspaceStyle = { "--visual-width": `${visualWidth}px` } as CSSProperties;
+  const workspaceStyle = { "--visual-width": `${visualWidth}px`, "--sheet-height": `${sheetHeight}vh`, "--sheet-height-dvh": `${sheetHeight}dvh` } as CSSProperties;
+
+  function setSheetHeight(value: number) {
+    const clamped = Math.min(92, Math.max(14, value));
+    sheetHeightRef.current = clamped;
+    setSheetHeightRaw(clamped);
+  }
 
   useEffect(() => {
     const controller = new AbortController();
@@ -93,6 +103,7 @@ export default function LessonClient() {
   function startTask(visual: LessonVisual) {
     setActiveVisual(visual);
     setVisualOpen(true);
+    setSheetHeight(52);
   }
 
   function isTaskVisualOpen(visual: LessonVisual) {
@@ -149,6 +160,43 @@ export default function LessonClient() {
     if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
     event.preventDefault();
     setVisualWidth((width) => Math.min(860, Math.max(380, width + (event.key === "ArrowLeft" ? 30 : -30))));
+  }
+
+  function beginSheetDrag(event: ReactPointerEvent<HTMLDivElement>) {
+    sheetDrag.current = { startY: event.clientY, startHeight: sheetHeightRef.current };
+    setSheetDragging(true);
+    event.currentTarget.setPointerCapture(event.pointerId);
+  }
+
+  function dragSheet(event: ReactPointerEvent<HTMLDivElement>) {
+    if (!sheetDrag.current) return;
+    const deltaVh = ((sheetDrag.current.startY - event.clientY) / window.innerHeight) * 100;
+    setSheetHeight(sheetDrag.current.startHeight + deltaVh);
+  }
+
+  function endSheetDrag(event: ReactPointerEvent<HTMLDivElement>) {
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+    const drag = sheetDrag.current;
+    sheetDrag.current = null;
+    setSheetDragging(false);
+    if (!drag) return;
+    const height = sheetHeightRef.current;
+    if (Math.abs(height - drag.startHeight) < 3) {
+      setSheetHeight(drag.startHeight >= 70 ? 52 : 88);
+      return;
+    }
+    if (height < 30) {
+      setSheetHeight(52);
+      setVisualOpen(false);
+      return;
+    }
+    setSheetHeight(height < 70 ? 52 : 88);
+  }
+
+  function resizeSheetWithKeyboard(event: ReactKeyboardEvent<HTMLDivElement>) {
+    if (event.key !== "ArrowUp" && event.key !== "ArrowDown") return;
+    event.preventDefault();
+    setSheetHeight(event.key === "ArrowUp" ? 88 : 52);
   }
 
   return (
@@ -252,8 +300,13 @@ export default function LessonClient() {
         {/* A focusable ARIA separator supports pointer dragging and keyboard resizing. */}
         {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex */}
         {visualOpen && activeVisual ? <div className="lesson-resize-handle" role="separator" aria-label="Resize the lesson visual" aria-orientation="vertical" aria-valuemin={380} aria-valuemax={860} aria-valuenow={visualWidth} tabIndex={0} onPointerDown={beginResize} onPointerMove={resizeVisual} onPointerUp={endResize} onPointerCancel={endResize} onKeyDown={resizeWithKeyboard}><span aria-hidden="true">⋮</span></div> : null}
-        {visualOpen && activeVisual ? <aside className="lesson-visual context-visual" aria-label={`${visualLabels[activeVisual]} visual`}>
-          <div className="visual-switcher task-visual-header"><div><span>Side view</span><b>{visualLabels[activeVisual]}</b></div><span className="task-visual-context">{visualTaskLabels[activeVisual]}</span><button className="close-visual" type="button" onClick={() => setVisualOpen(false)} aria-label="Close side view">×</button></div>
+        {visualOpen && activeVisual ? <aside className={`lesson-visual context-visual${sheetDragging ? " sheet-dragging" : ""}`} aria-label={`${visualLabels[activeVisual]} visual`}>
+          <div className="visual-switcher task-visual-header">
+            <div className="sheet-grab-handle" role="slider" aria-label="Resize the task visual sheet" aria-orientation="vertical" aria-valuemin={14} aria-valuemax={92} aria-valuenow={Math.round(sheetHeight)} tabIndex={0} onPointerDown={beginSheetDrag} onPointerMove={dragSheet} onPointerUp={endSheetDrag} onPointerCancel={endSheetDrag} onKeyDown={resizeSheetWithKeyboard}><span aria-hidden="true" /></div>
+            <div><span>Side view</span><b>{visualLabels[activeVisual]}</b></div>
+            <span className="task-visual-context">{visualTaskLabels[activeVisual]}</span>
+            <button className="close-visual" type="button" onClick={() => setVisualOpen(false)} aria-label="Close side view">×</button>
+          </div>
           <div className="context-visual-stage"><LessonVisualContent visual={activeVisual} /></div>
         </aside> : null}
         {!visualOpen && activeVisual ? <button className="reopen-visual" type="button" onClick={() => setVisualOpen(true)}><span>Resume task visual</span><b>{visualLabels[activeVisual]}</b></button> : null}
