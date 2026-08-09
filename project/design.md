@@ -12,22 +12,22 @@ Flat, high-contrast colour blocks with hard black-ink borders and offset shadows
 
 Defined as custom properties on `.home-page`:
 
-| Token | Value | Use |
-|---|---|---|
-| `--home-bg` | `#f6f7fb` | Page background |
-| ink (no token, literal) | `#0b1130` | Primary text, borders, dark button fills |
-| dark navy alt | `#0c1231` | Alternate dark fill (e.g. `.button-primary`) |
-| `--home-line` | `rgba(11, 17, 32, .08)` | Hairline dividers |
-| `--home-muted` | `#5c6478` | Body/paragraph copy |
-| muted tier 2 | `#7d8499` | Secondary labels |
-| muted tier 3 | `#8991aa` | Tertiary labels, small print |
-| muted tier 4 | `#98a0b3` | Faintest labels |
-| heading dark | `#151a33` / `#232a45` | Emphasised numbers/headings inside cards |
-| `--home-blue` | `#3561dc` | Accent 1 (links, primary tint) |
-| `--home-violet` | `#6258e9` | Accent 2 (primary brand accent, "properly", progress fill) |
-| `--home-pink` | `#c2469e` | Accent 3 (secondary flourish) |
-| `--home-cyan` | `#1f9db8` | Accent 4 (rarely used) |
-| success green | `#1f9d6e` / `#178a53` | Completed states |
+| Token                   | Value                   | Use                                                        |
+| ----------------------- | ----------------------- | ---------------------------------------------------------- |
+| `--home-bg`             | `#f6f7fb`               | Page background                                            |
+| ink (no token, literal) | `#0b1130`               | Primary text, borders, dark button fills                   |
+| dark navy alt           | `#0c1231`               | Alternate dark fill (e.g. `.button-primary`)               |
+| `--home-line`           | `rgba(11, 17, 32, .08)` | Hairline dividers                                          |
+| `--home-muted`          | `#5c6478`               | Body/paragraph copy                                        |
+| muted tier 2            | `#7d8499`               | Secondary labels                                           |
+| muted tier 3            | `#8991aa`               | Tertiary labels, small print                               |
+| muted tier 4            | `#98a0b3`               | Faintest labels                                            |
+| heading dark            | `#151a33` / `#232a45`   | Emphasised numbers/headings inside cards                   |
+| `--home-blue`           | `#3561dc`               | Accent 1 (links, primary tint)                             |
+| `--home-violet`         | `#6258e9`               | Accent 2 (primary brand accent, "properly", progress fill) |
+| `--home-pink`           | `#c2469e`               | Accent 3 (secondary flourish)                              |
+| `--home-cyan`           | `#1f9db8`               | Accent 4 (rarely used)                                     |
+| success green           | `#1f9d6e` / `#178a53`   | Completed states                                           |
 
 Card/panel surfaces are white (`#ffffff`) or the page background, never a gradient wash.
 
@@ -61,9 +61,12 @@ Buttons "press in" on interaction: the shadow shrinks and the element nudges tow
 
 ```css
 .button {
-  transition: transform .1s ease, box-shadow .1s ease;
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.1s ease;
 }
-.button:hover, .button:focus-visible {
+.button:hover,
+.button:focus-visible {
   transform: translate(2px, 2px);
   box-shadow: 3px 3px 0 var(--home-violet); /* was 5px 5px 0 */
 }
@@ -80,10 +83,10 @@ Do not use `linear-gradient`/`radial-gradient` as a decorative colour wash: no g
 The one sanctioned use of the `gradient()` function is a **hairline grid texture**, used to replace the old blurred glow blobs (`.hero-ambient`, `.home-final` background):
 
 ```css
-background-color: rgba(98, 88, 233, .05); /* faint accent tint */
+background-color: rgba(98, 88, 233, 0.05); /* faint accent tint */
 background-image:
-  linear-gradient(rgba(11, 17, 32, .07) 1px, transparent 1px),
-  linear-gradient(90deg, rgba(11, 17, 32, .07) 1px, transparent 1px);
+  linear-gradient(rgba(11, 17, 32, 0.07) 1px, transparent 1px),
+  linear-gradient(90deg, rgba(11, 17, 32, 0.07) 1px, transparent 1px);
 background-size: 16px 16px;
 ```
 
@@ -98,8 +101,12 @@ function PixelArrow({ className = "" }: { className?: string }) {
   return (
     <svg
       className={`pixel-icon pixel-arrow ${className}`.trim()}
-      viewBox="0 0 8 8" width="11" height="11"
-      fill="currentColor" aria-hidden="true" focusable="false"
+      viewBox="0 0 8 8"
+      width="11"
+      height="11"
+      fill="currentColor"
+      aria-hidden="true"
+      focusable="false"
       shapeRendering="crispEdges"
     >
       <rect x="4" y="1" width="1" height="1" />
@@ -113,8 +120,8 @@ function PixelArrow({ className = "" }: { className?: string }) {
 
 Two placements for decorative sparks, depending on how much room the container has:
 
-- **Spacious section** (generous padding, e.g. `.proof-section`, `.home-final`, `.home-footer` in `globals.css`): a `.corner-spark` class sits *inside* the container's own padding, near a corner but with a positive offset (e.g. `top: 32px; right: 28px`), so it never reaches as far as the actual content.
-- **Dense card** (tight padding, e.g. the profile page's `.courseCard`/`.activityCard`/`.next` in `profile.module.css`): perch the spark *outside* the card's corner instead, with a small negative offset (e.g. `top: -14px; right: -10px`, sized up a little from the icon's default via `width`/`height`, like the profile page's `.cornerSpark`) — the same technique the homepage's `PixelMascot` uses to perch on the workflow console's corner. This guarantees no overlap with card content regardless of how tightly packed the card is.
+- **Spacious section** (generous padding, e.g. `.proof-section`, `.home-final`, `.home-footer` in `globals.css`): a `.corner-spark` class sits _inside_ the container's own padding, near a corner but with a positive offset (e.g. `top: 32px; right: 28px`), so it never reaches as far as the actual content.
+- **Dense card** (tight padding, e.g. the profile page's `.courseCard`/`.activityCard`/`.next` in `profile.module.css`): perch the spark _outside_ the card's corner instead, with a small negative offset (e.g. `top: -14px; right: -10px`, sized up a little from the icon's default via `width`/`height`, like the profile page's `.cornerSpark`) — the same technique the homepage's `PixelMascot` uses to perch on the workflow console's corner. This guarantees no overlap with card content regardless of how tightly packed the card is.
 
 Both need `position: relative` on the container and `position: absolute` on the spark.
 
@@ -122,13 +129,20 @@ Do not fetch external binary assets automatically. If richer sprite/animation pa
 
 ## Animation
 
-Retro pixel animation reads as *stepped*, not smoothly eased — use the `steps()` timing function, not `ease`/`ease-in-out`, for any looping decorative animation:
+Retro pixel animation reads as _stepped_, not smoothly eased — use the `steps()` timing function, not `ease`/`ease-in-out`, for any looping decorative animation:
 
 ```css
-@keyframes home-spark-twinkle { 50% { opacity: .4; transform: scale(.75); } }
+@keyframes home-spark-twinkle {
+  50% {
+    opacity: 0.4;
+    transform: scale(0.75);
+  }
+}
 
 @media (prefers-reduced-motion: no-preference) {
-  .pixel-spark { animation: home-spark-twinkle 1.4s steps(2) infinite; }
+  .pixel-spark {
+    animation: home-spark-twinkle 1.4s steps(2) infinite;
+  }
 }
 ```
 
@@ -152,7 +166,7 @@ No hyphens, en dashes or em dashes anywhere in visible homepage text (including 
 
 ## Shared header
 
-The homepage and `/profile` render the exact same top navigation via `app/components/SiteHeader.tsx` (brand logo/wordmark, `AuthButton`, a "Start learning" CTA) — this is a genuinely shared component, not two implementations styled to look alike. Its CSS (`.home-nav`, `.site-brand`, `.home-nav-links`, `.nav-cta`, and the light `.auth-sign-in`/`.auth-user` treatment, scoped under `.home-nav` rather than a page wrapper) lives in `globals.css` and is intentionally *not* scoped under `.home-page`, so it renders identically regardless of which page mounts it. The `--home-*` colour tokens and `--home-gutter` spacing token live on `:root` for the same reason — any page can use them, not just the homepage. If a third page adopts this header, just render `<SiteHeader />`; don't recreate the markup.
+The homepage and `/profile` render the exact same top navigation via `app/components/SiteHeader.tsx` (brand logo/wordmark, `AuthButton`, a "Start learning" CTA) — this is a genuinely shared component, not two implementations styled to look alike. Its CSS (`.home-nav`, `.site-brand`, `.home-nav-links`, `.nav-cta`, and the light `.auth-sign-in`/`.auth-user` treatment, scoped under `.home-nav` rather than a page wrapper) lives in `globals.css` and is intentionally _not_ scoped under `.home-page`, so it renders identically regardless of which page mounts it. The `--home-*` colour tokens and `--home-gutter` spacing token live on `:root` for the same reason — any page can use them, not just the homepage. If a third page adopts this header, just render `<SiteHeader />`; don't recreate the markup.
 
 Two gotchas hit while building it, worth avoiding next time:
 

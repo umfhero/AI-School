@@ -23,6 +23,7 @@ The public Privacy and Terms pages are part of the product. Keep them accurate w
 ## Account security
 
 - Keep Google OAuth PKCE, state validation, verified-email checks, HttpOnly cookies, SameSite protection and secure cookies in production.
+- Keep a versioned record of Terms acceptance for each account. When terms materially change, update the version and require renewed agreement before account features continue.
 - Require same-origin checks for every state-changing route and check that the signed-in user owns the record being changed.
 - Keep session tokens hashed in D1. Expire sessions and clear them on logout or account deletion.
 - Review persistent sign-in cookies before adding any tracking. A persistent login should be limited to authentication and clearly explained to users.
