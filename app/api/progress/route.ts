@@ -7,6 +7,7 @@ const allowedTasksByLesson: Record<string, Set<string>> = {
   [courseIntroLesson.id]: new Set(),
   "basics/ai": new Set(["identify", "order"]),
   "basics/context-rot": new Set(["diagnose", "compare", "build"]),
+  "basics/project-brain": new Set(["identify", "maintain", "draft"]),
 };
 
 export async function GET(request: Request) {

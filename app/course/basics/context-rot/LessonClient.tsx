@@ -230,7 +230,7 @@ export default function LessonClient() {
   return (
     <main className="lesson-page">
       <LessonCelebration trigger={celebrationKey} />
-      <LessonXpCelebration trigger={lessonCompletionKey} nextLessonHref="/profile#courses" />
+      <LessonXpCelebration trigger={lessonCompletionKey} nextLessonHref="/course/basics/project-brain" />
       <header className="lesson-header">
         <div className="lesson-header-left">
           <button className="sidebar-toggle" type="button" onClick={() => setSidebarOpen((open) => !open)} aria-expanded={sidebarOpen} aria-controls="course-contents"><span aria-hidden="true">{sidebarOpen ? "×" : "☰"}</span><b>{sidebarOpen ? "Hide contents" : "Show contents"}</b></button>
@@ -341,7 +341,7 @@ export default function LessonClient() {
         {!visualOpen && activeVisual ? <button className="reopen-visual" type="button" onClick={() => setVisualOpen(true)}><span>Resume task visual</span><b>{visualLabels[activeVisual]}</b></button> : null}
       </div>
 
-      <nav className="lesson-bottom" aria-label="Lesson navigation"><a className="lesson-home-back" href="/"><span aria-hidden="true">←</span><b>Back to home</b></a><div><span>CHAPTER 01 · THE BASICS</span><b>{completedTasks.length} of 3 tasks complete</b></div><button className="lesson-next" disabled={!lessonComplete} title={!lessonComplete ? "Complete the lesson to unlock the next lesson" : undefined}>Next lesson <PixelArrow /></button></nav>
+      <nav className="lesson-bottom" aria-label="Lesson navigation"><a className="lesson-home-back" href="/"><span aria-hidden="true">←</span><b>Back to home</b></a><div><span>CHAPTER 01 · THE BASICS</span><b>{completedTasks.length} of 3 tasks complete</b></div><a className={`lesson-next ${!lessonComplete ? "disabled" : ""}`} aria-disabled={!lessonComplete} href={lessonComplete ? "/course/basics/project-brain" : "/course/basics/context-rot"}>Next lesson <PixelArrow /></a></nav>
     </main>
   );
 }

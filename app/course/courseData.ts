@@ -29,7 +29,7 @@ export const courseChapters: CourseChapter[] = [
     lessons: [
       { id: "basics/ai", title: "AI?", path: "/course/basics/ai", taskCount: 2 },
       { id: "basics/context-rot", title: "Context rot", path: "/course/basics/context-rot", taskCount: 3 },
-      { id: "basics/project-brain", title: "Your project brain", taskCount: 3 },
+      { id: "basics/project-brain", title: "Your project brain", path: "/course/basics/project-brain", taskCount: 3 },
       { id: "basics/files-handovers", title: "Files and handovers", taskCount: 3 },
       { id: "basics/clean-workflow", title: "A clean first workflow", taskCount: 3 },
     ],

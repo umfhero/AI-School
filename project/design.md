@@ -152,6 +152,10 @@ Always gate looping animation behind `@media (prefers-reduced-motion: no-prefere
 
 No hyphens, en dashes or em dashes anywhere in visible homepage text (including `aria-label`/`title` attributes) — rephrase with a comma, "and", or two sentences instead. This does not apply to CSS class names, file paths or code, only to text a reader sees.
 
+## Lesson readability
+
+Each lesson paragraph directly inside a lesson section needs a visible gap below it. Use a `19px` bottom margin alongside the existing `1.75` line height, through the shared `.lesson-reading section > p:not(.reading-kicker)` rule in `app/globals.css`. Do not remove this spacing for a new lesson or add a one-off override, because the gap separates ideas in long teaching sections and prevents the copy from reading as one block.
+
 ## A specific gotcha: overriding shared components
 
 `AuthButton.tsx` (`.auth-sign-in`, `.auth-user`) is shared between the dark lesson header and the light homepage/profile pages, so it has a dark base style plus a `.home-page .auth-sign-in` override for the light context. The homepage retheme once only overrode `background`/`border-radius` and left the base rule's near-white `color` in place, producing invisible white-on-white text — a real bug that shipped and had to be fixed later. When overriding a shared component's colours for a specific page context, override every colour-related property together (`color`, `background`, `border`, any child element's colours), not just the ones that visibly differ at a glance — a partial override can leave an inherited value that only becomes illegible in the new context.

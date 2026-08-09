@@ -80,6 +80,17 @@ test("server-renders the course introduction", async () => {
   assert.doesNotMatch(html, /TASK 01/i);
 });
 
+test("server-renders the project brain lesson", async () => {
+  const response = await render("/course/basics/project-brain");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /Your project brain/i);
+  assert.match(html, /Give the project one clear source of truth/i);
+  assert.match(html, /TASK 01 · PICK THE FACTS/i);
+  assert.match(html, /TASK 03 · DRAFT YOUR OVERVIEW/i);
+  assert.match(html, /not sent to your account/i);
+});
+
 test("publishes crawl and AI-discovery files for the active host", async () => {
   const robots = await render("/robots.txt");
   assert.equal(robots.status, 200);
