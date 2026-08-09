@@ -3,7 +3,7 @@
 import AuthButton from "./AuthButton";
 import ExperienceBadge from "./ExperienceBadge";
 import NotificationButton from "./NotificationButton";
-import { PixelArrow, PixelSpark } from "./PixelIcons";
+import { PixelSpark } from "./PixelIcons";
 
 export default function SiteHeader() {
   return (
@@ -14,11 +14,8 @@ export default function SiteHeader() {
       </a>
       <div className="home-nav-actions">
         <NotificationButton />
-        <AuthButton />
         <ExperienceBadge />
-        <a className="nav-cta" href="/course">
-          Start learning <PixelArrow />
-        </a>
+        <AuthButton />
       </div>
     </nav>
   );
