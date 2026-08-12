@@ -69,6 +69,7 @@ export default function LessonClient() {
   const progress = Math.round((completedTasks.length / 3) * 100);
   const allTasksComplete = completedTasks.length === 3;
   const lessonComplete = Boolean(lessonCompletedAt);
+  const canContinue = signedIn === false || lessonComplete;
   const workspaceStyle = { "--visual-width": `${visualWidth}px`, "--sheet-height": `${sheetHeight}vh`, "--sheet-height-dvh": `${sheetHeight}dvh` } as CSSProperties;
 
   function setSheetHeight(value: number) {
@@ -344,7 +345,7 @@ export default function LessonClient() {
         {!visualOpen && activeVisual ? <button className="reopen-visual" type="button" onClick={() => setVisualOpen(true)}><span>Resume task visual</span><b>{visualLabels[activeVisual]}</b></button> : null}
       </div>
 
-      <nav className="lesson-bottom" aria-label="Lesson navigation"><a className="lesson-home-back" href="/"><span aria-hidden="true">←</span><b>Back to home</b></a><div><span>CHAPTER 01 · THE BASICS</span><b>{completedTasks.length} of 3 tasks complete</b></div><a className={`lesson-next ${!lessonComplete ? "disabled" : ""}`} aria-disabled={!lessonComplete} href={lessonComplete ? "/course/basics/project-brain" : "/course/basics/context-rot"}>Next lesson <PixelArrow /></a></nav>
+      <nav className="lesson-bottom" aria-label="Lesson navigation"><a className="lesson-home-back" href="/"><span aria-hidden="true">←</span><b>Back to home</b></a><div><span>CHAPTER 01 · THE BASICS</span><b>{completedTasks.length} of 3 tasks complete</b></div><a className={`lesson-next ${!canContinue ? "disabled" : ""}`} aria-disabled={!canContinue} href={canContinue ? "/course/basics/project-brain" : "/course/basics/context-rot"}>Next lesson <PixelArrow /></a></nav>
     </main>
   );
 }

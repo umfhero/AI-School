@@ -39,6 +39,7 @@ export default function AiLessonClient() {
   const progress = Math.round((completedTasks.length / taskIds.length) * 100);
   const allTasksComplete = taskIds.every((task) => completedTasks.includes(task));
   const lessonComplete = Boolean(lessonCompletedAt);
+  const canContinue = signedIn === false || lessonComplete;
   const workspaceStyle = { "--visual-width": `${visualWidth}px`, "--sheet-height": `${sheetHeight}vh`, "--sheet-height-dvh": `${sheetHeight}dvh` } as CSSProperties;
 
   function setSheetHeight(value: number) { const clamped = Math.min(92, Math.max(14, value)); sheetHeightRef.current = clamped; setSheetHeightRaw(clamped); }
@@ -89,6 +90,6 @@ export default function AiLessonClient() {
       {visualOpen && activeVisual ? <aside className={`lesson-visual context-visual${sheetDragging ? " sheet-dragging" : ""}`} aria-label="AI setup task visual"><div className="visual-switcher task-visual-header sheet-drag-surface" onPointerDown={beginSheetDrag} onPointerMove={dragSheet} onPointerUp={endSheetDrag} onPointerCancel={endSheetDrag}><div className="sheet-grab-handle" role="slider" aria-label="Resize the task visual sheet" aria-orientation="vertical" aria-valuemin={14} aria-valuemax={92} aria-valuenow={Math.round(sheetHeight)} tabIndex={0} onKeyDown={resizeSheetWithKeyboard}><span aria-hidden="true" /></div><div><span>Side view</span><b>{activeVisual === "match" ? "Match the setups" : "Order the setups"}</b></div><span className="task-visual-context">{activeVisual === "match" ? "Task 01" : "Task 02"}</span><button className="close-visual" type="button" onClick={() => setVisualOpen(false)} aria-label="Close side view">×</button></div><div className="context-visual-stage ai-visual-stage"><AiLessonVisualContent visual={activeVisual} onComplete={() => completeTask(activeVisual === "match" ? "identify" : "order")} /></div></aside> : null}
       {!visualOpen && activeVisual ? <button className="reopen-visual" type="button" onClick={() => setVisualOpen(true)}><span>Resume task visual</span><b>{activeVisual === "match" ? "Match the setups" : "Order the setups"}</b></button> : null}
     </div>
-    <nav className="lesson-bottom" aria-label="Lesson navigation"><a className="lesson-home-back" href="/"><span aria-hidden="true">←</span><b>Back to home</b></a><div><span>CHAPTER 01 · THE BASICS</span><b>{completedTasks.length} of {taskIds.length} tasks complete</b></div><a className={`lesson-next ${!lessonComplete ? "disabled" : ""}`} aria-disabled={!lessonComplete} href={lessonComplete ? "/course/basics/context-rot" : "/course/basics/ai"}>Next lesson <PixelArrow /></a></nav>
+    <nav className="lesson-bottom" aria-label="Lesson navigation"><a className="lesson-home-back" href="/"><span aria-hidden="true">←</span><b>Back to home</b></a><div><span>CHAPTER 01 · THE BASICS</span><b>{completedTasks.length} of {taskIds.length} tasks complete</b></div><a className={`lesson-next ${!canContinue ? "disabled" : ""}`} aria-disabled={!canContinue} href={canContinue ? "/course/basics/context-rot" : "/course/basics/ai"}>Next lesson <PixelArrow /></a></nav>
   </main>;
 }

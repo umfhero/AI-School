@@ -35,6 +35,7 @@ export default function FilesHandoversLessonClient() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [openChapter, setOpenChapter] = useState(0);
   const complete = Boolean(completedAt);
+  const canContinue = signedIn === false || complete;
   const allComplete = taskIds.every((task) => tasks.includes(task));
   const progress = Math.round((tasks.length / 3) * 100);
   const lessonDone = (id: string) =>
@@ -517,10 +518,10 @@ export default function FilesHandoversLessonClient() {
           <b>{tasks.length} of 3 tasks complete</b>
         </div>
         <a
-          className={`lesson-next ${!complete ? "disabled" : ""}`}
-          aria-disabled={!complete}
+          className={`lesson-next ${!canContinue ? "disabled" : ""}`}
+          aria-disabled={!canContinue}
           href={
-            complete
+            canContinue
               ? "/course/basics/clean-workflow"
               : "/course/basics/files-handovers"
           }

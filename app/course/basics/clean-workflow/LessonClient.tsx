@@ -46,6 +46,7 @@ export default function CleanWorkflowLessonClient() {
   const resizing = useRef(false);
   const progress = Math.round((tasks.length / 3) * 100);
   const answerCount = Object.keys(answers).length;
+  const canContinue = signedIn === false || complete;
   const lessonDone = (id: string) =>
     Boolean(id === lessonId ? complete : lessons[id]?.lessonCompletedAt);
   const basicsLessons = courseChapters[0].lessons;
@@ -512,9 +513,9 @@ export default function CleanWorkflowLessonClient() {
           <b>{tasks.length === 3 ? "Quiz passed" : "Quiz required"}</b>
         </div>
         <a
-          className={`lesson-next ${!complete ? "disabled" : ""}`}
-          aria-disabled={!complete}
-          href={complete ? "/profile#courses" : "/course/basics/clean-workflow"}
+          className={`lesson-next ${!canContinue ? "disabled" : ""}`}
+          aria-disabled={!canContinue}
+          href={canContinue ? "/profile#courses" : "/course/basics/clean-workflow"}
         >
           Course overview <PixelArrow />
         </a>
