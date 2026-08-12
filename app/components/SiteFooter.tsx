@@ -2,14 +2,14 @@
 
 import { PixelArrow, PixelSpark } from "./PixelIcons";
 
-export default function SiteFooter() {
+export default function SiteFooter({ showDevelopmentNote = false }: { showDevelopmentNote?: boolean }) {
   return <footer className="site-footer">
     <PixelSpark className="corner-spark" />
     <a className="site-brand" href="/" aria-label="AI school home">
       <PixelSpark className="brand-star" />
       <b>AI school</b>
     </a>
-    <p>Free lessons for building substantial projects with AI.</p>
+    <p>{showDevelopmentNote ? <>This is still a work in progress. I&apos;ll keep reviewing, updating and adding to it. Feedback is welcome: <a href="https://github.com/umfhero/AI-School/issues" target="_blank" rel="noreferrer">report issues on GitHub</a>.</> : "Free lessons for building substantial projects with AI."}</p>
     <nav className="site-footer-links" aria-label="Site information">
       <a href="/privacy">Privacy</a>
       <a href="/terms">Terms</a>

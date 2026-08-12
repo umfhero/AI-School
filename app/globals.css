@@ -729,6 +729,8 @@ button,a { font:inherit; }
 
 .site-footer { width: 100%; min-height: 120px; display: grid; grid-template-columns: auto minmax(180px, 1fr) auto auto; align-items: center; gap: 24px; padding: 30px var(--home-gutter); position: relative; border-top: 2px solid var(--home-line); background: var(--home-bg); color: #0b1130; }
 .site-footer p { margin: 0; color: #7d8499; font-size: .78rem; line-height: 1.45; }
+.site-footer p a { color:#475d9e; font-weight:700; text-decoration:underline; text-underline-offset:3px; }
+.site-footer p a:hover,.site-footer p a:focus-visible { color:var(--home-blue); outline:none; }
 .site-footer .site-brand { color: #0b1130; }
 .site-footer .corner-spark { position: absolute; top: 14px; right: 24px; color: var(--home-pink); opacity: .7; }
 .site-footer-links { display: flex; align-items: center; gap: 15px; }

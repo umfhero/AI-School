@@ -154,7 +154,7 @@ export default async function Home() {
         <a className="button-primary light" href="/course">Start the free course <PixelArrow /></a>
       </section>
 
-      <SiteFooter />
+      <SiteFooter showDevelopmentNote />
     </main>
   );
 }
