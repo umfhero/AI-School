@@ -50,7 +50,7 @@ export async function GET() {
       provider: model.organization_name,
       value,
     });
-    const priceable = models.filter((model) => model.input_price !== null && model.output_price !== null && model.input_price >= 0 && model.output_price >= 0);
+    const priceable = models.filter((model) => model.input_price !== null && model.output_price !== null && model.input_price > 0 && model.output_price > 0);
     const contextual = models.filter((model) => model.context_length && model.context_length > 0);
 
     return Response.json({
