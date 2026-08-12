@@ -120,6 +120,20 @@ test("server-renders the clean first workflow lesson", async () => {
   assert.doesNotMatch(html, /Chapter 2 is ready when you are/i);
 });
 
+test("server-renders the first models lesson", async () => {
+  const response = await render("/course/models/what-changes");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /What models change/i);
+  assert.match(html, /Lesson 02\.1/i);
+  assert.match(html, /A model is the engine inside an AI tool/i);
+  assert.match(html, /Artificial Analysis/i);
+  assert.match(html, /LLM Stats/i);
+  assert.match(html, /TASK 01 · MATCH THE STRENGTH/i);
+  assert.match(html, /Open and closed models/i);
+  assert.match(html, /Next lesson/i);
+});
+
 test("publishes crawl and AI-discovery files for the active host", async () => {
   const robots = await render("/robots.txt");
   assert.equal(robots.status, 200);
@@ -127,11 +141,15 @@ test("publishes crawl and AI-discovery files for the active host", async () => {
 
   const sitemap = await render("/sitemap.xml");
   assert.equal(sitemap.status, 200);
-  assert.match(await sitemap.text(), /http:\/\/localhost\/course\/basics\/context-rot/);
+  const sitemapText = await sitemap.text();
+  assert.match(sitemapText, /http:\/\/localhost\/course\/basics\/context-rot/);
+  assert.match(sitemapText, /http:\/\/localhost\/course\/models\/what-changes/);
 
   const llms = await render("/llms.txt");
   assert.equal(llms.status, 200);
-  assert.match(await llms.text(), /A free, visual course/i);
+  const llmsText = await llms.text();
+  assert.match(llmsText, /A free, visual course/i);
+  assert.match(llmsText, /What models change/i);
 });
 
 test("server-renders the privacy and terms pages", async () => {

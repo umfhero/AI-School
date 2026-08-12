@@ -10,6 +10,7 @@ const allowedTasksByLesson: Record<string, Set<string>> = {
   "basics/project-brain": new Set(["identify", "maintain", "draft"]),
   "basics/files-handovers": new Set(["places", "record", "handover"]),
   "basics/clean-workflow": new Set(["define", "check", "update"]),
+  "models/what-changes": new Set(["match", "source", "choose"]),
 };
 
 export async function GET(request: Request) {

@@ -55,7 +55,7 @@ Introduce a short project overview as the project brain. Cover the facts it shou
 
 Show how the overview gives every fresh chat the same starting point, while remaining small enough to read and maintain. Explain that it is a living document rather than a final specification.
 
-Suggested learner outcome: create a first project overview for a small personal project.
+Suggested learner outcome: create a first project overview for a small personal project. (make this a small task where the user has to fill in a few fields, then submit and have the task show as complete)
 
 ### Lesson 1.4: Files and handovers
 
@@ -79,7 +79,17 @@ This chapter helps the learner choose an AI model for the job, instead of assumi
 
 ### Lesson 2.1: What models change
 
-Explain what a model is and why two AI tools can respond differently to the same request. Cover broad differences in strengths, such as writing, reasoning, coding, image understanding and following instructions, without presenting any model as universally best.
+Cover broad differences in strengths, such as writing, reasoning, coding, image understanding and following instructions, without presenting any model as universally best. and explain why each is different down to factors.
+
+One good source will be https://artificialanalysis.ai/leaderboards/models
+
+where you can see each model ranked by categories such as Output Speed, cost per task, latency, context window etc.
+
+Then more important categories like https://llm-stats.com/ with leads on reasoning, cheapest in the top 10 etc. and would be amazing to get this to be live fetched on some stats, and a live ranking for each cateogiry showing top 3-5 for each section. Adding the AI logos etc.
+
+Will also be important to introduce the idea of open/closed source models, with this idea of why cost is so big and what its like running a model on your own machine, why open source is important, what models you could run on your own machine etc.
+
+
 
 ### Lesson 2.2: Speed, cost and reasoning
 

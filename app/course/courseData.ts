@@ -35,7 +35,7 @@ export const courseChapters: CourseChapter[] = [
     ],
   },
   { title: "Pick the right model", lessons: [
-    { id: "models/what-changes", title: "What models change", taskCount: 3 },
+    { id: "models/what-changes", title: "What models change", path: "/course/models/what-changes", taskCount: 3 },
     { id: "models/speed-cost-reasoning", title: "Speed, cost and reasoning", taskCount: 3 },
     { id: "models/context-windows", title: "Context windows", taskCount: 3 },
     { id: "models/simple-model-test", title: "A simple model test", taskCount: 3 },
