@@ -131,6 +131,10 @@ test("server-renders the first models lesson", async () => {
   assert.match(html, /LLM Stats/i);
   assert.match(html, /TASK 01 · MATCH THE STRENGTH/i);
   assert.match(html, /Open and closed models/i);
+  assert.match(html, /LIVE MODEL DATA/i);
+  assert.match(html, /Loading current model measurements/i);
+  assert.match(html, /Open task/i);
+  assert.match(html, /Connect each request to the first strength/i);
   assert.match(html, /Next lesson/i);
 });
 

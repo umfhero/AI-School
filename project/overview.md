@@ -21,6 +21,7 @@ These are hard operating constraints, not aspirational targets. Recalculate the 
 
 - Static asset requests are free; SSR pages and API routes consume Worker invocations. Do not make a public page dynamic or add client API calls without adding them to the request estimate.
 - A typical signed-in lesson session currently makes approximately 8–12 Worker invocations, 20–40 D1 row reads and 4–8 D1 row writes. Treat these as a baseline to update, not a guarantee.
+- Lesson 2.1 makes one additional public `GET /api/model-rankings` request for its live comparison panel. It reads no account data and makes no D1 queries or writes. Its upstream LLM Stats source is edge-cached for 15 minutes, so a Chapter 2.1 signed-in session should be planned at roughly 10–14 Worker invocations.
 - The shared header makes one additional `GET /api/notifications` request for signed-in visitors. Plan for roughly 9–13 Worker invocations and 22–45 D1 reads per signed-in lesson session before a notification is opened; opening a notification adds one D1 write for its private read state. Do not add polling or real-time delivery without recalculating the busiest-day impact.
 - D1 does not have a monthly free allowance to smooth usage: the practical capacity is determined by the busiest day. As a loose guide, a 5,000-DAU service supports roughly 15,000–40,000 MAU depending on how often learners return.
 
@@ -53,6 +54,7 @@ Read more than one document whenever the change crosses boundaries. For example,
 - Notification read records are included in account export and deleted with the account. Keep the Privacy page accurate for any new notification data or delivery channel.
 - A one-off, idempotent global preview broadcast is currently configured in `lib/server/notifications.ts`: title `Hello!` with lorem ipsum body. It is for visual testing only. Remove the seed after approval; removing it from source does not delete the already-created production notification, so ask the owner before arranging any production data cleanup.
 - Every published lesson must use the complete lesson shell: header, `sidebar-toggle`, `course-sidebar` (`id="course-contents"`), lesson reading area and bottom navigation. Do not ship a lesson with a reading area alone or a permanently visible contents panel. Reuse a working lesson shell, including the responsive `sidebarOpen` state, before adding lesson-specific tasks or visuals.
+- **Course task template:** copy the structure used by Lesson 1.1, Task 01, "Match the setups". The reading area contains a clear task card with a task count and an "Open task" button. The task opens in the responsive side view with two card stacks, visible links between selected pairs, a progress count and a check button. A task completes only after every pair is correct, saves its progress, closes the side view and shows the full-screen task-complete confetti modal. XP appears only after the learner finishes the entire lesson through its completion button, never after an individual task.
 
 ## Build, release and safety
 
