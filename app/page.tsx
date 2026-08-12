@@ -122,6 +122,15 @@ export default async function Home() {
         </div>
       </section>
 
+      <section className="home-development-note" aria-label="Course update">
+        <div>
+          <span>WORK IN PROGRESS</span>
+          <h2>AI school is being built in the open.</h2>
+        </div>
+        <p>I&apos;ll keep reviewing, updating and adding to the course. Feedback is welcome.</p>
+        <a href="https://github.com/umfhero/AI-School/issues" target="_blank" rel="noreferrer">Report an issue on GitHub <PixelArrow /></a>
+      </section>
+
       <CourseProgress />
 
       <section className="proof-section" id="proof">
@@ -154,7 +163,7 @@ export default async function Home() {
         <a className="button-primary light" href="/course">Start the free course <PixelArrow /></a>
       </section>
 
-      <SiteFooter showDevelopmentNote />
+      <SiteFooter />
     </main>
   );
 }
