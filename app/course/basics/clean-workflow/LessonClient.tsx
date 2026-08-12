@@ -9,6 +9,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import AuthButton from "../../../components/AuthButton";
+import CourseSignInNotice from "../../../components/CourseSignInNotice";
 import ExperienceBadge from "../../../components/ExperienceBadge";
 import LessonSaveState from "../../../components/LessonSaveState";
 import LessonXpCelebration from "../../../components/LessonXpCelebration";
@@ -42,11 +43,11 @@ export default function CleanWorkflowLessonClient() {
   const [answers, setAnswers] = useState<Record<number, boolean>>({});
   const [score, setScore] = useState<number | null>(null);
   const [finish, setFinish] = useState(false);
+  const [showSignInNotice, setShowSignInNotice] = useState(false);
   const [visualWidth, setVisualWidth] = useState(620);
   const resizing = useRef(false);
   const progress = Math.round((tasks.length / 3) * 100);
   const answerCount = Object.keys(answers).length;
-  const canContinue = signedIn === false || complete;
   const lessonDone = (id: string) =>
     Boolean(id === lessonId ? complete : lessons[id]?.lessonCompletedAt);
   const basicsLessons = courseChapters[0].lessons;
@@ -119,7 +120,9 @@ export default function CleanWorkflowLessonClient() {
     setOpen(false);
   }
   async function completeLesson() {
-    if (!signedIn || tasks.length !== 3 || complete) return;
+    if (signedIn === false) { setShowSignInNotice(true); return; }
+    if (!signedIn) return;
+    if (tasks.length !== 3 || complete) return;
     const r = await fetch("/api/progress", {
       method: "PUT",
       credentials: "same-origin",
@@ -400,7 +403,6 @@ export default function CleanWorkflowLessonClient() {
                   <button
                     className="complete-lesson-button"
                     type="button"
-                    disabled={!signedIn}
                     onClick={completeLesson}
                   >
                     Complete lesson · +100 XP
@@ -513,13 +515,15 @@ export default function CleanWorkflowLessonClient() {
           <b>{tasks.length === 3 ? "Quiz passed" : "Quiz required"}</b>
         </div>
         <a
-          className={`lesson-next ${!canContinue ? "disabled" : ""}`}
-          aria-disabled={!canContinue}
-          href={canContinue ? "/profile#courses" : "/course/basics/clean-workflow"}
+          className={`lesson-next ${!complete ? "disabled" : ""} ${signedIn === false && !complete ? "guest-gate" : ""}`}
+          aria-disabled={!complete}
+          href={complete ? "/profile#courses" : "/course/basics/clean-workflow"}
+          onClick={(event) => { if (signedIn === false && !complete) { event.preventDefault(); setShowSignInNotice(true); } }}
         >
           Course overview <PixelArrow />
         </a>
       </nav>
+      {showSignInNotice ? <CourseSignInNotice returnTo="/course/basics/clean-workflow" onDismiss={() => setShowSignInNotice(false)} /> : null}
     </main>
   );
 }

@@ -2,6 +2,7 @@
 /* eslint-disable @next/next/no-html-link-for-pages -- Native navigation is required by the deployed Vinext Worker router. */
 import { useEffect, useState } from "react";
 import AuthButton from "../../../components/AuthButton";
+import CourseSignInNotice from "../../../components/CourseSignInNotice";
 import ExperienceBadge from "../../../components/ExperienceBadge";
 import LessonSaveState from "../../../components/LessonSaveState";
 import LessonXpCelebration from "../../../components/LessonXpCelebration";
@@ -25,6 +26,7 @@ export default function FilesHandoversLessonClient() {
     "idle",
   );
   const [celebration, setCelebration] = useState(0);
+  const [showSignInNotice, setShowSignInNotice] = useState(false);
   const [place, setPlace] = useState<string | null>(null);
   const [record, setRecord] = useState<string[]>([]);
   const [handover, setHandover] = useState({
@@ -35,7 +37,6 @@ export default function FilesHandoversLessonClient() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [openChapter, setOpenChapter] = useState(0);
   const complete = Boolean(completedAt);
-  const canContinue = signedIn === false || complete;
   const allComplete = taskIds.every((task) => tasks.includes(task));
   const progress = Math.round((tasks.length / 3) * 100);
   const lessonDone = (id: string) =>
@@ -90,7 +91,9 @@ export default function FilesHandoversLessonClient() {
     save(next);
   }
   async function finish() {
-    if (!signedIn || !allComplete || complete) return;
+    if (signedIn === false) { setShowSignInNotice(true); return; }
+    if (!signedIn) return;
+    if (!allComplete || complete) return;
     setFinishStatus("saving");
     try {
       const response = await fetch("/api/progress", {
@@ -495,7 +498,7 @@ export default function FilesHandoversLessonClient() {
                   <button
                     className="complete-lesson-button"
                     type="button"
-                    disabled={!signedIn || finishStatus === "saving"}
+                    disabled={finishStatus === "saving"}
                     onClick={finish}
                   >
                     {finishStatus === "saving"
@@ -518,17 +521,19 @@ export default function FilesHandoversLessonClient() {
           <b>{tasks.length} of 3 tasks complete</b>
         </div>
         <a
-          className={`lesson-next ${!canContinue ? "disabled" : ""}`}
-          aria-disabled={!canContinue}
+          className={`lesson-next ${!complete ? "disabled" : ""} ${signedIn === false && !complete ? "guest-gate" : ""}`}
+          aria-disabled={!complete}
           href={
-            canContinue
+            complete
               ? "/course/basics/clean-workflow"
               : "/course/basics/files-handovers"
           }
+          onClick={(event) => { if (signedIn === false && !complete) { event.preventDefault(); setShowSignInNotice(true); } }}
         >
           Next lesson <PixelArrow />
         </a>
       </nav>
+      {showSignInNotice ? <CourseSignInNotice returnTo="/course/basics/files-handovers" onDismiss={() => setShowSignInNotice(false)} /> : null}
     </main>
   );
 }

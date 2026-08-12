@@ -4,6 +4,7 @@
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import Image from "next/image";
 import AuthButton from "../../../components/AuthButton";
+import CourseSignInNotice from "../../../components/CourseSignInNotice";
 import ExperienceBadge from "../../../components/ExperienceBadge";
 import LessonSaveState from "../../../components/LessonSaveState";
 import LessonXpCelebration from "../../../components/LessonXpCelebration";
@@ -56,6 +57,7 @@ export default function LessonClient() {
   const [visualOpen, setVisualOpen] = useState(false);
   const [activeVisual, setActiveVisual] = useState<LessonVisual | null>(null);
   const [celebrationKey, setCelebrationKey] = useState(0);
+  const [showSignInNotice, setShowSignInNotice] = useState(false);
   const [lessonCompletionKey, setLessonCompletionKey] = useState(0);
   const [lessonCompletedAt, setLessonCompletedAt] = useState<number | null>(null);
   const [completionStatus, setCompletionStatus] = useState<"idle" | "saving" | "error">("idle");
@@ -69,7 +71,6 @@ export default function LessonClient() {
   const progress = Math.round((completedTasks.length / 3) * 100);
   const allTasksComplete = completedTasks.length === 3;
   const lessonComplete = Boolean(lessonCompletedAt);
-  const canContinue = signedIn === false || lessonComplete;
   const workspaceStyle = { "--visual-width": `${visualWidth}px`, "--sheet-height": `${sheetHeight}vh`, "--sheet-height-dvh": `${sheetHeight}dvh` } as CSSProperties;
 
   function setSheetHeight(value: number) {
@@ -140,7 +141,9 @@ export default function LessonClient() {
   }
 
   async function completeLesson() {
-    if (!signedIn || !allTasksComplete || lessonComplete || completionStatus === "saving") return;
+    if (signedIn === false) { setShowSignInNotice(true); return; }
+    if (!signedIn) return;
+    if (!allTasksComplete || lessonComplete || completionStatus === "saving") return;
     setCompletionStatus("saving");
     try {
       const response = await fetch("/api/progress", {
@@ -323,7 +326,7 @@ export default function LessonClient() {
               </div>
             </section>
 
-            {allTasksComplete ? <section className={`lesson-complete-card ${lessonComplete ? "complete" : ""}`}><span>{lessonComplete ? "LESSON COMPLETE" : "READY TO COMPLETE"}</span><h2>{lessonComplete ? "You have moved project memory outside the chat." : "Finish the lesson and collect your XP."}</h2><p>{lessonComplete ? "Your account has saved this lesson and its XP." : signedIn ? "All tasks are complete. Confirm the lesson to add 100 XP to your level." : "Sign in with Google to save this lesson and collect its XP."}</p>{lessonComplete ? null : <button className="complete-lesson-button" type="button" disabled={!signedIn || completionStatus === "saving"} onClick={completeLesson}>{completionStatus === "saving" ? "Completing lesson…" : "Complete lesson · +100 XP"}</button>}{completionStatus === "error" ? <small className="completion-error">We could not save the lesson yet. Please try again.</small> : null}</section> : null}
+            {allTasksComplete ? <section className={`lesson-complete-card ${lessonComplete ? "complete" : ""}`}><span>{lessonComplete ? "LESSON COMPLETE" : "READY TO COMPLETE"}</span><h2>{lessonComplete ? "You have moved project memory outside the chat." : "Finish the lesson and collect your XP."}</h2><p>{lessonComplete ? "Your account has saved this lesson and its XP." : signedIn ? "All tasks are complete. Confirm the lesson to add 100 XP to your level." : "Sign in with Google to save this lesson and collect its XP."}</p>{lessonComplete ? null : <button className="complete-lesson-button" type="button" disabled={completionStatus === "saving"} onClick={completeLesson}>{completionStatus === "saving" ? "Completing lesson…" : "Complete lesson · +100 XP"}</button>}{completionStatus === "error" ? <small className="completion-error">We could not save the lesson yet. Please try again.</small> : null}</section> : null}
 
             <section className="lesson-sources"><p className="reading-kicker">Sources</p><h2>The research used in this lesson.</h2><a href="https://www.trychroma.com/research/context-rot" target="_blank" rel="noreferrer"><b>Chroma Research</b><span>Context Rot ↗</span></a><a href="https://arxiv.org/abs/2307.03172" target="_blank" rel="noreferrer"><b>Liu et al.</b><span>Lost in the Middle ↗</span></a></section>
           </div>
@@ -345,7 +348,8 @@ export default function LessonClient() {
         {!visualOpen && activeVisual ? <button className="reopen-visual" type="button" onClick={() => setVisualOpen(true)}><span>Resume task visual</span><b>{visualLabels[activeVisual]}</b></button> : null}
       </div>
 
-      <nav className="lesson-bottom" aria-label="Lesson navigation"><a className="lesson-home-back" href="/"><span aria-hidden="true">←</span><b>Back to home</b></a><div><span>CHAPTER 01 · THE BASICS</span><b>{completedTasks.length} of 3 tasks complete</b></div><a className={`lesson-next ${!canContinue ? "disabled" : ""}`} aria-disabled={!canContinue} href={canContinue ? "/course/basics/project-brain" : "/course/basics/context-rot"}>Next lesson <PixelArrow /></a></nav>
+      <nav className="lesson-bottom" aria-label="Lesson navigation"><a className="lesson-home-back" href="/"><span aria-hidden="true">←</span><b>Back to home</b></a><div><span>CHAPTER 01 · THE BASICS</span><b>{completedTasks.length} of 3 tasks complete</b></div><a className={`lesson-next ${!lessonComplete ? "disabled" : ""} ${signedIn === false && !lessonComplete ? "guest-gate" : ""}`} aria-disabled={!lessonComplete} href={lessonComplete ? "/course/basics/project-brain" : "/course/basics/context-rot"} onClick={(event) => { if (signedIn === false && !lessonComplete) { event.preventDefault(); setShowSignInNotice(true); } }}>Next lesson <PixelArrow /></a></nav>
+      {showSignInNotice ? <CourseSignInNotice returnTo="/course/basics/context-rot" onDismiss={() => setShowSignInNotice(false)} /> : null}
     </main>
   );
 }
