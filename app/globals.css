@@ -2161,6 +2161,11 @@ button,a { font:inherit; }
 }
 .lesson-task-template-card > button:hover,.lesson-task-template-card > button:focus-visible { transform: translate(2px,2px); box-shadow: 2px 2px 0 #0b1130; outline: 2px solid #8dbbff; outline-offset: 3px; }
 .lesson-task-template-card > button:active { transform: translate(4px,4px); box-shadow: 0 0 0 #0b1130; }
+.lesson-task-template-card.completed { border-color: #145f3c; background: #e5f8ec; box-shadow: 5px 5px 0 #178a53; }
+.lesson-task-template-card.completed > div span,.lesson-task-template-card.completed > div small { color: #176b43; }
+.lesson-task-template-card.completed > button { background: #178a53; }
+.lesson-task-options button:disabled { cursor: default; }
+.lesson-task-options button.correct:disabled { opacity: 1; }
 
 .lesson-workspace.lesson-template-workspace.task-open { grid-template-columns: 260px minmax(0,1fr) minmax(400px,min(42vw,620px)); }
 .lesson-workspace.lesson-template-workspace.sidebar-closed.task-open { grid-template-columns: minmax(0,1fr) minmax(400px,min(46vw,620px)); }

@@ -9,21 +9,24 @@ type TaskOption = {
 };
 
 type LessonTaskCardProps = {
+  completed: boolean;
   open: boolean;
   onOpen: () => void;
 };
 
-export function LessonTaskCard({ open, onOpen }: LessonTaskCardProps) {
-  return <div className="lesson-task-template-card">
-    <div><span>EXAMPLE TASK</span><small>Optional side panel</small></div>
+export function LessonTaskCard({ completed, open, onOpen }: LessonTaskCardProps) {
+  return <div className={`lesson-task-template-card ${completed ? "completed" : ""}`}>
+    <div><span>{completed ? "TASK COMPLETE" : "EXAMPLE TASK"}</span><small>{completed ? "1 of 1 complete" : "Optional side panel"}</small></div>
     <h3>Use a task when the learner needs to make a decision.</h3>
     <p>The reading explains the idea, while the task asks the learner to apply it without leaving the lesson.</p>
-    <button type="button" onClick={onOpen}>{open ? "Task is open" : "Open task"} <PixelArrow /></button>
+    <button type="button" onClick={onOpen}>{open ? "Task is open" : completed ? "Review task" : "Open task"} {completed ? <PixelCheck /> : <PixelArrow />}</button>
   </div>;
 }
 
 type LessonTaskPanelProps = {
+  completed: boolean;
   onClose: () => void;
+  onComplete: () => void;
 };
 
 const options: TaskOption[] = [
@@ -32,11 +35,11 @@ const options: TaskOption[] = [
   { id: "routine", label: "Every lesson should contain an image." },
 ];
 
-export function LessonTaskPanel({ onClose }: LessonTaskPanelProps) {
+export function LessonTaskPanel({ completed, onClose, onComplete }: LessonTaskPanelProps) {
   const headingRef = useRef<HTMLHeadingElement>(null);
-  const [selected, setSelected] = useState<string | null>(null);
-  const [checked, setChecked] = useState(false);
-  const correct = checked && selected === "evidence";
+  const [selected, setSelected] = useState<string | null>(completed ? "evidence" : null);
+  const [checked, setChecked] = useState(completed);
+  const correct = completed || checked && selected === "evidence";
 
   useEffect(() => {
     headingRef.current?.focus();
@@ -48,8 +51,14 @@ export function LessonTaskPanel({ onClose }: LessonTaskPanelProps) {
   }, [onClose]);
 
   function chooseOption(id: string) {
+    if (completed) return;
     setSelected(id);
     setChecked(false);
+  }
+
+  function checkAnswer() {
+    setChecked(true);
+    if (selected === "evidence") onComplete();
   }
 
   return <aside className="context-visual lesson-task-panel" aria-label="Example lesson task">
@@ -66,7 +75,7 @@ export function LessonTaskPanel({ onClose }: LessonTaskPanelProps) {
         {options.map((option, index) => {
           const selectedOption = selected === option.id;
           const resultClass = checked && selectedOption ? option.id === "evidence" ? "correct" : "incorrect" : "";
-          return <button key={option.id} type="button" className={`${selectedOption ? "selected" : ""} ${resultClass}`} aria-pressed={selectedOption} onClick={() => chooseOption(option.id)}><span>{String(index + 1).padStart(2, "0")}</span><b>{option.label}</b>{checked && selectedOption && correct ? <PixelCheck /> : null}</button>;
+          return <button key={option.id} type="button" disabled={completed} className={`${selectedOption ? "selected" : ""} ${resultClass}`} aria-pressed={selectedOption} onClick={() => chooseOption(option.id)}><span>{String(index + 1).padStart(2, "0")}</span><b>{option.label}</b>{selectedOption && correct ? <PixelCheck /> : null}</button>;
         })}
       </div>
       <div className={`lesson-task-feedback ${checked ? correct ? "correct" : "incorrect" : ""}`} role="status" aria-live="polite">
@@ -75,7 +84,7 @@ export function LessonTaskPanel({ onClose }: LessonTaskPanelProps) {
     </div>
     <footer className="lesson-task-panel-footer">
       <span>{correct ? "1 of 1 complete" : "0 of 1 complete"}</span>
-      <button type="button" disabled={!selected} onClick={() => setChecked(true)}>{correct ? "Answer checked" : "Check answer"} {correct ? <PixelCheck /> : <PixelArrow />}</button>
+      <button type="button" disabled={!selected || completed} onClick={checkAnswer}>{correct ? "Answer checked" : "Check answer"} {correct ? <PixelCheck /> : <PixelArrow />}</button>
     </footer>
   </aside>;
 }

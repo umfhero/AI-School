@@ -26,6 +26,7 @@ export default function LessonOneClient() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showSignInNotice, setShowSignInNotice] = useState(false);
   const [taskOpen, setTaskOpen] = useState(false);
+  const [taskCompleted, setTaskCompleted] = useState(false);
   const [completionStatus, setCompletionStatus] = useState<"idle" | "saving" | "error">("idle");
   const [celebrationKey, setCelebrationKey] = useState(0);
   const lessonComplete = Boolean(lessonCompletedAt);
@@ -136,7 +137,7 @@ export default function LessonOneClient() {
             <p className="reading-kicker">Section 3</p>
             <h2>Tasks should prove something.</h2>
             <p>A task belongs after the learner has enough information to make a choice. The task panel opens beside the reading on a large screen and becomes a contained sheet on mobile, while the course contents remain available from the header.</p>
-            <LessonTaskCard open={taskOpen} onOpen={openTask} />
+            <LessonTaskCard completed={taskCompleted} open={taskOpen} onOpen={openTask} />
           </section>
           <section className={`lesson-complete-card intro-complete-card ${lessonComplete ? "complete" : ""}`}>
             <span>{lessonComplete ? "LESSON COMPLETE" : "READY WHEN YOU ARE"}</span>
@@ -147,7 +148,7 @@ export default function LessonOneClient() {
           </section>
         </div>
       </article>
-      {taskOpen ? <LessonTaskPanel onClose={closeTask} /> : null}
+      {taskOpen ? <LessonTaskPanel completed={taskCompleted} onClose={closeTask} onComplete={() => setTaskCompleted(true)} /> : null}
     </div>
     <nav className="lesson-bottom" aria-label="Lesson navigation"><a className="lesson-home-back" href="/"><PixelArrow className="lesson-back-arrow" /><b>Back to home</b></a><div><span>CHAPTER 01</span><b>{lessonComplete ? "Lesson complete" : "One lesson available"}</b></div><a className="lesson-next" href="/">Return to course <PixelArrow /></a></nav>
     {showSignInNotice ? <CourseSignInNotice returnTo={currentPath} onDismiss={() => setShowSignInNotice(false)} /> : null}
