@@ -1,7 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { getCourseResumeLesson, publishedCourseLessons, totalCourseLessons, totalCourseProgressItems } from "../course/courseData";
+import {
+  courseChapters,
+  courseLessons,
+  getCourseResumeLesson,
+  publishedCourseLessons,
+  totalCourseLessons,
+  totalCourseProgressItems,
+} from "../course/courseData";
 import { PixelArrow } from "./PixelIcons";
 import AuthButton from "./AuthButton";
 
@@ -53,23 +60,20 @@ export default function CourseProgress() {
   }
 
   const completedTasks = progress.completedTasks?.length ?? 0;
-  const introComplete = Boolean(progress.lessons?.intro?.lessonCompletedAt);
-  const completedProgressItems = completedTasks + (introComplete ? 1 : 0);
-  const coursePercent = Math.round((completedProgressItems / totalCourseProgressItems) * 100);
-  const aiTasks = progress.lessons?.["basics/ai"]?.completedTasks?.length ?? 0;
-  const contextTasks = progress.lessons?.["basics/context-rot"]?.completedTasks?.length ?? 0;
+  const completedTaskFreeLessons = courseLessons.filter(
+    (lesson) => lesson.taskCount === 0 && progress.lessons?.[lesson.id]?.lessonCompletedAt,
+  ).length;
+  const completedProgressItems = completedTasks + completedTaskFreeLessons;
+  const coursePercent = totalCourseProgressItems
+    ? Math.round((completedProgressItems / totalCourseProgressItems) * 100)
+    : 0;
   const resumeLesson = getCourseResumeLesson(progress.lessons ?? {});
-  const allPublishedLessonsComplete = publishedCourseLessons.every((lesson) => progress.lessons?.[lesson.id]?.lessonCompletedAt);
-  const currentHref = resumeLesson.path;
+  const allPublishedLessonsComplete = publishedCourseLessons.every(
+    (lesson) => progress.lessons?.[lesson.id]?.lessonCompletedAt,
+  );
   const currentText = allPublishedLessonsComplete
-    ? "All available lessons are complete · Review the final lesson"
-    : resumeLesson.id === "intro"
-    ? `Course introduction · Complete to earn 500 XP`
-    : resumeLesson.id === "basics/ai"
-      ? `Lesson 1 of ${totalCourseLessons - 1} · AI? · ${aiTasks} of 2 tasks`
-      : resumeLesson.id === "basics/context-rot"
-      ? `Lesson 2 of ${totalCourseLessons} · Context rot · ${contextTasks} of 3 tasks`
-      : "Continue with your next lesson";
+    ? "All available lessons are complete · Review Lesson one"
+    : `Lesson 1 of ${totalCourseLessons} · Lesson one · Read to complete`;
 
   return (
     <section className="home-progress" aria-label="Your saved course progress">
@@ -79,15 +83,15 @@ export default function CourseProgress() {
         <small>{completedProgressItems} of {totalCourseProgressItems} course steps</small>
       </div>
       <div className="home-progress-track">
-        <div><span style={{ width: `${Math.max(coursePercent, completedTasks ? 1.5 : 0)}%` }} /></div>
+        <div><span style={{ width: `${Math.max(coursePercent, completedProgressItems ? 1.5 : 0)}%` }} /></div>
         <p>Signed in as {progress.user.name}</p>
       </div>
       <div className="home-progress-current">
         <span>CURRENT POSITION</span>
-        <strong>Chapter 1 of 6 · The basics</strong>
+        <strong>Chapter 1 of {courseChapters.length}</strong>
         <p>{currentText}</p>
       </div>
-      <a className="home-progress-continue" href={currentHref}>{completedProgressItems ? "Continue learning" : "Start course"} <PixelArrow /></a>
+      <a className="home-progress-continue" href={resumeLesson.path}>{completedProgressItems ? "Continue learning" : "Start course"} <PixelArrow /></a>
     </section>
   );
 }

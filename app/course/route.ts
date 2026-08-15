@@ -8,7 +8,7 @@ function redirectTo(path: string, request: Request) {
 export async function GET(request: Request) {
   try {
     const user = await getSessionUser(request);
-    if (!user) return redirectTo("/course/intro", request);
+    if (!user) return redirectTo(getCourseResumeLesson({}).path, request);
     const rows = await database().prepare("SELECT lesson_id AS lessonId, completed_tasks AS completedTasks FROM lesson_progress WHERE user_id = ?")
       .bind(user.id).all<{ lessonId: string; completedTasks: string }>();
     const lessons: Record<string, CourseLessonProgress> = {};
@@ -23,6 +23,6 @@ export async function GET(request: Request) {
     return redirectTo(getCourseResumeLesson(lessons).path, request);
   } catch (error) {
     console.error("Course resume lookup failed", error);
-    return redirectTo("/course/intro", request);
+    return redirectTo(getCourseResumeLesson({}).path, request);
   }
 }

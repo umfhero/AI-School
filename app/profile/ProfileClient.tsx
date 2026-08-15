@@ -8,7 +8,7 @@ import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 import AuthButton from "../components/AuthButton";
 import { PixelArrow, PixelSpark, PixelTierBadge } from "../components/PixelIcons";
-import { chapterTaskCount, courseChapters, getCourseResumeLesson, totalCourseProgressItems, type CourseChapter } from "../course/courseData";
+import { courseChapters, courseLessons, getCourseResumeLesson, totalCourseProgressItems, type CourseChapter } from "../course/courseData";
 import { getExperience, type Experience } from "../lib/experience";
 
 type User = { name: string; email: string; pictureUrl: string | null };
@@ -16,21 +16,21 @@ type LessonMap = Record<string, { completedTasks?: string[]; lessonCompletedAt?:
 type Progress = { user: User | null; completedTasks?: string[]; lessons?: LessonMap; activity?: Record<string, number>; experience?: Experience };
 const heatLabels = ["Mon", "Wed", "Fri"];
 
-function chapterCompletedTasks(chapter: CourseChapter, lessons: LessonMap) {
-  return chapter.lessons.reduce((total, lesson) => total + Math.min(lessons[lesson.id]?.completedTasks?.length ?? 0, lesson.taskCount), 0);
+function chapterCompletedLessons(chapter: CourseChapter, lessons: LessonMap) {
+  return chapter.lessons.filter((lesson) => lessons[lesson.id]?.lessonCompletedAt).length;
 }
 
-const badgeTierNames = ["Foundation", "Model sense", "Agent builder", "Skill maker", "Fleet lead", "Ship shape"];
+const badgeTierNames = ["First step"];
 
 function ChapterBadges({ lessons }: { lessons: LessonMap }) {
-  const unlockedCount = courseChapters.filter((chapter) => chapterCompletedTasks(chapter, lessons) >= chapterTaskCount(chapter)).length;
+  const unlockedCount = courseChapters.filter((chapter) => chapterCompletedLessons(chapter, lessons) === chapter.lessons.length).length;
   return <section className={styles.badgesCard}>
     <div className={styles.badgesTop}><div><p className={styles.eyebrow}>ACHIEVEMENTS</p><h2>Chapter badges</h2></div><span className={styles.badgesCount}>{unlockedCount} of {courseChapters.length}</span></div>
     <div className={styles.badgeRow}>{courseChapters.map((chapter, tier) => {
-      const done = chapterCompletedTasks(chapter, lessons);
-      const total = chapterTaskCount(chapter);
-      const unlocked = done >= total;
-      return <div key={chapter.title} className={`${styles.badge} ${badgeStyles.badge} ${badgeStyles[`tier${tier + 1}`]} ${unlocked ? `${styles.badgeUnlocked} ${badgeStyles.unlocked}` : ""}`} title={`${chapter.title}: ${done} of ${total} tasks complete`}><span className={badgeStyles.tier}>Tier {String(tier + 1).padStart(2, "0")}</span><PixelTierBadge tier={tier} className={`${styles.badgeIcon} ${badgeStyles.icon}`} /><strong>{badgeTierNames[tier] ?? "Course badge"}</strong><span>{chapter.title}</span></div>;
+      const done = chapterCompletedLessons(chapter, lessons);
+      const total = chapter.lessons.length;
+      const unlocked = done === total;
+      return <div key={chapter.title} className={`${styles.badge} ${badgeStyles.badge} ${badgeStyles[`tier${tier + 1}`]} ${unlocked ? `${styles.badgeUnlocked} ${badgeStyles.unlocked}` : ""}`} title={`${chapter.title}: ${done} of ${total} lessons complete`}><span className={badgeStyles.tier}>Tier {String(tier + 1).padStart(2, "0")}</span><PixelTierBadge tier={tier} className={`${styles.badgeIcon} ${badgeStyles.icon}`} /><strong>{badgeTierNames[tier] ?? "Course badge"}</strong><span>{chapter.title}</span></div>;
     })}</div>
   </section>;
 }
@@ -72,11 +72,9 @@ function ActivityGrid({ activity }: { activity: Record<string, number> }) {
 }
 
 function CourseProgress({ completedTasks, lessons }: { completedTasks: number; lessons: Record<string, { completedTasks?: string[]; lessonCompletedAt?: number }> }) {
-  const introComplete = Boolean(lessons.intro?.lessonCompletedAt);
-  const completedProgressItems = completedTasks + (introComplete ? 1 : 0);
-  const percent = Math.round((completedProgressItems / totalCourseProgressItems) * 100);
-  const basics = courseChapters[0];
-  const basicsTasks = basics.lessons.reduce((total, lesson) => total + (lessons[lesson.id]?.completedTasks?.length ?? 0), 0);
+  const completedTaskFreeLessons = courseLessons.filter((lesson) => lesson.taskCount === 0 && lessons[lesson.id]?.lessonCompletedAt).length;
+  const completedProgressItems = completedTasks + completedTaskFreeLessons;
+  const percent = totalCourseProgressItems ? Math.round((completedProgressItems / totalCourseProgressItems) * 100) : 0;
   const nextLesson = getCourseResumeLesson(lessons);
   const nextTitle = nextLesson.title;
   const nextHref = nextLesson.path;
@@ -85,11 +83,12 @@ function CourseProgress({ completedTasks, lessons }: { completedTasks: number; l
     <div className={styles.courseHeader}><div><p className={styles.eyebrow}>COURSE IN PROGRESS</p><h2>AI workflows</h2><p>Build a calmer, more capable way of working with AI.</p></div><strong>{percent}%<small>complete</small></strong></div>
     <div className={styles.progressTrack} aria-label={`${percent}% of the course complete`}><span style={{ width: `${Math.max(percent, completedTasks ? 2 : 0)}%` }} /></div>
     <div className={styles.chapterList}>{courseChapters.map((chapter, index) => {
-      const active = index === 0;
-      const done = active && basicsTasks >= chapterTaskCount(basics);
-      return <div key={chapter.title} className={`${styles.chapter} ${active ? styles.active : ""} ${done ? styles.done : ""}`}><span>{done ? "✓" : String(index + 1).padStart(2, "0")}</span><div><b>{chapter.title}</b><small>{active ? `${basicsTasks} of ${chapterTaskCount(basics)} tasks in The basics` : "Not started"}</small></div><i>{done ? "Complete" : active ? "In progress" : "Locked"}</i></div>;
+      const doneLessons = chapterCompletedLessons(chapter, lessons);
+      const done = doneLessons === chapter.lessons.length;
+      const active = !done && courseChapters.slice(0, index).every((previous) => chapterCompletedLessons(previous, lessons) === previous.lessons.length);
+      return <div key={chapter.title} className={`${styles.chapter} ${active ? styles.active : ""} ${done ? styles.done : ""}`}><span>{done ? "✓" : String(index + 1).padStart(2, "0")}</span><div><b>{chapter.title}</b><small>{doneLessons} of {chapter.lessons.length} lessons complete</small></div><i>{done ? "Complete" : active ? "In progress" : "Locked"}</i></div>;
     })}</div>
-    <a href={nextHref} className={styles.continue}>{completedTasks ? `Continue with ${nextTitle}` : "Start course"}<PixelArrow /></a>
+    <a href={nextHref} className={styles.continue}>{completedProgressItems ? `Continue with ${nextTitle}` : "Start course"}<PixelArrow /></a>
   </section>;
 }
 
@@ -113,7 +112,7 @@ export default function ProfileClient() {
   const lessons = progress?.lessons ?? {};
   const nextLesson = getCourseResumeLesson(lessons);
   const nextTitle = nextLesson.title;
-  const nextCopy = nextLesson.id === "intro" ? "See how the course is organised, who it is for and the workflow habits you will practise." : nextLesson.id === "basics/ai" ? "Start with what AI is, where people use it and how a project grows from a chat into a workspace." : nextLesson.id === "basics/context-rot" ? "Learn why a long chat starts losing the thread and how to prevent it." : nextLesson.id === "basics/project-brain" ? "Learn how a short project overview keeps important context in one place." : "Learn how files and handovers make work understandable after a break.";
+  const nextCopy = "The starter lesson is ready for the shared layout and content review.";
   const nextHref = nextLesson.path;
   const level = progress?.experience ?? getExperience(lessons);
   const activity = progress?.activity ?? {};

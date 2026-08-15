@@ -4,16 +4,7 @@ export const dynamic = "force-dynamic";
 
 const pages = [
   { path: "/", priority: "1.0", changefreq: "weekly" },
-  { path: "/course/intro", priority: "0.9", changefreq: "monthly" },
-  { path: "/course/basics/ai", priority: "0.9", changefreq: "monthly" },
-  { path: "/course/basics/context-rot", priority: "0.9", changefreq: "monthly" },
-  { path: "/course/basics/project-brain", priority: "0.9", changefreq: "monthly" },
-  { path: "/course/basics/files-handovers", priority: "0.9", changefreq: "monthly" },
-  { path: "/course/basics/clean-workflow", priority: "0.9", changefreq: "monthly" },
-  { path: "/course/models/what-changes", priority: "0.9", changefreq: "monthly" },
-  { path: "/course/models/speed-cost-reasoning", priority: "0.9", changefreq: "monthly" },
-  { path: "/course/models/context-windows", priority: "0.9", changefreq: "monthly" },
-  { path: "/course/models/simple-model-test", priority: "0.9", changefreq: "monthly" },
+  { path: "/course/chapter-1/lesson-1", priority: "0.9", changefreq: "monthly" },
   { path: "/privacy", priority: "0.3", changefreq: "yearly" },
   { path: "/terms", priority: "0.3", changefreq: "yearly" },
 ];

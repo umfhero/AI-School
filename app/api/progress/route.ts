@@ -1,16 +1,10 @@
 import { database, getSessionUser, isSameOrigin, noStoreJson } from "@/lib/server/auth";
-import { courseIntroLesson, getLesson } from "@/app/course/courseData";
+import { getLesson } from "@/app/course/courseData";
 import { getExperience } from "@/app/lib/experience";
 import { hasAcceptedCurrentTerms } from "@/lib/terms";
 
 const allowedTasksByLesson: Record<string, Set<string>> = {
-  [courseIntroLesson.id]: new Set(),
-  "basics/ai": new Set(["identify", "order"]),
-  "basics/context-rot": new Set(["diagnose", "compare", "build"]),
-  "basics/project-brain": new Set(["identify", "maintain", "draft"]),
-  "basics/files-handovers": new Set(["places", "record", "handover"]),
-  "basics/clean-workflow": new Set(["define", "check", "update"]),
-  "models/what-changes": new Set(["match", "source", "choose"]),
+  "chapter-1/lesson-1": new Set(),
 };
 
 export async function GET(request: Request) {

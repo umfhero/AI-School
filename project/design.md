@@ -183,8 +183,17 @@ Two gotchas hit while building it, worth avoiding next time:
 - **Internal links must use a plain `<a href>`, not `next/link`'s `<Link>`.** This app's Vinext/Cloudflare Worker deployment needs native navigation — `ProfileClient.tsx` already had an `eslint-disable @next/next/no-html-link-for-pages` comment saying so, but `SiteHeader.tsx` was first written with `<Link>` anyway (copied from the pre-refactor homepage nav, which had the same bug) and clicking the brand logo silently failed to navigate. Every new internal link in this codebase should be `<a href="...">`, with that same eslint-disable comment at the top of the file if it links to `/`.
 - **A shared header must not be nested inside a page's own padded wrapper.** `/profile`'s `<main>` had its own horizontal `padding`, and placing `<SiteHeader />` inside it squeezed the header inward instead of edge-to-edge like the homepage. The fix: the outermost page element should carry no padding of its own (matching `.home-page`'s pattern) — give padding to an inner content wrapper instead, so the header, rendered as a direct child of the unpadded outer element, can size itself independently.
 
+## Starter lesson template
+
+`/course/chapter-1/lesson-1` is the reference shell for the rebuilt course. New lessons should reuse its structure and shared components rather than copying a full lesson and changing it by hand.
+
+- **Reading width:** `.lesson-template-reading` gives desktop lessons a wider measure while keeping paragraph lines readable. It starts with the first numbered section. Do not add a separate lesson title, introductory rule or decorative opening block above it.
+- **Section copy:** section paragraphs use the shared larger text size and blue-grey colour. The numbered kicker remains small and violet, so it works as navigation rather than competing with the heading.
+- **Sourced figures:** `.lesson-image-template` keeps an image, teaching caption and source link together. Use a relevant graph, model diagram or training image, explain what the learner should notice and link to the original publisher.
+- **Side tasks:** `LessonTaskCard` opens `LessonTaskPanel`. On desktop, the panel becomes a third workspace column. At smaller widths it becomes a bottom sheet. Keep the close button, Escape key behaviour, focus transfer, answer state and feedback region.
+- **Pointer feedback:** `LessonPointerEffects` adds the square pointer and stepped click burst only for a fine pointer. Touch devices, reduced motion users and browsers without fine pointer support keep the native experience. Custom pointer styling is scoped to `.lesson-page` so it does not leak into the rest of the site.
+- **Reusable icons:** the task panel close control uses `PixelClose` from `app/components/PixelIcons.tsx`. Add new shared pixel shapes there rather than drawing a lesson-specific copy.
+
 ## Rollout
 
-Applied so far: the homepage, and `/profile` (`app/profile/profile.module.css` and `ProfileClient.tsx`, as of 8 August 2026 — same palette, hard-shadow/border formulas and pixel-icon swaps as the homepage, translated into that page's CSS module, plus the shared `SiteHeader` described above).
-
-The course/lesson pages (`.course-sidebar`/`.lesson-reading` and related rules in `globals.css`) still use the separate, older soft-light theme and were deliberately left untouched. When extending this pixel-art treatment to them, reuse the palette, border/shadow/icon patterns and shared header above rather than introducing new values.
+Applied so far: the homepage, `/profile` and the starter lesson at `/course/chapter-1/lesson-1`. The starter lesson now defines the reading, image, task and pointer patterns for the new course. Future lessons should reuse these patterns and the existing palette rather than introduce another lesson shell.

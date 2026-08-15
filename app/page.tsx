@@ -51,9 +51,7 @@ export default async function Home() {
           isAccessibleForFree: true,
         },
         hasPart: [
-          { "@type": "Course", name: "Course introduction", url: `${siteUrl}/course/intro` },
-          { "@type": "Course", name: "AI?", url: `${siteUrl}/course/basics/ai` },
-          { "@type": "Course", name: "Context rot", url: `${siteUrl}/course/basics/context-rot` },
+          { "@type": "Course", name: "Lesson one", url: `${siteUrl}/course/chapter-1/lesson-1` },
         ],
       },
     ],
@@ -81,7 +79,7 @@ export default async function Home() {
           </div>
           <div className="course-facts" aria-label="Course facts">
             <span><b>1</b><small>course</small></span>
-            <span><b>26</b><small>lessons</small></span>
+            <span><b>1</b><small>lesson</small></span>
             <span><b>£0</b><small>price</small></span>
             <span><SignupCount /><small>signed up</small></span>
           </div>
@@ -158,7 +156,7 @@ export default async function Home() {
       <section className="home-final">
         <PixelSpark className="corner-spark" />
         <div className="final-icon" aria-hidden="true"><PixelSpark /></div>
-        <p>The course introduction is ready</p>
+        <p>The starter lesson is ready</p>
         <h2>Start with the workflow.<br /><em>Then learn how to use AI properly.</em></h2>
         <a className="button-primary light" href="/course">Start the free course <PixelArrow /></a>
       </section>
