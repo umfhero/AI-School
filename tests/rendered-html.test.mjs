@@ -32,6 +32,7 @@ test("server-renders the task-free course pathway and its full shell", async () 
   assert.match(html, /YOUR COURSE MAP/i);
   assert.match(html, /course-pathway-svg-desktop/i);
   assert.match(html, /course-pathway-svg-mobile/i);
+  assert.match(html, /lesson-concept-diagram-paper/i);
   assert.match(html, /animateMotion/i);
   assert.match(html, /Provider companies/i);
   assert.match(html, /Closed and open weights/i);
@@ -40,6 +41,7 @@ test("server-renders the task-free course pathway and its full shell", async () 
   assert.match(html, /Subagents and isolation/i);
   assert.match(html, /Ship, monitor and maintain/i);
   assert.match(html, /course-path-runner/i);
+  assert.doesNotMatch(html, /pathway-card-shadow|pathway-checkpoint-shadow/i);
   assert.match(html, /lesson-diagram-accessible/i);
   assert.doesNotMatch(html, /Determinism comes|deterministic AI/i);
   assert.doesNotMatch(html, /course-chapter-overview/i);

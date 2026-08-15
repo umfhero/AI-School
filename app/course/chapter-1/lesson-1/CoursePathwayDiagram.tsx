@@ -8,7 +8,8 @@ const chapters = [
     mobileTitle: ["Use AI on", "the web"],
     topics: ["AI basics", "Clear requests", "Sources and files", "Checking and privacy"],
     outcome: "Complete one checked web task",
-    colour: "#c7ff24",
+    colour: "#6650e6",
+    surface: "#fbf5ab",
   },
   {
     number: "02",
@@ -17,7 +18,8 @@ const chapters = [
     mobileTitle: ["Understand models", "and AI products"],
     topics: ["Provider companies", "Model types", "Closed and open weights", "Speed, cost and reasoning"],
     outcome: "Choose a model for the work",
-    colour: "#f4a340",
+    colour: "#b56f26",
+    surface: "#fff0c7",
   },
   {
     number: "03",
@@ -26,7 +28,8 @@ const chapters = [
     mobileTitle: ["Manage prompts", "and context"],
     topics: ["Prompt structure", "Tokens and windows", "Context clearing", "Memory and retrieval"],
     outcome: "Build a clean context pack",
-    colour: "#ff6f91",
+    colour: "#8b62c7",
+    surface: "#eee8ff",
   },
   {
     number: "04",
@@ -35,7 +38,8 @@ const chapters = [
     mobileTitle: ["Build AI", "workflows"],
     topics: ["Inputs and outputs", "Steps and branches", "Tools and approvals", "State and handovers"],
     outcome: "Run a visible, repeatable process",
-    colour: "#7dd3fc",
+    colour: "#3976b9",
+    surface: "#e5f1ff",
   },
   {
     number: "05",
@@ -44,7 +48,8 @@ const chapters = [
     mobileTitle: ["Narrow outputs", "and actions"],
     topics: ["Generation controls", "Schemas and constraints", "Validation and retries", "Repeatability tests"],
     outcome: "Set the allowed variation and failures",
-    colour: "#a78bfa",
+    colour: "#6650e6",
+    surface: "#ebe7ff",
   },
   {
     number: "06",
@@ -53,7 +58,8 @@ const chapters = [
     mobileTitle: ["Set up a project", "workspace"],
     topics: ["Project brief", "Files and handovers", "Git and recovery", "Permissions and tests"],
     outcome: "Create a recoverable project home",
-    colour: "#fb7185",
+    colour: "#b65477",
+    surface: "#fbe7ee",
   },
   {
     number: "07",
@@ -62,7 +68,8 @@ const chapters = [
     mobileTitle: ["Work with", "one agent"],
     topics: ["The agent loop", "Agent briefs", "Inspect, plan and change", "Review and handover"],
     outcome: "Supervise one contained change",
-    colour: "#facc15",
+    colour: "#98731f",
+    surface: "#fbf5ab",
   },
   {
     number: "08",
@@ -71,7 +78,8 @@ const chapters = [
     mobileTitle: ["Create skills", "and connect tools"],
     topics: ["Specifications", "Templates and skills", "MCP and tool contracts", "Versioning and tests"],
     outcome: "Reuse a checked capability",
-    colour: "#4ade80",
+    colour: "#317c5d",
+    surface: "#e3f5e9",
   },
   {
     number: "09",
@@ -80,7 +88,8 @@ const chapters = [
     mobileTitle: ["Orchestrate models", "and agents"],
     topics: ["Model routing", "Models prompting models", "Subagents and isolation", "Monitoring and merging"],
     outcome: "Coordinate work without losing control",
-    colour: "#38bdf8",
+    colour: "#327c9c",
+    surface: "#e2f3f8",
   },
   {
     number: "10",
@@ -89,17 +98,17 @@ const chapters = [
     mobileTitle: ["Ship, monitor", "and maintain"],
     topics: ["Deploy and roll back", "Logs, traces and cost", "Live evaluation", "Security and maintenance"],
     outcome: "Operate the complete system",
-    colour: "#f472b6",
+    colour: "#995078",
+    surface: "#f8e6f0",
   },
 ];
 
 function DesktopChapter({ chapter, y }: { chapter: typeof chapters[number]; y: number }) {
   return <g className="pathway-chapter" transform={`translate(0 ${y})`}>
     <path className="pathway-connector" d="M48 58 H94" />
-    <rect className="pathway-checkpoint-shadow" x="40" y="50" width="16" height="16" />
-    <rect className="pathway-checkpoint" x="38" y="48" width="16" height="16" fill={chapter.colour} />
-    <rect className="pathway-card-shadow" x="102" y="7" width="902" height="116" />
-    <rect className="pathway-card" x="96" y="1" width="902" height="116" />
+    <rect className="pathway-checkpoint" x="38" y="48" width="16" height="16" fill={chapter.surface} />
+    <rect x="43" y="53" width="6" height="6" fill={chapter.colour} />
+    <rect className="pathway-card" x="96" y="1" width="902" height="116" fill={chapter.surface} />
     <rect x="96" y="1" width="10" height="116" fill={chapter.colour} />
     <text className="pathway-card-label" x="128" y="26" fill={chapter.colour}>CHAPTER {chapter.number}  /  {chapter.phase}</text>
     <text className="pathway-card-title" x="128" y="55">{chapter.title}</text>
@@ -121,10 +130,9 @@ function DesktopChapter({ chapter, y }: { chapter: typeof chapters[number]; y: n
 function MobileChapter({ chapter, y }: { chapter: typeof chapters[number]; y: number }) {
   return <g className="pathway-chapter" transform={`translate(0 ${y})`}>
     <path className="pathway-connector" d="M28 121 H53" />
-    <rect className="pathway-checkpoint-shadow" x="22" y="115" width="14" height="14" />
-    <rect className="pathway-checkpoint" x="20" y="113" width="14" height="14" fill={chapter.colour} />
-    <rect className="pathway-card-shadow" x="60" y="6" width="338" height="242" />
-    <rect className="pathway-card" x="55" y="1" width="338" height="242" />
+    <rect className="pathway-checkpoint" x="20" y="113" width="14" height="14" fill={chapter.surface} />
+    <rect x="24" y="117" width="6" height="6" fill={chapter.colour} />
+    <rect className="pathway-card" x="55" y="1" width="338" height="242" fill={chapter.surface} />
     <rect x="55" y="1" width="9" height="242" fill={chapter.colour} />
     <text className="pathway-card-label" x="80" y="24" fill={chapter.colour}>CHAPTER {chapter.number}  /  {chapter.phase}</text>
     <text className="pathway-card-title pathway-card-title-mobile" x="80" y="50">
@@ -148,6 +156,7 @@ function MobileChapter({ chapter, y }: { chapter: typeof chapters[number]; y: nu
 export default function CoursePathwayDiagram() {
   return <>
     <LessonDiagram
+      tone="paper"
       eyebrow="YOUR COURSE MAP"
       title="Ten chapters move from browser AI to an operated system."
       description="Read each chapter from top to bottom. The square signal travels in its own rail beside the cards, while every card names the concepts and the result you will carry into the next chapter."
@@ -155,10 +164,10 @@ export default function CoursePathwayDiagram() {
       <svg className="course-pathway-svg course-pathway-svg-desktop" viewBox="0 0 1040 1358" focusable="false" shapeRendering="crispEdges">
         <path id="pathway-rail-desktop" className="pathway-rail" d="M48 18 V1338" />
         {chapters.map((chapter, index) => <DesktopChapter key={chapter.number} chapter={chapter} y={16 + index * 132} />)}
-        <rect className="course-path-runner" x="-7" y="-7" width="14" height="14" fill="#c7ff24">
+        <rect className="course-path-runner" x="-7" y="-7" width="14" height="14" fill="#fbf5ab">
           <animateMotion dur="12s" repeatCount="indefinite"><mpath href="#pathway-rail-desktop" /></animateMotion>
         </rect>
-        <rect className="course-path-runner course-path-runner-second" x="-5" y="-5" width="10" height="10" fill="#ffffff">
+        <rect className="course-path-runner course-path-runner-second" x="-5" y="-5" width="10" height="10" fill="#6650e6">
           <animateMotion dur="12s" begin="-6s" repeatCount="indefinite"><mpath href="#pathway-rail-desktop" /></animateMotion>
         </rect>
       </svg>
@@ -166,7 +175,7 @@ export default function CoursePathwayDiagram() {
       <svg className="course-pathway-svg course-pathway-svg-mobile" viewBox="0 0 420 2595" focusable="false" shapeRendering="crispEdges">
         <path id="pathway-rail-mobile" className="pathway-rail" d="M28 18 V2572" />
         {chapters.map((chapter, index) => <MobileChapter key={chapter.number} chapter={chapter} y={14 + index * 257} />)}
-        <rect className="course-path-runner" x="-6" y="-6" width="12" height="12" fill="#c7ff24">
+        <rect className="course-path-runner" x="-6" y="-6" width="12" height="12" fill="#fbf5ab">
           <animateMotion dur="12s" repeatCount="indefinite"><mpath href="#pathway-rail-mobile" /></animateMotion>
         </rect>
       </svg>

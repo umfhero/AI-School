@@ -5,10 +5,11 @@ type LessonDiagramProps = {
   description: string;
   eyebrow: string;
   title: string;
+  tone?: "dark" | "paper";
 };
 
-export default function LessonDiagram({ children, description, eyebrow, title }: LessonDiagramProps) {
-  return <figure className="lesson-concept-diagram" role="img" aria-label={`${title} ${description}`}>
+export default function LessonDiagram({ children, description, eyebrow, title, tone = "dark" }: LessonDiagramProps) {
+  return <figure className={`lesson-concept-diagram lesson-concept-diagram-${tone}`} role="img" aria-label={`${title} ${description}`}>
     <div className="lesson-concept-diagram-head">
       <span>{eyebrow}</span>
       <i aria-hidden="true" />

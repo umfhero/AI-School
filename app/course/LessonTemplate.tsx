@@ -7,7 +7,7 @@ import CourseSignInNotice from "../components/CourseSignInNotice";
 import ExperienceBadge from "../components/ExperienceBadge";
 import LessonSaveState from "../components/LessonSaveState";
 import LessonXpCelebration from "../components/LessonXpCelebration";
-import { PixelArrow, PixelSpark } from "../components/PixelIcons";
+import { PixelArrow, PixelCheck, PixelSpark } from "../components/PixelIcons";
 import { courseChapters } from "./courseData";
 import LessonPointerEffects from "./LessonPointerEffects";
 
@@ -180,11 +180,11 @@ export default function LessonTemplate({
             const chapterComplete = chapter.lessons.every((lesson) => lessonIsComplete(lesson.id));
             const currentChapter = chapterIndex === chapterNumber - 1;
             return <div className={`side-chapter ${currentChapter ? "current" : ""} ${chapterComplete ? "complete" : ""}`} key={chapter.title}>
-              <button type="button" onClick={() => setOpenChapter(openChapter === chapterIndex ? -1 : chapterIndex)} aria-expanded={openChapter === chapterIndex}><span>{chapterComplete ? "✓" : String(chapterIndex + 1).padStart(2, "0")}</span><b>{chapter.title}</b><i>{chapterComplete ? "COMPLETE" : openChapter === chapterIndex ? "−" : "+"}</i></button>
+              <button type="button" onClick={() => setOpenChapter(openChapter === chapterIndex ? -1 : chapterIndex)} aria-expanded={openChapter === chapterIndex}><span>{chapterComplete ? <PixelCheck /> : String(chapterIndex + 1).padStart(2, "0")}</span><b>{chapter.title}</b>{chapterComplete ? <i>COMPLETE</i> : <i className={`side-chapter-toggle-mark ${openChapter === chapterIndex ? "open" : ""}`} aria-hidden="true"><span /><span /></i>}</button>
               {openChapter === chapterIndex ? <ol>{chapter.lessons.map((lesson, lessonIndex) => {
                 const complete = lessonIsComplete(lesson.id);
                 const active = lesson.id === lessonId;
-                return <li className={`${active ? "active" : ""} ${complete ? "complete" : ""}`} key={lesson.id}><span>{complete ? "✓" : "●"}</span><div><small>Lesson {chapterIndex + 1}.{lessonIndex + 1}</small><a href={lesson.path}>{lesson.title}</a></div>{complete ? <i>COMPLETE</i> : null}</li>;
+                return <li className={`${active ? "active" : ""} ${complete ? "complete" : ""}`} key={lesson.id}><span>{complete ? <PixelCheck /> : <i className="side-lesson-pixel" aria-hidden="true" />}</span><div><small>Lesson {chapterIndex + 1}.{lessonIndex + 1}</small><a href={lesson.path}>{lesson.title}</a></div>{complete ? <i>COMPLETE</i> : null}</li>;
               })}</ol> : null}
             </div>;
           })}</nav>

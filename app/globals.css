@@ -2128,6 +2128,79 @@ button,a { font:inherit; }
 .lesson-image-template figcaption a { display: inline-flex; align-items: center; gap: 10px; color: var(--home-blue); font-size: .76rem; font-weight: 850; text-decoration: none; white-space: nowrap; }
 .lesson-image-template figcaption a:hover,.lesson-image-template figcaption a:focus-visible { color: #2148aa; text-decoration: underline; text-underline-offset: 4px; outline: none; }
 
+/* Shared course contents use the homepage's paper, ink and pixel controls. */
+.lesson-page .course-sidebar {
+  background: #f7f5ff;
+  border-right: 2px solid #0b1130;
+  box-shadow: none;
+  color: #171b35;
+  scrollbar-color: #6650e6 #eeeaff;
+}
+.lesson-page .course-side-head {
+  position: relative;
+  padding: 29px 22px 27px;
+  border-bottom: 2px solid #0b1130;
+  background: #fbf5ab;
+}
+.lesson-page .course-side-head::after { content: ""; position: absolute; right: 18px; top: 20px; width: 8px; height: 8px; background: #6650e6; box-shadow: 12px 0 0 #0b1130,0 12px 0 #0b1130; }
+.lesson-page .course-side-head > p { margin: 0 0 9px; color: #4936bf; font: 900 .68rem ui-monospace,SFMono-Regular,Consolas,monospace; letter-spacing: .11em; }
+.lesson-page .course-side-head h2 { margin: 0 0 21px; color: #0b1130; font-size: 1.42rem; letter-spacing: -.045em; }
+.lesson-page .course-side-head > div { height: 10px; margin: 0 0 24px; border: 2px solid #0b1130; background: #fff; }
+.lesson-page .course-side-head > div > span { height: 100%; background: #6650e6; transition: width .2s steps(3,end); }
+.lesson-page .course-side-head small { top: 15px; color: #50586d; font: 750 .64rem ui-monospace,SFMono-Regular,Consolas,monospace; }
+.lesson-page .course-sidebar nav { padding: 14px 12px 28px; }
+.lesson-page .side-chapter { margin: 0 0 12px; border: 0; }
+.lesson-page .side-chapter > button {
+  min-height: 64px;
+  grid-template-columns: 32px minmax(0,1fr) 25px;
+  gap: 11px;
+  padding: 12px 13px;
+  border: 2px solid #0b1130;
+  border-radius: 5px;
+  background: #fff;
+  box-shadow: 3px 3px 0 #0b1130;
+  color: #20253d;
+  transition: transform .1s steps(2,end),box-shadow .1s steps(2,end),background .1s steps(2,end);
+}
+.lesson-page .side-chapter > button:hover,.lesson-page .side-chapter > button:focus-visible { background: #fbf5ab; transform: translate(1px,1px); box-shadow: 2px 2px 0 #0b1130; outline: 2px solid #6650e6; outline-offset: 2px; }
+.lesson-page .side-chapter.current > button { background: #eeeaff; color: #2d247d; box-shadow: 3px 3px 0 #6650e6; }
+.lesson-page .side-chapter > button > span { width: 27px; height: 27px; display: grid; place-items: center; border: 2px solid #0b1130; background: #fbf5ab; color: #0b1130; font: 900 .64rem ui-monospace,SFMono-Regular,Consolas,monospace; }
+.lesson-page .side-chapter.current > button > span { background: #6650e6; color: #fff; }
+.lesson-page .side-chapter > button b { font-size: .82rem; line-height: 1.25; }
+.lesson-page .side-chapter > button > i { color: #625b78; font-style: normal; justify-self: end; }
+.lesson-page .side-chapter > button > i:not(.side-chapter-toggle-mark) { font: 900 .48rem ui-monospace,SFMono-Regular,Consolas,monospace; letter-spacing: .05em; }
+.lesson-page .side-chapter-toggle-mark { position: relative; width: 17px; height: 17px; display: block; }
+.lesson-page .side-chapter-toggle-mark > span { position: absolute; top: 7px; left: 1px; width: 15px; height: 3px; background: currentColor; }
+.lesson-page .side-chapter-toggle-mark > span:last-child { transform: rotate(90deg); }
+.lesson-page .side-chapter-toggle-mark.open > span:last-child { display: none; }
+.lesson-page .side-chapter ol { padding: 7px 0 0; background: transparent; }
+.lesson-page .side-chapter li {
+  min-height: 64px;
+  grid-template-columns: 27px minmax(0,1fr) auto;
+  gap: 10px;
+  margin-top: 7px;
+  padding: 11px 12px;
+  border: 1px solid #bec4d2;
+  border-radius: 4px;
+  background: #fff;
+  color: #555e73;
+}
+.lesson-page .side-chapter li.active { padding-left: 12px; border: 2px solid #0b1130; background: #fff; box-shadow: 3px 3px 0 #6650e6; color: #171b35; }
+.lesson-page .side-chapter li > span { width: 23px; height: 23px; display: grid; place-items: center; border: 2px solid #6650e6; color: #6650e6; }
+.lesson-page .side-lesson-pixel { width: 7px; height: 7px; display: block; background: currentColor; }
+.lesson-page .side-chapter li small { color: #746b9b; font: 800 .59rem ui-monospace,SFMono-Regular,Consolas,monospace; }
+.lesson-page .side-chapter li a { color: inherit; font-size: .78rem; font-weight: 800; line-height: 1.3; text-decoration: none; }
+.lesson-page .side-chapter li a:hover,.lesson-page .side-chapter li a:focus-visible { color: #4936bf; text-decoration: underline; text-underline-offset: 3px; outline: none; }
+.lesson-page .side-chapter.complete > button { background: #e3f5e9; color: #16583b; box-shadow: 3px 3px 0 #178a53; }
+.lesson-page .side-chapter.complete > button > span { border-color: #145f3c; background: #178a53; color: #fff; }
+.lesson-page .side-chapter li.complete { border-color: #6daf89; background: #edf9f1; color: #185439; }
+.lesson-page .side-chapter li.complete.active { border-color: #145f3c; background: #e3f5e9; box-shadow: 3px 3px 0 #178a53; color: #123f2c; }
+.lesson-page .side-chapter li.complete > span { border-color: #145f3c; background: #178a53; color: #fff; }
+
+@media (max-width:760px) {
+  .lesson-workspace:not(.sidebar-closed) .course-sidebar { box-shadow: 7px 0 0 #6650e6; }
+}
+
 .lesson-concept-diagram {
   max-width: 1080px;
   margin: 36px 0 0;
@@ -2145,27 +2218,34 @@ button,a { font:inherit; }
 .lesson-concept-diagram figcaption { padding: 20px 22px; border-top: 1px solid #3a4665; background: #111a34; }
 .lesson-concept-diagram figcaption b { display: block; color: #f7f8fc; font-size: .96rem; line-height: 1.45; }
 .lesson-concept-diagram figcaption p { max-width: 850px; margin: 7px 0 0; color: #aeb8cc; font-size: .82rem; line-height: 1.58; }
+.lesson-concept-diagram-paper { overflow: visible; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+.lesson-concept-diagram-paper .lesson-concept-diagram-head { min-height: 46px; border: 2px solid #0b1130; border-radius: 5px; background: #fbf5ab; box-shadow: 4px 4px 0 #6650e6; color: #0b1130; }
+.lesson-concept-diagram-paper .lesson-concept-diagram-head span { color: #4936bf; }
+.lesson-concept-diagram-paper .lesson-concept-diagram-head i { background: rgba(11,17,48,.25); }
+.lesson-concept-diagram-paper .lesson-concept-diagram-head small { color: #5c6478; }
+.lesson-concept-diagram-paper .lesson-concept-diagram-canvas { padding: 32px 0 8px; background: transparent; }
+.lesson-concept-diagram-paper figcaption { margin-top: 18px; padding: 19px 21px; border: 2px solid #0b1130; border-radius: 5px; background: #fff; box-shadow: 4px 4px 0 #0b1130; }
+.lesson-concept-diagram-paper figcaption b { color: #171b35; }
+.lesson-concept-diagram-paper figcaption p { color: #5c6478; }
 .course-pathway-svg { display: block; width: 100%; height: auto; overflow: visible; }
 .course-pathway-svg-mobile { display: none; }
-.pathway-rail { fill: none; stroke: #66728c; stroke-width: 4; stroke-dasharray: 10 7; stroke-linecap: butt; }
-.pathway-connector { fill: none; stroke: #66728c; stroke-width: 3; stroke-dasharray: 6 5; stroke-linecap: butt; }
-.pathway-checkpoint-shadow { fill: #050918; }
+.pathway-rail { fill: none; stroke: #a99ef0; stroke-width: 4; stroke-dasharray: 10 7; stroke-linecap: butt; }
+.pathway-connector { fill: none; stroke: #a99ef0; stroke-width: 3; stroke-dasharray: 6 5; stroke-linecap: butt; }
 .pathway-checkpoint { stroke: #0b1130; stroke-width: 2; }
-.pathway-card-shadow { fill: #6258e9; }
-.pathway-card { fill: #121d38; stroke: #65728e; stroke-width: 2; }
+.pathway-card { stroke: #0b1130; stroke-width: 2; }
 .pathway-card-label { font: 900 11px ui-monospace,SFMono-Regular,Consolas,monospace; letter-spacing: 1px; }
-.pathway-card-title { fill: #f7f8fc; font: 850 18px Arial,sans-serif; }
-.pathway-card-outcome,.pathway-card-covers { fill: #8e9bb3; font: 900 9.5px ui-monospace,SFMono-Regular,Consolas,monospace; letter-spacing: 1px; }
-.pathway-card-outcome-copy { fill: #d5dced; font: 750 11.5px Arial,sans-serif; }
-.pathway-card-divider { fill: none; stroke: #3d4a68; stroke-width: 2; }
-.pathway-card-topic { fill: #e8edf7; font: 700 12.5px Arial,sans-serif; }
+.pathway-card-title { fill: #171b35; font: 850 18px Arial,sans-serif; }
+.pathway-card-outcome,.pathway-card-covers { fill: #60677b; font: 900 9.5px ui-monospace,SFMono-Regular,Consolas,monospace; letter-spacing: 1px; }
+.pathway-card-outcome-copy { fill: #343b52; font: 750 11.5px Arial,sans-serif; }
+.pathway-card-divider { fill: none; stroke: rgba(11,17,48,.28); stroke-width: 2; }
+.pathway-card-topic { fill: #2f354c; font: 700 12.5px Arial,sans-serif; }
 .course-path-runner { stroke: #0b1130; stroke-width: 3; }
 .course-path-runner-second { opacity: .85; }
 .course-pathway-note { display: grid; gap: 0; }
 .pathway-card-title-mobile { font-size: 20px; }
 .pathway-card-topic-mobile { font-size: 13px; }
 .pathway-card-divider-mobile { stroke-width: 1; }
-.pathway-card-outcome-mobile { fill: #cfd7e8; font-size: 12.5px; }
+.pathway-card-outcome-mobile { fill: #343b52; font-size: 12.5px; }
 .lesson-diagram-accessible { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
 
 .lesson-inline-task {
@@ -2233,9 +2313,11 @@ button,a { font:inherit; }
   .lesson-image-template figcaption { grid-template-columns: 1fr; gap: 11px; padding: 17px; }
   .lesson-image-template figcaption a { margin-top: 3px; }
   .lesson-concept-diagram { margin-top: 29px; box-shadow: 5px 5px 0 var(--home-violet); }
+  .lesson-concept-diagram-paper { box-shadow: none; }
   .lesson-concept-diagram-head { grid-template-columns: 1fr auto; gap: 10px; padding: 0 13px; }
   .lesson-concept-diagram-head i { display: none; }
   .lesson-concept-diagram-canvas { padding: 7px; background-size: 18px 18px; }
+  .lesson-concept-diagram-paper .lesson-concept-diagram-canvas { padding: 27px 0 7px; }
   .lesson-concept-diagram figcaption { padding: 17px; }
   .course-pathway-svg-desktop { display: none; }
   .course-pathway-svg-mobile { display: block; }
