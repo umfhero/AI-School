@@ -17,13 +17,13 @@ export function SpeedReasoningDiagram() {
   const [profile, setProfile] = useState<keyof typeof speedProfiles>("balanced");
   const current = speedProfiles[profile];
   return <div className={`model-concept-console speed-console profile-${profile}`}>
-    <header><div><span>DECISION CONSOLE</span><b>Match effort to the work.</b></div><small aria-live="polite">{current.label}</small></header>
+    <header><div><span>DECISION CONSOLE</span><b>Match the model effort to the work in front of you.</b></div><small aria-live="polite">{current.label}</small></header>
     <div className="speed-console-controls" role="group" aria-label="Choose a task consequence"><button type="button" className={profile === "quick" ? "active" : ""} onClick={() => setProfile("quick")}>Quick task</button><button type="button" className={profile === "balanced" ? "active" : ""} onClick={() => setProfile("balanced")}>Project work</button><button type="button" className={profile === "careful" ? "active" : ""} onClick={() => setProfile("careful")}>High consequence</button></div>
     <div className="speed-console-body">
       <div className="pixel-gauge" aria-label={`Suggested response pace: ${current.pace}`}><div className="gauge-track"><i style={{ "--gauge-position": `${current.needle}%` } as CSSProperties} /></div><span>MORE THINKING</span><span>MORE SPEED</span></div>
       <div className="tradeoff-readout"><div><span>PACE</span><b>{current.pace}</b></div><div><span>LIKELY SPEND</span><b>{current.spend}</b></div><div><span>CHECKING</span><b>{current.checks}</b></div></div>
     </div>
-    <p>A slower reasoning mode is not automatically better, and a fast model is not automatically careless. This control shows the starting priority, then your own test confirms the choice.</p>
+    <p>A slower reasoning mode can spend more effort on the request, while a fast model can still return an accurate answer. This control shows the starting priority, then your own test confirms the choice.</p>
   </div>;
 }
 
@@ -43,7 +43,7 @@ export function ContextWindowDiagram() {
   const [mode, setMode] = useState<ContextMode>("clean");
   const signal = mode === "noisy" ? 38 : mode === "cleared" ? 96 : 82;
   return <div className={`model-concept-console context-console mode-${mode}`}>
-    <header><div><span>CONTEXT VIEWER</span><b>What the model receives now.</b></div><small aria-live="polite">Signal {signal}%</small></header>
+    <header><div><span>CONTEXT VIEWER</span><b>See what the model receives in the current request.</b></div><small aria-live="polite">Signal {signal}%</small></header>
     <div className="context-console-controls" role="group" aria-label="Change the context example"><button type="button" className={mode === "clean" ? "active" : ""} onClick={() => setMode("clean")}>Clean task</button><button type="button" className={mode === "noisy" ? "active" : ""} onClick={() => setMode("noisy")}>Add long chat</button><button type="button" className={mode === "cleared" ? "active" : ""} onClick={() => setMode("cleared")}>Clear and reload</button></div>
     <div className="context-window-stage">
       <div className="context-window-frame"><span>CONTEXT WINDOW</span><div className="context-card-flow">{contextCards[mode].map((card, index) => <i key={`${mode}-${card}`} className={card.includes("Old") || card.includes("Unrelated") || card.includes("Repeated") || card === "Correction" ? "noise" : "signal"} style={{ "--card-index": index } as CSSProperties}>{card}</i>)}</div><div className="context-capacity"><span style={{ width: `${Math.min(100, contextCards[mode].length * 12.5)}%` }} /></div><small>{contextCards[mode].length} of 8 example slots used</small></div>
@@ -61,7 +61,7 @@ type TestRun = "ready" | "a" | "b" | "compare";
 export function FairModelTestDiagram() {
   const [run, setRun] = useState<TestRun>("ready");
   return <div className={`model-concept-console test-console run-${run}`}>
-    <header><div><span>MODEL TEST BENCH</span><b>One task, one set of rules.</b></div><small aria-live="polite">{run === "ready" ? "Ready" : run === "compare" ? "Comparison complete" : `Model ${run.toUpperCase()} recorded`}</small></header>
+    <header><div><span>MODEL TEST BENCH</span><b>Keep one task and one set of rules across both models.</b></div><small aria-live="polite">{run === "ready" ? "Ready" : run === "compare" ? "Comparison complete" : `Model ${run.toUpperCase()} recorded`}</small></header>
     <div className="shared-test-brief"><span>SHARED PROMPT</span><p>Summarise the supplied policy in under 120 words, name the refund deadline, and cite the paragraph that contains it.</p><div><b>Correct deadline</b><b>Under 120 words</b><b>Source cited</b></div></div>
     <div className="test-output-grid"><article className={run === "a" || run === "compare" ? "ran" : ""}><span>MODEL A</span><div className="test-output-lines"><i /><i /><i /><i /></div><ul><li className="pass">Deadline correct</li><li className="pass">Length passed</li><li className="fail">Source missing</li></ul></article><article className={run === "b" || run === "compare" ? "ran" : ""}><span>MODEL B</span><div className="test-output-lines"><i /><i /><i /></div><ul><li className="pass">Deadline correct</li><li className="pass">Length passed</li><li className="pass">Source cited</li></ul></article></div>
     <div className="test-console-actions"><button type="button" onClick={() => setRun("a")}>Run model A</button><button type="button" onClick={() => setRun("b")}>Run model B</button><button type="button" disabled={run !== "a" && run !== "b" && run !== "compare"} onClick={() => setRun("compare")}>Compare evidence</button></div>
@@ -70,5 +70,5 @@ export function FairModelTestDiagram() {
 }
 
 export function TestRecordDiagram() {
-  return <div className="test-record-card"><header><span>MODEL TEST RECORD</span><b>Keep enough detail to repeat it.</b></header><dl><div><dt>Task</dt><dd>Policy summary</dd></div><div><dt>Model and mode</dt><dd>Model B, standard</dd></div><div><dt>Date</dt><dd>15 August 2026</dd></div><div><dt>Prompt</dt><dd>Saved with the test</dd></div><div><dt>Result</dt><dd>3 of 3 criteria passed</dd></div><div><dt>Decision</dt><dd>Use for the next trial</dd></div></dl></div>;
+  return <div className="test-record-card"><header><span>MODEL TEST RECORD</span><b>Keep enough detail so the same test can be repeated.</b></header><dl><div><dt>Task</dt><dd>Policy summary</dd></div><div><dt>Model and mode</dt><dd>Model B, standard</dd></div><div><dt>Date</dt><dd>15 August 2026</dd></div><div><dt>Prompt</dt><dd>Saved with the test</dd></div><div><dt>Result</dt><dd>3 of 3 criteria passed</dd></div><div><dt>Decision</dt><dd>Use for the next trial</dd></div></dl></div>;
 }
