@@ -12,7 +12,7 @@ AI school is free and open source. Its pathway moves from web AI to deterministi
 
 ## Live lessons
 
-- [Your AI course pathway](${origin}/course/chapter-1/lesson-1): an animated overview of all eight chapters and the control loop used throughout the course.
+- [Your AI course pathway](${origin}/course/chapter-1/lesson-1): a detailed animated overview of all ten chapters, from web AI and model basics to orchestration and live operation.
 
 ## Primary pages
 

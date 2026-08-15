@@ -225,11 +225,30 @@ The final chapter then teaches verification and source control after the learner
 
 ## Recommended course order
 
-This is the preferred structure if the course can grow from six chapters to eight. It keeps the existing lessons where they fit, and it makes the move from web AI to controlled project work visible.
+This eight chapter structure was the first recommendation from the roadmap audit. It is retained as research history, but the ten chapter pathway in `aicourse.md` now supersedes it. The later decision gives model types, context management, workflows, deterministic systems, project setup, skills and orchestration enough room to be taught in dependency order.
+
+The agreed chapter sequence is:
+
+1. Use AI on the web.
+2. Understand models and AI products, including provider companies, model types, and closed models compared with open weights.
+3. Manage prompts and context, including context windows, clearing, compaction, memory and retrieval.
+4. Build AI workflows with visible steps, state, tools, approval points and handovers.
+5. Build deterministic AI systems through generation controls, constrained outputs, bounded actions, validation, retries and repeatability tests.
+6. Set up a project workspace with maintained files, Git, permissions, secrets and tests.
+7. Work with one agent through inspection, planning, contained change, review and handover.
+8. Create specifications, templates and skills, then connect tools and MCP through explicit contracts.
+9. Orchestrate models and agents through routing, models prompting models, subagents, isolated parallel work, monitoring and controlled merging.
+10. Ship, monitor and maintain the complete system.
+
+Lesson 1.1 only maps this journey. It does not introduce deterministic AI as a term because the learner has not yet learnt models, context or workflows.
+
+## Historical eight chapter recommendation
+
+This was the preferred structure when the course was expected to grow from six chapters to eight. It keeps the original lessons where they fit and records how the first reordering decision was reached.
 
 ### Course introduction
 
-Set the learner promise, explain that AI outputs can be narrowed, and preview the controls used throughout the course: fixed inputs, bounded outputs, permitted actions, validation and recorded evidence. Mention later mechanisms without teaching them in full here.
+Show the route from web AI to an operated system and explain the practical result of each chapter. Do not introduce deterministic AI or teach later mechanisms in the orientation.
 
 ### Chapter 1: Use AI on the web
 

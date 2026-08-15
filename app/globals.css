@@ -2147,23 +2147,26 @@ button,a { font:inherit; }
 .lesson-concept-diagram figcaption p { max-width: 850px; margin: 7px 0 0; color: #aeb8cc; font-size: .82rem; line-height: 1.58; }
 .course-pathway-svg { display: block; width: 100%; height: auto; overflow: visible; }
 .course-pathway-svg-mobile { display: none; }
-.course-path-line { fill: none; stroke: #53617f; stroke-width: 3; stroke-linecap: square; stroke-linejoin: bevel; }
-.course-path-arrows path { fill: none; stroke: #7b89a6; stroke-width: 3; stroke-linecap: square; stroke-linejoin: bevel; }
-.course-path-node { fill: #121d38; stroke: #65728e; stroke-width: 2; }
-.course-path-node-title { fill: #f7f8fc; font-size: 17px; font-weight: 850; }
-.course-path-node-result { fill: #9eabc1; font-size: 11.5px; font-weight: 650; }
-.course-path-pulse { stroke: #0b1130; stroke-width: 3; }
-.course-path-pulse-second { opacity: .8; }
-.course-control-loop > text { fill: #9eabc1; font: 900 11px monospace; letter-spacing: 1.4px; }
-.course-control-loop g rect { fill: #181f3e; stroke: #6258e9; stroke-width: 1.5; }
-.course-control-loop g text { fill: #f7f8fc; font: 850 10px monospace; letter-spacing: .5px; }
+.pathway-rail { fill: none; stroke: #66728c; stroke-width: 4; stroke-dasharray: 10 7; stroke-linecap: butt; }
+.pathway-connector { fill: none; stroke: #66728c; stroke-width: 3; stroke-dasharray: 6 5; stroke-linecap: butt; }
+.pathway-checkpoint-shadow { fill: #050918; }
+.pathway-checkpoint { stroke: #0b1130; stroke-width: 2; }
+.pathway-card-shadow { fill: #6258e9; }
+.pathway-card { fill: #121d38; stroke: #65728e; stroke-width: 2; }
+.pathway-card-label { font: 900 11px ui-monospace,SFMono-Regular,Consolas,monospace; letter-spacing: 1px; }
+.pathway-card-title { fill: #f7f8fc; font: 850 18px Arial,sans-serif; }
+.pathway-card-outcome,.pathway-card-covers { fill: #8e9bb3; font: 900 9.5px ui-monospace,SFMono-Regular,Consolas,monospace; letter-spacing: 1px; }
+.pathway-card-outcome-copy { fill: #d5dced; font: 750 11.5px Arial,sans-serif; }
+.pathway-card-divider { fill: none; stroke: #3d4a68; stroke-width: 2; }
+.pathway-card-topic { fill: #e8edf7; font: 700 12.5px Arial,sans-serif; }
+.course-path-runner { stroke: #0b1130; stroke-width: 3; }
+.course-path-runner-second { opacity: .85; }
 .course-pathway-note { display: grid; gap: 0; }
-.course-pathway-note a { width: fit-content; margin-top: 14px; color: #173f9f; font-size: .8rem; font-weight: 850; text-underline-offset: 4px; }
-.course-chapter-overview { max-width: 1080px; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; margin-top: 34px; }
-.course-chapter-overview article { min-height: 150px; display: grid; grid-template-columns: 58px minmax(0,1fr); gap: 18px; padding: 22px; border: 2px solid #0b1130; border-radius: 5px; background: #fff; box-shadow: 4px 4px 0 #0b1130; }
-.course-chapter-overview article > span { color: var(--home-violet); font: 950 .77rem monospace; letter-spacing: .08em; }
-.course-chapter-overview h3 { margin: 0; color: #202b45; font-size: 1.05rem; line-height: 1.25; }
-.course-chapter-overview p { margin: 9px 0 0; color: #526077; font-size: .84rem; line-height: 1.58; }
+.pathway-card-title-mobile { font-size: 20px; }
+.pathway-card-topic-mobile { font-size: 13px; }
+.pathway-card-divider-mobile { stroke-width: 1; }
+.pathway-card-outcome-mobile { fill: #cfd7e8; font-size: 12.5px; }
+.lesson-diagram-accessible { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
 
 .lesson-inline-task {
   max-width: 980px;
@@ -2236,8 +2239,6 @@ button,a { font:inherit; }
   .lesson-concept-diagram figcaption { padding: 17px; }
   .course-pathway-svg-desktop { display: none; }
   .course-pathway-svg-mobile { display: block; }
-  .course-chapter-overview { grid-template-columns: 1fr; }
-  .course-chapter-overview article { min-height: 0; grid-template-columns: 42px minmax(0,1fr); padding: 18px; }
   .lesson-inline-task { padding: 19px; }
   .lesson-inline-task > header { align-items: flex-start; flex-direction: column; gap: 6px; }
   .lesson-inline-task-footer { align-items: stretch; flex-direction: column; margin: 22px -19px -19px; }
@@ -2245,5 +2246,5 @@ button,a { font:inherit; }
 }
 
 @media (prefers-reduced-motion:reduce) {
-  .course-path-pulse { display: none; }
+  .course-path-runner { display: none; }
 }

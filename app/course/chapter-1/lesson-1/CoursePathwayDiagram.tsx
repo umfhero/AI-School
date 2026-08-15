@@ -1,86 +1,178 @@
 import LessonDiagram from "../../LessonDiagram";
 
-const stages = [
-  { number: "01", lines: ["Start with", "web AI"], result: "Give it a clear job", colour: "#c7ff24" },
-  { number: "02", lines: ["Narrow and", "control results"], result: "Define what may pass", colour: "#f4a340" },
-  { number: "03", lines: ["Keep a", "repeatable project"], result: "Save useful context", colour: "#ff6f91" },
-  { number: "04", lines: ["Choose and", "measure models"], result: "Test with evidence", colour: "#7dd3fc" },
-  { number: "05", lines: ["Enter a", "safe workspace"], result: "Protect every change", colour: "#a78bfa" },
-  { number: "06", lines: ["Build with", "one agent"], result: "Supervise the loop", colour: "#fb7185" },
-  { number: "07", lines: ["Reuse and", "scale the work"], result: "Add skills and tools", colour: "#facc15" },
-  { number: "08", lines: ["Ship and", "maintain"], result: "Observe and improve", colour: "#4ade80" },
+const chapters = [
+  {
+    number: "01",
+    phase: "FOUNDATION",
+    title: "Use AI on the web",
+    mobileTitle: ["Use AI on", "the web"],
+    topics: ["AI basics", "Clear requests", "Sources and files", "Checking and privacy"],
+    outcome: "Complete one checked web task",
+    colour: "#c7ff24",
+  },
+  {
+    number: "02",
+    phase: "FOUNDATION",
+    title: "Understand models and AI products",
+    mobileTitle: ["Understand models", "and AI products"],
+    topics: ["Provider companies", "Model types", "Closed and open weights", "Speed, cost and reasoning"],
+    outcome: "Choose a model for the work",
+    colour: "#f4a340",
+  },
+  {
+    number: "03",
+    phase: "CONTROL",
+    title: "Manage prompts and context",
+    mobileTitle: ["Manage prompts", "and context"],
+    topics: ["Prompt structure", "Tokens and windows", "Context clearing", "Memory and retrieval"],
+    outcome: "Build a clean context pack",
+    colour: "#ff6f91",
+  },
+  {
+    number: "04",
+    phase: "CONTROL",
+    title: "Build AI workflows",
+    mobileTitle: ["Build AI", "workflows"],
+    topics: ["Inputs and outputs", "Steps and branches", "Tools and approvals", "State and handovers"],
+    outcome: "Run a visible, repeatable process",
+    colour: "#7dd3fc",
+  },
+  {
+    number: "05",
+    phase: "CONTROL",
+    title: "Narrow outputs and actions",
+    mobileTitle: ["Narrow outputs", "and actions"],
+    topics: ["Generation controls", "Schemas and constraints", "Validation and retries", "Repeatability tests"],
+    outcome: "Set the allowed variation and failures",
+    colour: "#a78bfa",
+  },
+  {
+    number: "06",
+    phase: "BUILD",
+    title: "Set up a project workspace",
+    mobileTitle: ["Set up a project", "workspace"],
+    topics: ["Project brief", "Files and handovers", "Git and recovery", "Permissions and tests"],
+    outcome: "Create a recoverable project home",
+    colour: "#fb7185",
+  },
+  {
+    number: "07",
+    phase: "BUILD",
+    title: "Work with one agent",
+    mobileTitle: ["Work with", "one agent"],
+    topics: ["The agent loop", "Agent briefs", "Inspect, plan and change", "Review and handover"],
+    outcome: "Supervise one contained change",
+    colour: "#facc15",
+  },
+  {
+    number: "08",
+    phase: "BUILD",
+    title: "Create skills and connect tools",
+    mobileTitle: ["Create skills", "and connect tools"],
+    topics: ["Specifications", "Templates and skills", "MCP and tool contracts", "Versioning and tests"],
+    outcome: "Reuse a checked capability",
+    colour: "#4ade80",
+  },
+  {
+    number: "09",
+    phase: "ORCHESTRATE",
+    title: "Orchestrate models and agents",
+    mobileTitle: ["Orchestrate models", "and agents"],
+    topics: ["Model routing", "Models prompting models", "Subagents and isolation", "Monitoring and merging"],
+    outcome: "Coordinate work without losing control",
+    colour: "#38bdf8",
+  },
+  {
+    number: "10",
+    phase: "OPERATE",
+    title: "Ship, monitor and maintain",
+    mobileTitle: ["Ship, monitor", "and maintain"],
+    topics: ["Deploy and roll back", "Logs, traces and cost", "Live evaluation", "Security and maintenance"],
+    outcome: "Operate the complete system",
+    colour: "#f472b6",
+  },
 ];
 
-const desktopPositions = [
-  [140, 126], [400, 126], [660, 126], [920, 126],
-  [920, 354], [660, 354], [400, 354], [140, 354],
-];
-
-function DesktopStage({ stage, x, y }: { stage: typeof stages[number]; x: number; y: number }) {
-  return <g transform={`translate(${x} ${y})`}>
-    <rect className="course-path-node" x="-108" y="-55" width="216" height="110" rx="5" />
-    <rect x="-108" y="-55" width="10" height="110" fill={stage.colour} />
-    <text x="-84" y="-31" fill={stage.colour} fontSize="12" fontWeight="900" letterSpacing="1.4">CHAPTER {stage.number}</text>
-    <text x="-84" y="-5" className="course-path-node-title"><tspan x="-84">{stage.lines[0]}</tspan><tspan x="-84" dy="21">{stage.lines[1]}</tspan></text>
-    <text x="-84" y="40" className="course-path-node-result">{stage.result}</text>
+function DesktopChapter({ chapter, y }: { chapter: typeof chapters[number]; y: number }) {
+  return <g className="pathway-chapter" transform={`translate(0 ${y})`}>
+    <path className="pathway-connector" d="M48 58 H94" />
+    <rect className="pathway-checkpoint-shadow" x="40" y="50" width="16" height="16" />
+    <rect className="pathway-checkpoint" x="38" y="48" width="16" height="16" fill={chapter.colour} />
+    <rect className="pathway-card-shadow" x="102" y="7" width="902" height="116" />
+    <rect className="pathway-card" x="96" y="1" width="902" height="116" />
+    <rect x="96" y="1" width="10" height="116" fill={chapter.colour} />
+    <text className="pathway-card-label" x="128" y="26" fill={chapter.colour}>CHAPTER {chapter.number}  /  {chapter.phase}</text>
+    <text className="pathway-card-title" x="128" y="55">{chapter.title}</text>
+    <text className="pathway-card-outcome" x="128" y="88">YOU LEAVE WITH</text>
+    <text className="pathway-card-outcome-copy" x="128" y="105">{chapter.outcome}</text>
+    <path className="pathway-card-divider" d="M500 18 V100" />
+    <text className="pathway-card-covers" x="528" y="27">THIS CHAPTER COVERS</text>
+    {chapter.topics.map((topic, index) => {
+      const x = index % 2 === 0 ? 528 : 762;
+      const topicY = index < 2 ? 57 : 91;
+      return <g key={topic}>
+        <rect x={x} y={topicY - 9} width="8" height="8" fill={chapter.colour} />
+        <text className="pathway-card-topic" x={x + 17} y={topicY}>{topic}</text>
+      </g>;
+    })}
   </g>;
 }
 
-function MobileStage({ stage, y }: { stage: typeof stages[number]; y: number }) {
-  return <g transform={`translate(210 ${y})`}>
-    <rect className="course-path-node" x="-172" y="-48" width="344" height="96" rx="5" />
-    <rect x="-172" y="-48" width="10" height="96" fill={stage.colour} />
-    <text x="-145" y="-23" fill={stage.colour} fontSize="12" fontWeight="900" letterSpacing="1.2">CHAPTER {stage.number}</text>
-    <text x="-145" y="4" className="course-path-node-title"><tspan>{stage.lines.join(" ")}</tspan></text>
-    <text x="-145" y="31" className="course-path-node-result">{stage.result}</text>
+function MobileChapter({ chapter, y }: { chapter: typeof chapters[number]; y: number }) {
+  return <g className="pathway-chapter" transform={`translate(0 ${y})`}>
+    <path className="pathway-connector" d="M28 121 H53" />
+    <rect className="pathway-checkpoint-shadow" x="22" y="115" width="14" height="14" />
+    <rect className="pathway-checkpoint" x="20" y="113" width="14" height="14" fill={chapter.colour} />
+    <rect className="pathway-card-shadow" x="60" y="6" width="338" height="242" />
+    <rect className="pathway-card" x="55" y="1" width="338" height="242" />
+    <rect x="55" y="1" width="9" height="242" fill={chapter.colour} />
+    <text className="pathway-card-label" x="80" y="24" fill={chapter.colour}>CHAPTER {chapter.number}  /  {chapter.phase}</text>
+    <text className="pathway-card-title pathway-card-title-mobile" x="80" y="50">
+      <tspan x="80">{chapter.mobileTitle[0]}</tspan>
+      <tspan x="80" dy="23">{chapter.mobileTitle[1]}</tspan>
+    </text>
+    <text className="pathway-card-covers" x="80" y="101">THIS CHAPTER COVERS</text>
+    {chapter.topics.map((topic, index) => {
+      const x = 80;
+      const topicY = 127 + index * 23;
+      return <g key={topic}>
+        <rect x={x} y={topicY - 8} width="7" height="7" fill={chapter.colour} />
+        <text className="pathway-card-topic pathway-card-topic-mobile" x={x + 15} y={topicY}>{topic}</text>
+      </g>;
+    })}
+    <path className="pathway-card-divider pathway-card-divider-mobile" d="M80 211 H368" />
+    <text className="pathway-card-outcome-copy pathway-card-outcome-mobile" x="80" y="231">{chapter.outcome}</text>
   </g>;
 }
 
 export default function CoursePathwayDiagram() {
-  return <LessonDiagram
-    eyebrow="COURSE PATHWAY"
-    title="Eight chapters move from a web prompt to a maintained AI system."
-    description="The moving marker follows the learner route. Every stage keeps the same control loop: define, supply context, constrain, run, check and record."
-  >
-    <svg className="course-pathway-svg course-pathway-svg-desktop" viewBox="0 0 1060 545" focusable="false">
-      <path id="course-path-desktop" className="course-path-line" d="M140 126 H920 V354 H140" pathLength="100" />
-      <g className="course-path-arrows">
-        <path d="M270 114 l12 12 -12 12" />
-        <path d="M530 114 l12 12 -12 12" />
-        <path d="M790 114 l12 12 -12 12" />
-        <path d="M932 232 l-12 12 -12 -12" />
-        <path d="M790 342 l-12 12 12 12" />
-        <path d="M530 342 l-12 12 12 12" />
-        <path d="M270 342 l-12 12 12 12" />
-      </g>
-      {stages.map((stage, index) => <DesktopStage key={stage.number} stage={stage} x={desktopPositions[index][0]} y={desktopPositions[index][1]} />)}
-      <circle className="course-path-pulse" r="8" fill="#c7ff24">
-        <animateMotion dur="8s" repeatCount="indefinite"><mpath href="#course-path-desktop" /></animateMotion>
-      </circle>
-      <circle className="course-path-pulse course-path-pulse-second" r="5" fill="#ffffff">
-        <animateMotion dur="8s" begin="-4s" repeatCount="indefinite"><mpath href="#course-path-desktop" /></animateMotion>
-      </circle>
-      <g transform="translate(530 485)" className="course-control-loop">
-        <text y="-22" textAnchor="middle">THE CONTROL LOOP RETURNS IN EVERY CHAPTER</text>
-        {['DEFINE','CONTEXT','CONSTRAIN','RUN','CHECK','RECORD'].map((label, index) => <g key={label} transform={`translate(${(index - 3) * 135 + 68} 0)`}>
-          <rect x="-59" y="-13" width="118" height="28" rx="3" />
-          <text y="5" textAnchor="middle">{label}</text>
-        </g>)}
-      </g>
-    </svg>
-    <svg className="course-pathway-svg course-pathway-svg-mobile" viewBox="0 0 420 1125" focusable="false">
-      <path id="course-path-mobile" className="course-path-line" d="M210 72 V922" pathLength="100" />
-      {stages.map((stage, index) => <MobileStage key={stage.number} stage={stage} y={72 + index * 122} />)}
-      <circle className="course-path-pulse" r="8" fill="#c7ff24">
-        <animateMotion dur="8s" repeatCount="indefinite"><mpath href="#course-path-mobile" /></animateMotion>
-      </circle>
-      <g transform="translate(210 1033)" className="course-control-loop course-control-loop-mobile">
-        <text y="-49" textAnchor="middle">THE SAME CONTROL LOOP</text>
-        {['DEFINE','CONTEXT','CONSTRAIN','RUN','CHECK','RECORD'].map((label, index) => <g key={label} transform={`translate(${index % 3 * 116 - 116} ${Math.floor(index / 3) * 42})`}>
-          <rect x="-52" y="-14" width="104" height="28" rx="3" />
-          <text y="5" textAnchor="middle">{label}</text>
-        </g>)}
-      </g>
-    </svg>
-  </LessonDiagram>;
+  return <>
+    <LessonDiagram
+      eyebrow="YOUR COURSE MAP"
+      title="Ten chapters move from browser AI to an operated system."
+      description="Read each chapter from top to bottom. The square signal travels in its own rail beside the cards, while every card names the concepts and the result you will carry into the next chapter."
+    >
+      <svg className="course-pathway-svg course-pathway-svg-desktop" viewBox="0 0 1040 1358" focusable="false" shapeRendering="crispEdges">
+        <path id="pathway-rail-desktop" className="pathway-rail" d="M48 18 V1338" />
+        {chapters.map((chapter, index) => <DesktopChapter key={chapter.number} chapter={chapter} y={16 + index * 132} />)}
+        <rect className="course-path-runner" x="-7" y="-7" width="14" height="14" fill="#c7ff24">
+          <animateMotion dur="12s" repeatCount="indefinite"><mpath href="#pathway-rail-desktop" /></animateMotion>
+        </rect>
+        <rect className="course-path-runner course-path-runner-second" x="-5" y="-5" width="10" height="10" fill="#ffffff">
+          <animateMotion dur="12s" begin="-6s" repeatCount="indefinite"><mpath href="#pathway-rail-desktop" /></animateMotion>
+        </rect>
+      </svg>
+
+      <svg className="course-pathway-svg course-pathway-svg-mobile" viewBox="0 0 420 2595" focusable="false" shapeRendering="crispEdges">
+        <path id="pathway-rail-mobile" className="pathway-rail" d="M28 18 V2572" />
+        {chapters.map((chapter, index) => <MobileChapter key={chapter.number} chapter={chapter} y={14 + index * 257} />)}
+        <rect className="course-path-runner" x="-6" y="-6" width="12" height="12" fill="#c7ff24">
+          <animateMotion dur="12s" repeatCount="indefinite"><mpath href="#pathway-rail-mobile" /></animateMotion>
+        </rect>
+      </svg>
+    </LessonDiagram>
+    <ol className="lesson-diagram-accessible">
+      {chapters.map((chapter) => <li key={chapter.number}>Chapter {chapter.number}, {chapter.title}. Covers {chapter.topics.join(", ")}. Outcome: {chapter.outcome}.</li>)}
+    </ol>
+  </>;
 }
