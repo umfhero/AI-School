@@ -2,7 +2,7 @@
 
 This file records the curriculum audit behind the next version of AI school. It compares the current [course outline](./aicourse.md) with six roadmap.sh learning maps, then proposes an order that takes a complete beginner from web chat to a repeatable, checked workflow.
 
-This is a research and decision file, not the active course outline. The existing `aicourse.md` remains the source of truth until a revised order has been agreed and the live course map has been updated.
+This is a research record, not the active course outline. The agreed pathway now lives in `aicourse.md`.
 
 Research captured on 15 August 2026.
 
@@ -20,18 +20,23 @@ Most existing lessons can move into a clearer sequence, while a small number of 
 
 ## What deterministic means here
 
-An AI model is probabilistic, so this course should not promise identical wording every time. A deterministic workflow means that the surrounding process is controlled and repeatable:
+Owner correction, 15 August 2026: the earlier framing in this section was too weak. The course owner researched deterministic AI for his dissertation and now works on deterministic AI at Cloudflare. AI answers can be narrowed materially. The useful question is not whether a model is probabilistic in isolation. It is how tightly the complete system restricts the outputs and actions it will accept.
 
-- the task has one stated result;
-- the input files and relevant context are known;
-- the output format and acceptance checks are written down;
-- model, mode and important settings are recorded when they matter;
-- tool access and approval boundaries are explicit;
-- tests or visible checks decide whether the result passes;
-- prompts, project instructions and changes have a history;
-- a person approves consequential work.
+A deterministic AI system can combine:
 
-This distinction should appear early. It gives the learner a realistic goal: control the process and evidence, rather than expecting the model to become perfectly predictable.
+- fixed and versioned inputs;
+- a pinned model, mode and generation settings where the platform exposes them;
+- narrower sampling, seeds or deterministic decoding where supported;
+- constrained decoding, grammars, schemas and enumerated values;
+- a small set of permitted tools with typed inputs and outputs;
+- deterministic code around the model for routing, calculation and validation;
+- retries with an explicit stopping rule;
+- rejection of outputs that fail the contract;
+- tests and recorded evidence for the accepted result.
+
+Exact token-for-token reproduction is one form of determinism, but it is not the only useful form. A system can allow variation inside a bounded field while guaranteeing that the response has the required structure, uses an approved action and either passes validation or fails safely. The course should teach the learner to decide what may vary, narrow everything else and measure the remaining boundary.
+
+Cloudflare Workers AI documentation provides a practical example: JSON Mode accepts a JSON Schema and returns an error when the requested structure cannot be met. The documentation also warns that a model may fail a complex schema, which is why validation and failure handling remain part of the deterministic path. Source: [Cloudflare Workers AI JSON Mode](https://developers.cloudflare.com/workers-ai/features/json-mode/).
 
 ## Sources and method
 
@@ -224,7 +229,7 @@ This is the preferred structure if the course can grow from six chapters to eigh
 
 ### Course introduction
 
-Set the learner promise, explain that model output can vary, and define a dependable workflow as controlled inputs, recorded decisions and visible checks. Mention later topics without teaching their mechanics here.
+Set the learner promise, explain that AI outputs can be narrowed, and preview the controls used throughout the course: fixed inputs, bounded outputs, permitted actions, validation and recorded evidence. Mention later mechanisms without teaching them in full here.
 
 ### Chapter 1: Use AI on the web
 
@@ -242,7 +247,7 @@ Learner outcome: complete a small web based task with a clear request, supplied 
 2. **Your project brain.** Use the current Lesson 1.3.
 3. **Files and handovers.** Use the current Lesson 1.4.
 4. **A clean task loop.** Use the current Lesson 1.5 and make define, load, change, check and record the recurring course pattern.
-5. **Repeat the same task.** Run a simple task twice from the same brief, then compare the process and evidence rather than expecting identical prose.
+5. **Repeat the same task.** Run a simple task twice from the same brief, decide what must match, then compare both the accepted output and the evidence.
 
 Learner outcome: repeat a small project task from maintained files without relying on one long chat.
 
@@ -365,7 +370,7 @@ This option fixes the confusing transitions without rebuilding the course map or
 Before changing the live course map, decide:
 
 1. Whether AI school should remain a 25 lesson foundation course or become a longer route with explicit web, workspace and agent stages.
-2. Whether “deterministic workflow” should be the public course promise. If so, define it in the introduction and repeat the same control loop in every chapter.
+2. Resolved: deterministic control is part of the public course promise. Define it in the introduction as narrowing accepted outputs and actions, then repeat the same control loop in every chapter.
 3. Whether coding is the single destination or one project type among writing, research, operations and software. This affects how early IDEs and Git should appear.
 4. Whether APIs, RAG and MCP implementation belong in this course or in a later AI engineer course.
 5. Whether the current completed lessons should be moved intact first, then revised, or rewritten before the navigation changes.

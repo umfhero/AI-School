@@ -4,7 +4,7 @@ import { getExperience } from "@/app/lib/experience";
 import { hasAcceptedCurrentTerms } from "@/lib/terms";
 
 const allowedTasksByLesson: Record<string, Set<string>> = {
-  "chapter-1/lesson-1": new Set(["image-purpose"]),
+  "chapter-1/lesson-1": new Set(),
 };
 
 export async function GET(request: Request) {

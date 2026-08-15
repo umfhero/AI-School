@@ -8,13 +8,13 @@ import SignupCount from "./components/SignupCount";
 import { PixelArrow, PixelSpark, PixelCheck, PixelMascot, PixelWord } from "./components/PixelIcons";
 
 export const metadata: Metadata = {
-  title: "Free course for building projects with AI",
+  title: "Free course for controlled AI workflows",
   description:
-    "Learn how to build reliable AI projects with project memory, model choice, agents, reusable skills and parallel workflows. Free, visual and made for beginners.",
+    "Move from web AI to controlled outputs, repeatable projects, measured model choice, safe agents and maintained systems. Free, visual and made for beginners.",
   alternates: { canonical: "/" },
   openGraph: {
-    title: "AI school | Free course for building projects with AI",
-    description: "Learn practical AI workflows, from project memory and model choice to agents, skills and parallel work.",
+    title: "AI school | Free course for controlled AI workflows",
+    description: "Learn practical AI workflows from web AI and deterministic control to safe agents and maintained systems.",
     url: "/",
   },
 };
@@ -39,7 +39,7 @@ export default async function Home() {
         "@type": "Course",
         "@id": `${siteUrl}/#course`,
         name: "AI workflow course",
-        description: "A free visual course for beginners who want to build reliable, substantial projects with AI.",
+        description: "A free visual course for beginners moving from web AI to controlled, checked and maintained AI systems.",
         url: siteUrl,
         isAccessibleForFree: true,
         inLanguage: "en-GB",
@@ -51,7 +51,7 @@ export default async function Home() {
           isAccessibleForFree: true,
         },
         hasPart: [
-          { "@type": "Course", name: "Lesson one", url: `${siteUrl}/course/chapter-1/lesson-1` },
+          { "@type": "Course", name: "Your AI course pathway", url: `${siteUrl}/course/chapter-1/lesson-1` },
         ],
       },
     ],
@@ -69,8 +69,8 @@ export default async function Home() {
             Build serious projects with AI, <em className="properly" aria-label="properly."><PixelWord text="properly." className="properly-pixel" /><PixelSpark className="properly-spark" /></em>
           </h1>
           <p>
-            Learn the workflow behind substantial AI work from project memory and model choice to agents,
-            reusable skills and parallel execution. No technical background required.
+            Start with AI in the browser, then learn how to narrow results, preserve context, measure models,
+            supervise agents and maintain the finished system. No technical background required.
           </p>
           <div className="hero-actions">
             <a className="button-primary" href="/course">
@@ -156,7 +156,7 @@ export default async function Home() {
       <section className="home-final">
         <PixelSpark className="corner-spark" />
         <div className="final-icon" aria-hidden="true"><PixelSpark /></div>
-        <p>The starter lesson is ready</p>
+        <p>Your course pathway is ready</p>
         <h2>Start with the workflow.<br /><em>Then learn how to use AI properly.</em></h2>
         <a className="button-primary light" href="/course">Start the free course <PixelArrow /></a>
       </section>

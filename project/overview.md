@@ -61,10 +61,12 @@ The reference implementation is `/course/chapter-1/lesson-1`. A new lesson route
 - Pass the lesson ID, route, chapter number, title, completion copy and every required task ID into `LessonTemplate`. Add the same task IDs to `courseData.ts` and the allowlist in `app/api/progress/route.ts`, otherwise progress cannot be saved and the lesson cannot complete.
 - Put lesson sections directly inside `LessonTemplate`. Start with the first numbered section, and do not add a separate lesson title or dotted rule above it.
 - Use `.lesson-image-template` for sourced figures. Keep the image, teaching caption and original source link in the same figure, and use an image that directly explains the surrounding point.
+- Give every concept lesson at least one original SVG diagram through `app/course/LessonDiagram.tsx`. The shared frame owns the border, heading and caption. Keep lesson-specific SVG content in the lesson route, give the diagram a useful teaching caption, and make the `viewBox` responsive. If a wide SVG becomes unreadable on a phone, provide a mobile arrangement of the same diagram rather than shrinking desktop text. Motion must show a real sequence, state or movement and must disappear under `prefers-reduced-motion: reduce`.
 - Put every learner task on the page where it is introduced. `app/course/InlineLessonTask.tsx` is the working multiple choice example, including answer selection, feedback, saved completion and the green completed state. Sorting and left to right matching tasks should follow the same inline structure.
 - Do not add a task side panel, task drawer, bottom sheet, `task-open` workspace state or a separate close control. The course contents sidebar is the only lesson sidebar.
 - Keep task completion separate from XP. A completed task saves its task ID, while XP is awarded only when the learner uses the final lesson completion button after every required task is complete.
 - Keep lesson-specific copy, images and task data in the lesson file. Put shared shell behaviour, progress rules and reusable interaction patterns in the shared course components, so a future template change applies to every lesson at once.
+- A task-free orientation should omit `requiredTaskIds`, use `taskCount: 0` in `courseData.ts` and keep an empty lesson set in the progress API allowlist. Its final completion button is ready as soon as progress has loaded.
 
 ## Build, release and safety
 

@@ -17,13 +17,13 @@ export type CourseLessonProgress = {
 
 export const courseChapters: CourseChapter[] = [
   {
-    title: "Chapter 1",
+    title: "Start with web AI",
     lessons: [
       {
         id: "chapter-1/lesson-1",
-        title: "Lesson one",
+        title: "Your AI course pathway",
         path: "/course/chapter-1/lesson-1",
-        taskCount: 1,
+        taskCount: 0,
       },
     ],
   },

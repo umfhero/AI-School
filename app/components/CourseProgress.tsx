@@ -72,8 +72,8 @@ export default function CourseProgress() {
     (lesson) => progress.lessons?.[lesson.id]?.lessonCompletedAt,
   );
   const currentText = allPublishedLessonsComplete
-    ? "All available lessons are complete · Review Lesson one"
-    : `Lesson 1 of ${totalCourseLessons} · Lesson one · Read to complete`;
+    ? `All available lessons are complete · Review ${resumeLesson.title}`
+    : `Lesson 1 of ${totalCourseLessons} · ${resumeLesson.title} · Read to complete`;
 
   return (
     <section className="home-progress" aria-label="Your saved course progress">

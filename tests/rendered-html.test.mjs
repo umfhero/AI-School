@@ -16,7 +16,7 @@ test("server-renders the course home page", async () => {
   assert.match(html, /Cloudflare/i);
   assert.match(html, /AI school/i);
   assert.match(html, /Start course/i);
-  assert.match(html, /starter lesson is ready/i);
+  assert.match(html, /course pathway is ready/i);
   assert.match(html, /signed up/i);
   assert.match(html, /href="\/privacy"/i);
   assert.match(html, /href="\/terms"/i);
@@ -24,32 +24,32 @@ test("server-renders the course home page", async () => {
   assert.doesNotMatch(html, /26<\/b><small>lessons/i);
 });
 
-test("server-renders the single starter lesson and its full shell", async () => {
+test("server-renders the task-free course pathway and its full shell", async () => {
   const response = await render("/course/chapter-1/lesson-1");
   assert.equal(response.status, 200);
   const html = await response.text();
-  assert.match(html, /A clean starting point/i);
-  assert.match(html, /Images should do a job/i);
-  assert.match(html, /model-training-cost\.jpg/i);
-  assert.match(html, /EXAMPLE IMAGE/i);
-  assert.match(html, /aiindex\.stanford\.edu\/report/i);
-  assert.match(html, /Tasks should stay with the lesson/i);
-  assert.match(html, /EXAMPLE TASK/i);
-  assert.match(html, /When does an image earn its place/i);
-  assert.match(html, /Check answer/i);
+  assert.match(html, /From your first prompt to a controlled AI system/i);
+  assert.match(html, /Determinism comes from the complete system/i);
+  assert.match(html, /COURSE PATHWAY/i);
+  assert.match(html, /course-pathway-svg-desktop/i);
+  assert.match(html, /course-pathway-svg-mobile/i);
+  assert.match(html, /animateMotion/i);
+  assert.match(html, /What each chapter adds/i);
+  assert.match(html, /Ship and maintain/i);
+  assert.match(html, /ZERO TASKS/i);
+  assert.match(html, /There are no tasks in this orientation/i);
+  assert.match(html, /Complete lesson/i);
+  assert.doesNotMatch(html, /EXAMPLE TASK|Check answer|lesson-inline-task/i);
   assert.doesNotMatch(html, /Open task|lesson-task-panel/i);
-  assert.match(html, /TEMPLATE REVIEW/i);
   assert.match(html, /Course contents/i);
   assert.doesNotMatch(html, /COURSE RESET/i);
-  assert.doesNotMatch(html, /<h1[^>]*>\s*Lesson one/i);
+  assert.doesNotMatch(html, /<h1[^>]*>\s*Your AI course pathway/i);
   assert.match(html, /sidebar-toggle/i);
   assert.match(html, /id="course-contents"/i);
   assert.match(html, /lesson-pointer-layer/i);
   assert.match(html, /lesson-save-chip/i);
   assert.match(html, /lesson-bottom/i);
-  assert.match(html, /Complete the task above/i);
   assert.match(html, /Return to course/i);
-  assert.doesNotMatch(html, /Your project brain/i);
   assert.doesNotMatch(html, /Chapter 02/i);
   assert.doesNotMatch(html, /TASK 01/i);
 });
@@ -88,7 +88,7 @@ test("publishes crawl and AI-discovery files for only the live lesson", async ()
   assert.equal(llms.status, 200);
   const llmsText = await llms.text();
   assert.match(llmsText, /A free, visual course/i);
-  assert.match(llmsText, /Lesson one/i);
+  assert.match(llmsText, /Your AI course pathway/i);
   assert.doesNotMatch(llmsText, /What models change|Context rot|six chapters/i);
 });
 

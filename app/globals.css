@@ -2089,7 +2089,7 @@ button,a { font:inherit; }
   .model-factor-body label { grid-template-columns:96px minmax(0,1fr); }
 }
 
-/* Reusable lesson template: wide reading, sourced figures and optional side tasks. */
+/* Reusable lesson template: wide reading, concept diagrams, sourced figures and inline tasks. */
 .lesson-template-reading {
   width: 100%;
   max-width: 1180px;
@@ -2127,6 +2127,43 @@ button,a { font:inherit; }
 .lesson-image-template figcaption p { margin: 6px 0 0; color: #58657b; font-size: .82rem; line-height: 1.55; }
 .lesson-image-template figcaption a { display: inline-flex; align-items: center; gap: 10px; color: var(--home-blue); font-size: .76rem; font-weight: 850; text-decoration: none; white-space: nowrap; }
 .lesson-image-template figcaption a:hover,.lesson-image-template figcaption a:focus-visible { color: #2148aa; text-decoration: underline; text-underline-offset: 4px; outline: none; }
+
+.lesson-concept-diagram {
+  max-width: 1080px;
+  margin: 36px 0 0;
+  overflow: hidden;
+  border: 2px solid #0b1130;
+  border-radius: 6px;
+  background: #0b1130;
+  box-shadow: 7px 7px 0 var(--home-violet);
+}
+.lesson-concept-diagram-head { min-height: 48px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 18px; padding: 0 18px; border-bottom: 1px solid #3a4665; color: #fff; }
+.lesson-concept-diagram-head span { color: #c7ff24; font: 900 .7rem monospace; letter-spacing: .1em; }
+.lesson-concept-diagram-head i { height: 1px; background: #3a4665; }
+.lesson-concept-diagram-head small { color: #909bb5; font: 800 .59rem monospace; letter-spacing: .07em; }
+.lesson-concept-diagram-canvas { padding: 16px; background: #0b1130; }
+.lesson-concept-diagram figcaption { padding: 20px 22px; border-top: 1px solid #3a4665; background: #111a34; }
+.lesson-concept-diagram figcaption b { display: block; color: #f7f8fc; font-size: .96rem; line-height: 1.45; }
+.lesson-concept-diagram figcaption p { max-width: 850px; margin: 7px 0 0; color: #aeb8cc; font-size: .82rem; line-height: 1.58; }
+.course-pathway-svg { display: block; width: 100%; height: auto; overflow: visible; }
+.course-pathway-svg-mobile { display: none; }
+.course-path-line { fill: none; stroke: #53617f; stroke-width: 3; stroke-linecap: square; stroke-linejoin: bevel; }
+.course-path-arrows path { fill: none; stroke: #7b89a6; stroke-width: 3; stroke-linecap: square; stroke-linejoin: bevel; }
+.course-path-node { fill: #121d38; stroke: #65728e; stroke-width: 2; }
+.course-path-node-title { fill: #f7f8fc; font-size: 17px; font-weight: 850; }
+.course-path-node-result { fill: #9eabc1; font-size: 11.5px; font-weight: 650; }
+.course-path-pulse { stroke: #0b1130; stroke-width: 3; }
+.course-path-pulse-second { opacity: .8; }
+.course-control-loop > text { fill: #9eabc1; font: 900 11px monospace; letter-spacing: 1.4px; }
+.course-control-loop g rect { fill: #181f3e; stroke: #6258e9; stroke-width: 1.5; }
+.course-control-loop g text { fill: #f7f8fc; font: 850 10px monospace; letter-spacing: .5px; }
+.course-pathway-note { display: grid; gap: 0; }
+.course-pathway-note a { width: fit-content; margin-top: 14px; color: #173f9f; font-size: .8rem; font-weight: 850; text-underline-offset: 4px; }
+.course-chapter-overview { max-width: 1080px; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; margin-top: 34px; }
+.course-chapter-overview article { min-height: 150px; display: grid; grid-template-columns: 58px minmax(0,1fr); gap: 18px; padding: 22px; border: 2px solid #0b1130; border-radius: 5px; background: #fff; box-shadow: 4px 4px 0 #0b1130; }
+.course-chapter-overview article > span { color: var(--home-violet); font: 950 .77rem monospace; letter-spacing: .08em; }
+.course-chapter-overview h3 { margin: 0; color: #202b45; font-size: 1.05rem; line-height: 1.25; }
+.course-chapter-overview p { margin: 9px 0 0; color: #526077; font-size: .84rem; line-height: 1.58; }
 
 .lesson-inline-task {
   max-width: 980px;
@@ -2192,8 +2229,21 @@ button,a { font:inherit; }
   .lesson-image-template > div { padding: 8px; }
   .lesson-image-template figcaption { grid-template-columns: 1fr; gap: 11px; padding: 17px; }
   .lesson-image-template figcaption a { margin-top: 3px; }
+  .lesson-concept-diagram { margin-top: 29px; box-shadow: 5px 5px 0 var(--home-violet); }
+  .lesson-concept-diagram-head { grid-template-columns: 1fr auto; gap: 10px; padding: 0 13px; }
+  .lesson-concept-diagram-head i { display: none; }
+  .lesson-concept-diagram-canvas { padding: 7px; background-size: 18px 18px; }
+  .lesson-concept-diagram figcaption { padding: 17px; }
+  .course-pathway-svg-desktop { display: none; }
+  .course-pathway-svg-mobile { display: block; }
+  .course-chapter-overview { grid-template-columns: 1fr; }
+  .course-chapter-overview article { min-height: 0; grid-template-columns: 42px minmax(0,1fr); padding: 18px; }
   .lesson-inline-task { padding: 19px; }
   .lesson-inline-task > header { align-items: flex-start; flex-direction: column; gap: 6px; }
   .lesson-inline-task-footer { align-items: stretch; flex-direction: column; margin: 22px -19px -19px; }
   .lesson-inline-task-footer > button { justify-content: space-between; }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .course-path-pulse { display: none; }
 }

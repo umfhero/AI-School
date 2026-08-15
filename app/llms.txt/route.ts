@@ -8,11 +8,11 @@ export function GET(request: NextRequest) {
 
 > A free, visual course that teaches beginners how to build reliable, substantial projects with AI.
 
-AI school is free and open source. The curriculum is being rebuilt around one consistent lesson template before new chapters and lessons are added. The course uses British English and does not assume technical experience.
+AI school is free and open source. Its pathway moves from web AI to deterministic control, repeatable projects, measured model choice, safe agent work and maintained systems. The course uses British English and does not assume technical experience.
 
 ## Live lessons
 
-- [Lesson one](${origin}/course/chapter-1/lesson-1): the starter lesson used to review and settle the shared layout before the new curriculum is written.
+- [Your AI course pathway](${origin}/course/chapter-1/lesson-1): an animated overview of all eight chapters and the control loop used throughout the course.
 
 ## Primary pages
 
@@ -24,7 +24,7 @@ AI school is free and open source. The curriculum is being rebuilt around one co
 
 - The course is free for learners.
 - It is designed for people without a technical background.
-- The previous curriculum is archived while the new course path is developed.
+- Lesson 1.1 is an orientation with no learner task.
 `;
   return new Response(body, { headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "public, max-age=3600" } });
 }

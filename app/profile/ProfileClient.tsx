@@ -112,7 +112,7 @@ export default function ProfileClient() {
   const lessons = progress?.lessons ?? {};
   const nextLesson = getCourseResumeLesson(lessons);
   const nextTitle = nextLesson.title;
-  const nextCopy = "The starter lesson is ready for the shared layout and content review.";
+  const nextCopy = "See the complete route from web AI to controlled workflows, agents and maintained systems.";
   const nextHref = nextLesson.path;
   const level = progress?.experience ?? getExperience(lessons);
   const activity = progress?.activity ?? {};
