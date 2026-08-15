@@ -4,7 +4,7 @@ import { getExperience } from "@/app/lib/experience";
 import { hasAcceptedCurrentTerms } from "@/lib/terms";
 
 const allowedTasksByLesson: Record<string, Set<string>> = {
-  "chapter-1/lesson-1": new Set(),
+  "chapter-1/lesson-1": new Set(["image-purpose"]),
 };
 
 export async function GET(request: Request) {
@@ -109,6 +109,15 @@ function parseProgress(value: string | undefined, fallbackTimestamp: number | un
       if (!completedAt[task] && fallback) completedAt[task] = fallback;
     }
     const lessonCompletedAt = typeof parsed?.lessonCompletedAt === "number" && Number.isFinite(parsed.lessonCompletedAt) && parsed.lessonCompletedAt > 0 ? Math.floor(parsed.lessonCompletedAt) : undefined;
+    // A learner who completed an earlier version of a lesson stays complete if
+    // that lesson later gains a required task. Treat the old lesson completion
+    // time as the best available completion time for the newly tracked task.
+    if (lessonCompletedAt) {
+      for (const task of allowedTasks) {
+        if (!completedTasks.includes(task)) completedTasks.push(task);
+        if (!completedAt[task]) completedAt[task] = lessonCompletedAt;
+      }
+    }
     const xpAwarded = lessonCompletedAt && typeof parsed?.xpAwarded === "number" && Number.isFinite(parsed.xpAwarded) && parsed.xpAwarded > 0 ? Math.floor(parsed.xpAwarded) : undefined;
     return { version: 3, completedTasks, completedAt, lessonCompletedAt, xpAwarded };
   } catch {

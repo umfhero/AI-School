@@ -33,9 +33,11 @@ test("server-renders the single starter lesson and its full shell", async () => 
   assert.match(html, /model-training-cost\.jpg/i);
   assert.match(html, /EXAMPLE IMAGE/i);
   assert.match(html, /aiindex\.stanford\.edu\/report/i);
-  assert.match(html, /Tasks should prove something/i);
+  assert.match(html, /Tasks should stay with the lesson/i);
   assert.match(html, /EXAMPLE TASK/i);
-  assert.match(html, /Open task/i);
+  assert.match(html, /When does an image earn its place/i);
+  assert.match(html, /Check answer/i);
+  assert.doesNotMatch(html, /Open task|lesson-task-panel/i);
   assert.match(html, /TEMPLATE REVIEW/i);
   assert.match(html, /Course contents/i);
   assert.doesNotMatch(html, /COURSE RESET/i);
@@ -45,7 +47,7 @@ test("server-renders the single starter lesson and its full shell", async () => 
   assert.match(html, /lesson-pointer-layer/i);
   assert.match(html, /lesson-save-chip/i);
   assert.match(html, /lesson-bottom/i);
-  assert.match(html, /Complete lesson · \+100 XP/i);
+  assert.match(html, /Complete the task above/i);
   assert.match(html, /Return to course/i);
   assert.doesNotMatch(html, /Your project brain/i);
   assert.doesNotMatch(html, /Chapter 02/i);

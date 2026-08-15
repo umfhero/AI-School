@@ -125,31 +125,6 @@ export function PixelCheck({ className = "" }: { className?: string }) {
   );
 }
 
-export function PixelClose({ className = "" }: { className?: string }) {
-  return (
-    <svg
-      className={`pixel-icon pixel-close ${className}`.trim()}
-      viewBox="0 0 7 7"
-      width="13"
-      height="13"
-      fill="currentColor"
-      aria-hidden="true"
-      focusable="false"
-      shapeRendering="crispEdges"
-    >
-      <rect x="0" y="0" width="2" height="2" />
-      <rect x="5" y="0" width="2" height="2" />
-      <rect x="1" y="1" width="2" height="2" />
-      <rect x="4" y="1" width="2" height="2" />
-      <rect x="2" y="2" width="3" height="3" />
-      <rect x="1" y="4" width="2" height="2" />
-      <rect x="4" y="4" width="2" height="2" />
-      <rect x="0" y="5" width="2" height="2" />
-      <rect x="5" y="5" width="2" height="2" />
-    </svg>
-  );
-}
-
 export function PixelMascot({ className = "" }: { className?: string }) {
   return (
     <svg

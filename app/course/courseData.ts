@@ -23,7 +23,7 @@ export const courseChapters: CourseChapter[] = [
         id: "chapter-1/lesson-1",
         title: "Lesson one",
         path: "/course/chapter-1/lesson-1",
-        taskCount: 0,
+        taskCount: 1,
       },
     ],
   },
