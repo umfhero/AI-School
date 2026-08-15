@@ -8,6 +8,7 @@ import LessonSaveState from "../../../components/LessonSaveState";
 import LessonXpCelebration from "../../../components/LessonXpCelebration";
 import { PixelArrow, PixelSpark } from "../../../components/PixelIcons";
 import { courseChapters, courseIntroLesson } from "../../courseData";
+import { HandoverDiagram } from "../../FoundationDiagrams";
 
 const lessonId = "basics/files-handovers";
 const taskIds = ["places", "record", "handover"];
@@ -272,7 +273,7 @@ export default function FilesHandoversLessonClient() {
           </div>
         </aside>
         <article className="lesson-reading">
-          <div className="lesson-reading-inner files-handovers-reading">
+          <div className="lesson-reading-inner files-handovers-reading model-decision-reading">
             <p className="reading-kicker">Lesson 01.4</p>
             <h1>Files and handovers.</h1>
             <p className="lesson-lede">
@@ -365,6 +366,7 @@ export default function FilesHandoversLessonClient() {
                 still uncertain, which is enough to save the next person from
                 rediscovering something you already worked out the hard way.
               </p>
+              <HandoverDiagram />
               <div
                 className={`inline-task ${tasks.includes("record") ? "complete" : ""}`}
               >

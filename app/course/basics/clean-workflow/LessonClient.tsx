@@ -15,6 +15,7 @@ import LessonSaveState from "../../../components/LessonSaveState";
 import LessonXpCelebration from "../../../components/LessonXpCelebration";
 import { PixelArrow, PixelSpark } from "../../../components/PixelIcons";
 import { courseChapters, courseIntroLesson } from "../../courseData";
+import { CleanWorkflowDiagram } from "../../FoundationDiagrams";
 
 const lessonId = "basics/clean-workflow";
 const taskIds = ["define", "check", "update"];
@@ -294,7 +295,7 @@ export default function CleanWorkflowLessonClient() {
           </div>
         </aside>
         <article className="lesson-reading">
-          <div className="lesson-reading-inner">
+          <div className="lesson-reading-inner model-decision-reading clean-workflow-reading">
             <p className="reading-kicker">Lesson 01.5</p>
             <h1>A clean first workflow.</h1>
             <p className="lesson-lede">
@@ -318,6 +319,7 @@ export default function CleanWorkflowLessonClient() {
                 needs to know. This keeps you responsible for the work, while AI
                 helps with the parts that benefit from speed.
               </p>
+              <CleanWorkflowDiagram />
               <ol className="intro-course-map">
                 <li>
                   <b>Define one task.</b> State the goal, constraints and what a

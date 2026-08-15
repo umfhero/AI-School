@@ -12,6 +12,7 @@ import { PixelArrow, PixelSpark } from "../../../components/PixelIcons";
 import { courseChapters, courseIntroLesson } from "../../courseData";
 import { LessonCelebration } from "./LessonCelebration";
 import { LessonVisualContent, type LessonVisual } from "./LessonVisuals";
+import { ContextPressureDiagram } from "../../FoundationDiagrams";
 
 const projectSetupPrompt = `You are setting up durable project context for this workspace.
 
@@ -264,7 +265,7 @@ export default function LessonClient() {
         </aside>
 
         <article className="lesson-reading">
-          <div className="lesson-reading-inner context-rot-reading">
+          <div className="lesson-reading-inner context-rot-reading model-decision-reading">
             <p className="reading-kicker">Lesson 01.2</p>
             <h1>Context rot.</h1>
             <p className="lesson-lede">An average user opens <a className="lesson-reference-link" href="https://chatgpt.com/" target="_blank" rel="noreferrer">ChatGPT</a>, <a className="lesson-reference-link" href="https://claude.ai/" target="_blank" rel="noreferrer">Claude</a> or <a className="lesson-reference-link" href="https://gemini.google.com/" target="_blank" rel="noreferrer">Gemini</a> and starts typing about one topic, because the chat looks like a place where the model knows the subject and remembers everything said before. The same thread then gathers new requests, corrections and side jobs, until the information that mattered at the start becomes harder for the model to use consistently.</p>
@@ -275,6 +276,7 @@ export default function LessonClient() {
               <h2>One topic slowly becomes one crowded chat.</h2>
               <p>A recipe conversation can begin with a useful list of ingredients and a clear request, then grow into portion changes, lunch ideas and a shopping list. Each reply feels connected to the same topic, so keeping it all in one place seems sensible.</p>
               <p>The earlier ingredient list can remain inside the context window while the model uses it less consistently, because later instructions and similar details compete for the same answer. People often describe this as the model forgetting, although the practical problem is unreliable use of information that still exists somewhere in a long input.</p>
+              <ContextPressureDiagram />
               <div className={`inline-task context-task ${completedTasks.includes("diagnose") ? "complete" : ""}`}>
                 <div className="task-heading"><span>TASK 01 · FIND THE DRIFT</span><b>{completedTasks.includes("diagnose") ? "COMPLETE ✓" : "3 MINUTES"}</b></div>
                 <h3>Read the conversation and find the first reply that breaks the original brief.</h3>

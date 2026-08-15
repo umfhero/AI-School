@@ -3,8 +3,8 @@
 import Image from "next/image";
 import { useState, type CSSProperties } from "react";
 
-export function LessonPhoto({ src, alt, eyebrow, title, sourceHref, sourceLabel }: { src: string; alt: string; eyebrow: string; title: string; sourceHref: string; sourceLabel: string }) {
-  return <figure className="model-lesson-photo"><div><Image src={src} alt={alt} width={1400} height={900} sizes="(max-width: 700px) 92vw, 720px" /></div><figcaption><span>{eyebrow}</span><b>{title}</b><a href={sourceHref} target="_blank" rel="noreferrer">Photo: {sourceLabel}</a></figcaption></figure>;
+export function LessonPhoto({ src, alt, eyebrow, title, sourceHref, sourceLabel, contain = false }: { src: string; alt: string; eyebrow: string; title: string; sourceHref: string; sourceLabel: string; contain?: boolean }) {
+  return <figure className={`model-lesson-photo ${contain ? "contain" : ""}`}><div><Image src={src} alt={alt} width={1400} height={900} sizes="(max-width: 700px) 92vw, 720px" /></div><figcaption><span>{eyebrow}</span><b>{title}</b><a href={sourceHref} target="_blank" rel="noreferrer">Source: {sourceLabel}</a></figcaption></figure>;
 }
 
 const speedProfiles = {

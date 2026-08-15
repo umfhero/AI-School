@@ -30,6 +30,7 @@ test("server-renders the context rot lesson workspace", async () => {
   assert.match(html, /Context rot\./i);
   assert.match(html, /Lesson 01\.2/i);
   assert.match(html, /One topic slowly becomes one crowded chat/i);
+  assert.match(html, /CONTEXT PRESSURE/i);
   assert.match(html, /Repeated Words/i);
   assert.match(html, /context-rot-repeated-words\.png/i);
   assert.match(html, /href="https:\/\/chatgpt\.com\//i);
@@ -55,6 +56,7 @@ test("server-renders the AI introduction lesson", async () => {
   assert.match(html, /AI\?/i);
   assert.match(html, /Lesson 01\.1/i);
   assert.match(html, /An assistant that works at speed/i);
+  assert.match(html, /AI WORKBENCH/i);
   assert.match(html, /created-vs-used\.png/i);
   assert.match(html, /href="https:\/\/chatgpt\.com\//i);
   assert.match(html, /href="https:\/\/claude\.ai\//i);
@@ -77,6 +79,7 @@ test("server-renders the course introduction", async () => {
   assert.match(html, /AI is stupid, even when it sounds confident/i);
   assert.match(html, /five trillion searches a year/i);
   assert.match(html, /Six chapters, one connected workflow/i);
+  assert.match(html, /COURSE MAP/i);
   assert.match(html, /lesson-save-chip/i);
   assert.doesNotMatch(html, /progress-save-state/i);
   assert.match(html, /Complete introduction/i);
@@ -90,6 +93,7 @@ test("server-renders the project brain lesson", async () => {
   const html = await response.text();
   assert.match(html, /Your project brain/i);
   assert.match(html, /Six questions the file has to answer/i);
+  assert.match(html, /PROJECT MEMORY/i);
   assert.match(html, /TASK 01 · PICK THE FACTS/i);
   assert.match(html, /TASK 03 · CHECK YOUR FILE/i);
   assert.match(html, /not saved to your account/i);
@@ -102,6 +106,7 @@ test("server-renders the files and handovers lesson", async () => {
   const html = await response.text();
   assert.match(html, /Files and handovers/i);
   assert.match(html, /Give each kind of information a home/i);
+  assert.match(html, /HANDOVER VIEWER/i);
   assert.match(html, /TASK 03 · WRITE A HANDOVER/i);
   assert.match(html, /not sent to your account/i);
   assert.match(html, /Next lesson/i);
@@ -114,6 +119,7 @@ test("server-renders the clean first workflow lesson", async () => {
   assert.match(html, /A clean first workflow/i);
   assert.match(html, /Lesson 01\.5/i);
   assert.match(html, /Define, give context, change, check, record/i);
+  assert.match(html, /CLEAN WORKFLOW/i);
   assert.match(html, /Slower at the start, faster than a repair/i);
   assert.match(html, /CHAPTER QUIZ · TRUE OR FALSE/i);
   assert.match(html, /Course contents/i);
@@ -127,6 +133,7 @@ test("server-renders the first models lesson", async () => {
   assert.match(html, /What models change/i);
   assert.match(html, /Lesson 02\.1/i);
   assert.match(html, /A model is the engine inside an AI tool/i);
+  assert.match(html, /MODEL FACTORS/i);
   assert.match(html, /Artificial Analysis/i);
   assert.match(html, /LLM Stats/i);
   assert.match(html, /TASK 01 · MATCH THE STRENGTH/i);
@@ -144,7 +151,7 @@ test("server-renders the model decision lessons", async () => {
   const speedHtml = await speed.text();
   assert.match(speedHtml, /02\.2/i);
   assert.match(speedHtml, /DECISION CONSOLE/i);
-  assert.match(speedHtml, /model-speed\.jpg/i);
+  assert.match(speedHtml, /model-training-cost\.jpg/i);
   assert.match(speedHtml, /TASK 03 · MATCH THE CONSEQUENCE/i);
   assert.match(speedHtml, /href="\/course\/models\/context-windows"/i);
 
@@ -153,7 +160,7 @@ test("server-renders the model decision lessons", async () => {
   const contextHtml = await context.text();
   assert.match(contextHtml, /02\.3/i);
   assert.match(contextHtml, /CONTEXT VIEWER/i);
-  assert.match(contextHtml, /context-library\.jpg/i);
+  assert.match(contextHtml, /transformer-attention\.jpg/i);
   assert.match(contextHtml, /TASK 03 · CLEAR AND RELOAD/i);
   assert.match(contextHtml, /href="\/course\/models\/simple-model-test"/i);
 
@@ -162,7 +169,7 @@ test("server-renders the model decision lessons", async () => {
   const modelTestHtml = await modelTest.text();
   assert.match(modelTestHtml, /02\.4/i);
   assert.match(modelTestHtml, /MODEL TEST BENCH/i);
-  assert.match(modelTestHtml, /model-test\.jpg/i);
+  assert.match(modelTestHtml, /ai-benchmark-performance\.png/i);
   assert.match(modelTestHtml, /TASK 03 · RECORD THE DECISION/i);
   assert.match(modelTestHtml, /Return to course/i);
 });
