@@ -16,6 +16,9 @@ AI school is free and open source. It teaches project memory, model choice, agen
 - [What is AI?](${origin}/course/basics/ai): an introduction to AI tools, project workspaces and why a useful first version still needs review.
 - [Context rot](${origin}/course/basics/context-rot): why long conversations can become less reliable and how a small external project memory helps.
 - [What models change](${origin}/course/models/what-changes): how model capabilities, benchmarks, cost and deployment choices affect the right tool for a task.
+- [Speed, cost and reasoning](${origin}/course/models/speed-cost-reasoning): how to match model effort and checking to the cost and consequence of a task.
+- [Context windows](${origin}/course/models/context-windows): what context capacity means, why relevance still matters and how to clear a tired conversation safely.
+- [A simple model test](${origin}/course/models/simple-model-test): how to compare models with one bounded task, shared criteria and a repeatable result.
 
 ## Primary pages
 

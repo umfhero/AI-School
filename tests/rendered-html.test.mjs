@@ -138,6 +138,35 @@ test("server-renders the first models lesson", async () => {
   assert.match(html, /Next lesson/i);
 });
 
+test("server-renders the model decision lessons", async () => {
+  const speed = await render("/course/models/speed-cost-reasoning");
+  assert.equal(speed.status, 200);
+  const speedHtml = await speed.text();
+  assert.match(speedHtml, /02\.2/i);
+  assert.match(speedHtml, /DECISION CONSOLE/i);
+  assert.match(speedHtml, /model-speed\.jpg/i);
+  assert.match(speedHtml, /TASK 03 · MATCH THE CONSEQUENCE/i);
+  assert.match(speedHtml, /href="\/course\/models\/context-windows"/i);
+
+  const context = await render("/course/models/context-windows");
+  assert.equal(context.status, 200);
+  const contextHtml = await context.text();
+  assert.match(contextHtml, /02\.3/i);
+  assert.match(contextHtml, /CONTEXT VIEWER/i);
+  assert.match(contextHtml, /context-library\.jpg/i);
+  assert.match(contextHtml, /TASK 03 · CLEAR AND RELOAD/i);
+  assert.match(contextHtml, /href="\/course\/models\/simple-model-test"/i);
+
+  const modelTest = await render("/course/models/simple-model-test");
+  assert.equal(modelTest.status, 200);
+  const modelTestHtml = await modelTest.text();
+  assert.match(modelTestHtml, /02\.4/i);
+  assert.match(modelTestHtml, /MODEL TEST BENCH/i);
+  assert.match(modelTestHtml, /model-test\.jpg/i);
+  assert.match(modelTestHtml, /TASK 03 · RECORD THE DECISION/i);
+  assert.match(modelTestHtml, /Return to course/i);
+});
+
 test("publishes crawl and AI-discovery files for the active host", async () => {
   const robots = await render("/robots.txt");
   assert.equal(robots.status, 200);
@@ -148,6 +177,9 @@ test("publishes crawl and AI-discovery files for the active host", async () => {
   const sitemapText = await sitemap.text();
   assert.match(sitemapText, /http:\/\/localhost\/course\/basics\/context-rot/);
   assert.match(sitemapText, /http:\/\/localhost\/course\/models\/what-changes/);
+  assert.match(sitemapText, /http:\/\/localhost\/course\/models\/speed-cost-reasoning/);
+  assert.match(sitemapText, /http:\/\/localhost\/course\/models\/context-windows/);
+  assert.match(sitemapText, /http:\/\/localhost\/course\/models\/simple-model-test/);
 
   const llms = await render("/llms.txt");
   assert.equal(llms.status, 200);
