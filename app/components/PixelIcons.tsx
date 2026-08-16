@@ -125,6 +125,49 @@ export function PixelCheck({ className = "" }: { className?: string }) {
   );
 }
 
+const cursorGlyph = [
+  "10000000",
+  "11000000",
+  "11100000",
+  "11110000",
+  "11111000",
+  "11111100",
+  "11111110",
+  "11110000",
+  "11011000",
+  "10011000",
+  "00001100",
+  "00001100",
+];
+
+const pointerGlyph = [
+  "000110000",
+  "000110000",
+  "000110000",
+  "000110000",
+  "000111100",
+  "010111110",
+  "110111111",
+  "111111111",
+  "011111111",
+  "001111110",
+  "001111110",
+  "000111100",
+];
+
+function PixelPointerSprite({ className, glyph }: { className?: string; glyph: string[] }) {
+  const pixels = (prefix: string) => glyph.flatMap((row, y) => [...row].flatMap((pixel, x) => pixel === "1" ? <rect key={`${prefix}-${x}-${y}`} x={x} y={y} width="1" height="1" /> : []));
+  return <svg className={`pixel-icon ${className ?? ""}`.trim()} viewBox={`0 0 ${glyph[0].length + 1} ${glyph.length + 1}`} aria-hidden="true" focusable="false" shapeRendering="crispEdges"><g fill="#0b1130" transform="translate(1 1)">{pixels("shadow")}</g><g fill="currentColor">{pixels("face")}</g></svg>;
+}
+
+export function PixelCursor({ className = "" }: { className?: string }) {
+  return <PixelPointerSprite className={`pixel-cursor ${className}`.trim()} glyph={cursorGlyph} />;
+}
+
+export function PixelPointer({ className = "" }: { className?: string }) {
+  return <PixelPointerSprite className={`pixel-pointer ${className}`.trim()} glyph={pointerGlyph} />;
+}
+
 export function PixelMascot({ className = "" }: { className?: string }) {
   return (
     <svg

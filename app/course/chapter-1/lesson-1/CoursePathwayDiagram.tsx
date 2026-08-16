@@ -69,7 +69,7 @@ const chapters = [
     topics: ["The agent loop", "Agent briefs", "Inspect, plan and change", "Review and handover"],
     outcome: "Supervise one contained change",
     colour: "#98731f",
-    surface: "#fbf5ab",
+    surface: "#e8edff",
   },
   {
     number: "08",
@@ -158,16 +158,17 @@ export default function CoursePathwayDiagram() {
     <LessonDiagram
       tone="paper"
       eyebrow="YOUR COURSE MAP"
+      meta="10 CHAPTERS"
       title="Ten chapters move from browser AI to an operated system."
       description="Read each chapter from top to bottom. The square signal travels in its own rail beside the cards, while every card names the concepts and the result you will carry into the next chapter."
     >
       <svg className="course-pathway-svg course-pathway-svg-desktop" viewBox="0 0 1040 1358" focusable="false" shapeRendering="crispEdges">
         <path id="pathway-rail-desktop" className="pathway-rail" d="M48 18 V1338" />
         {chapters.map((chapter, index) => <DesktopChapter key={chapter.number} chapter={chapter} y={16 + index * 132} />)}
-        <rect className="course-path-runner" x="-7" y="-7" width="14" height="14" fill="#fbf5ab">
+        <rect className="course-path-runner" x="-7" y="-7" width="14" height="14" fill="#6650e6">
           <animateMotion dur="12s" repeatCount="indefinite"><mpath href="#pathway-rail-desktop" /></animateMotion>
         </rect>
-        <rect className="course-path-runner course-path-runner-second" x="-5" y="-5" width="10" height="10" fill="#6650e6">
+        <rect className="course-path-runner course-path-runner-second" x="-5" y="-5" width="10" height="10" fill="#ffffff">
           <animateMotion dur="12s" begin="-6s" repeatCount="indefinite"><mpath href="#pathway-rail-desktop" /></animateMotion>
         </rect>
       </svg>
@@ -175,7 +176,7 @@ export default function CoursePathwayDiagram() {
       <svg className="course-pathway-svg course-pathway-svg-mobile" viewBox="0 0 420 2595" focusable="false" shapeRendering="crispEdges">
         <path id="pathway-rail-mobile" className="pathway-rail" d="M28 18 V2572" />
         {chapters.map((chapter, index) => <MobileChapter key={chapter.number} chapter={chapter} y={14 + index * 257} />)}
-        <rect className="course-path-runner" x="-6" y="-6" width="12" height="12" fill="#fbf5ab">
+        <rect className="course-path-runner" x="-6" y="-6" width="12" height="12" fill="#6650e6">
           <animateMotion dur="12s" repeatCount="indefinite"><mpath href="#pathway-rail-mobile" /></animateMotion>
         </rect>
       </svg>

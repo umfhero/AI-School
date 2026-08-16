@@ -33,6 +33,8 @@ test("server-renders the task-free course pathway and its full shell", async () 
   assert.match(html, /course-pathway-svg-desktop/i);
   assert.match(html, /course-pathway-svg-mobile/i);
   assert.match(html, /lesson-concept-diagram-paper/i);
+  assert.match(html, /10 CHAPTERS/i);
+  assert.doesNotMatch(html, /ANIMATED SVG/i);
   assert.match(html, /animateMotion/i);
   assert.match(html, /Provider companies/i);
   assert.match(html, /Closed and open weights/i);
@@ -56,6 +58,8 @@ test("server-renders the task-free course pathway and its full shell", async () 
   assert.match(html, /sidebar-toggle/i);
   assert.match(html, /id="course-contents"/i);
   assert.match(html, /lesson-pointer-layer/i);
+  assert.match(html, /pixel-cursor/i);
+  assert.match(html, /pixel-pointer/i);
   assert.match(html, /lesson-save-chip/i);
   assert.match(html, /lesson-bottom/i);
   assert.match(html, /Return to course/i);

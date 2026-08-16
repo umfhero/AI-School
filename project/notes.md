@@ -1,12 +1,12 @@
-opening the course should take the user to the lesson uncompleted.
-
-eg if lesson 1 is complete but no lesson 2, take them to lesson 2.
-
-but if lesson 1 is incomplete, take them to lesson 1. If they have completed all lessons, take them to the last lesson.
+completing the full course should have a Add to linkedin certificate of completion, and should include a link to verify to the users profile showing completion. The certificate should be a PDF with the users name, course name, completion date, and a unique verification code that can be checked against the website to confirm authenticity.
 
 
----
+types of tasks:
 
-AI logo on course should be the pixeled AI logo, not the AI school logo.
+match boxes
+tap to continue demo's/scrolling text
 
-header tasks completed should be shwon in the bottom bar, not the top bar.
+interactive env
+
+quiz (multiple choice, fill in the blank, and true/false) at the end of chapter. user must hit 80% to continue to next chapter. if they fail, they must retake the quiz until they pass.
+

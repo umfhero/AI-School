@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { PixelCursor, PixelPointer } from "../components/PixelIcons";
 
 type ClickMark = { id: number; x: number; y: number };
 
@@ -64,7 +65,7 @@ export default function LessonPointerEffects() {
   }, []);
 
   return <div className="lesson-pointer-layer" aria-hidden="true">
-    <span ref={dotRef} className="lesson-pointer-dot" />
-    {clickMarks.map((mark) => <span key={mark.id} className="lesson-pointer-click" style={{ left: mark.x, top: mark.y }} />)}
+    <span ref={dotRef} className="lesson-pointer-dot"><PixelCursor className="lesson-cursor-default" /><PixelPointer className="lesson-cursor-interactive" /></span>
+    {clickMarks.map((mark) => <span key={mark.id} className="lesson-pointer-click" style={{ left: mark.x, top: mark.y }}><PixelPointer /></span>)}
   </div>;
 }
