@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { PixelCursor, PixelPointer } from "../components/PixelIcons";
+import { PixelCursor } from "./PixelIcons";
 
 type ClickMark = { id: number; x: number; y: number };
 
-export default function LessonPointerEffects() {
+export default function SitePointerEffects() {
   const dotRef = useRef<HTMLSpanElement>(null);
   const frameRef = useRef<number | null>(null);
   const clickIdRef = useRef(0);
@@ -18,7 +18,7 @@ export default function LessonPointerEffects() {
 
     const body = document.body;
     const dot = dotRef.current;
-    body.classList.add("lesson-custom-pointer");
+    body.classList.add("site-custom-pointer");
 
     function movePointer(event: PointerEvent) {
       if (!dot) return;
@@ -26,46 +26,37 @@ export default function LessonPointerEffects() {
       frameRef.current = window.requestAnimationFrame(() => {
         dot.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0)`;
         dot.classList.add("visible");
-        const target = event.target instanceof Element ? event.target : null;
-        dot.classList.toggle("interactive", Boolean(target?.closest("a, button, [role='button'], input, label")));
       });
     }
 
-    function pressPointer(event: PointerEvent) {
+    function clickPointer(event: PointerEvent) {
       if (event.button !== 0) return;
-      dot?.classList.add("pressed");
       const id = ++clickIdRef.current;
-      setClickMarks((marks) => [...marks, { id, x: event.clientX, y: event.clientY }].slice(-4));
-      window.setTimeout(() => setClickMarks((marks) => marks.filter((mark) => mark.id !== id)), 420);
-    }
-
-    function releasePointer() {
-      dot?.classList.remove("pressed");
+      setClickMarks((marks) => [...marks, { id, x: event.clientX, y: event.clientY }].slice(-3));
+      window.setTimeout(() => setClickMarks((marks) => marks.filter((mark) => mark.id !== id)), 350);
     }
 
     function hidePointer() {
-      dot?.classList.remove("visible", "pressed");
+      dot?.classList.remove("visible");
     }
 
     window.addEventListener("pointermove", movePointer, { passive: true });
-    window.addEventListener("pointerdown", pressPointer, { passive: true });
-    window.addEventListener("pointerup", releasePointer, { passive: true });
+    window.addEventListener("pointerdown", clickPointer, { passive: true });
     document.documentElement.addEventListener("mouseleave", hidePointer);
     window.addEventListener("blur", hidePointer);
 
     return () => {
-      body.classList.remove("lesson-custom-pointer");
+      body.classList.remove("site-custom-pointer");
       if (frameRef.current) window.cancelAnimationFrame(frameRef.current);
       window.removeEventListener("pointermove", movePointer);
-      window.removeEventListener("pointerdown", pressPointer);
-      window.removeEventListener("pointerup", releasePointer);
+      window.removeEventListener("pointerdown", clickPointer);
       document.documentElement.removeEventListener("mouseleave", hidePointer);
       window.removeEventListener("blur", hidePointer);
     };
   }, []);
 
-  return <div className="lesson-pointer-layer" aria-hidden="true">
-    <span ref={dotRef} className="lesson-pointer-dot"><PixelCursor className="lesson-cursor-default" /><PixelPointer className="lesson-cursor-interactive" /></span>
-    {clickMarks.map((mark) => <span key={mark.id} className="lesson-pointer-click" style={{ left: mark.x, top: mark.y }}><PixelPointer /></span>)}
+  return <div className="site-pointer-layer" aria-hidden="true">
+    <span ref={dotRef} className="site-pointer-dot"><PixelCursor /></span>
+    {clickMarks.map((mark) => <span key={mark.id} className="site-pointer-click" style={{ left: mark.x, top: mark.y }}><i /><i /><i /><i /><i /></span>)}
   </div>;
 }

@@ -2284,20 +2284,22 @@ button,a { font:inherit; }
 .lesson-inline-task-footer > button:disabled { background: #d7dbe3; box-shadow: none; color: #7b8496; cursor: not-allowed; }
 .lesson-inline-task.completed .lesson-inline-task-footer { background: #d8f1e1; }
 
-.lesson-pointer-layer { display: none; }
+.site-pointer-layer { display: none; }
 @media (pointer:fine) and (hover:hover) and (prefers-reduced-motion:no-preference) {
-  body.lesson-custom-pointer .lesson-page,body.lesson-custom-pointer .lesson-page a,body.lesson-custom-pointer .lesson-page button { cursor: none !important; }
-  .lesson-pointer-layer { position: fixed; inset: 0; z-index: 120; display: block; overflow: hidden; pointer-events: none; }
-  .lesson-pointer-dot { position: fixed; top: 0; left: 0; width: 26px; height: 34px; opacity: 0; color: #6650e6; transition: opacity .1s steps(2,end); }
-  .lesson-pointer-dot > svg { position: absolute; top: 0; left: 0; width: 22px; height: 29px; transition: transform .1s steps(2,end),color .1s steps(2,end); }
-  .lesson-pointer-dot.visible { opacity: 1; }
-  .lesson-cursor-interactive { display: none; }
-  .lesson-pointer-dot.interactive .lesson-cursor-default { display: none; }
-  .lesson-pointer-dot.interactive .lesson-cursor-interactive { top: -1px; left: -8px; width: 27px; height: 35px; display: block; color: #6650e6; }
-  .lesson-pointer-dot.pressed > svg { color: #c2469e; transform: translateY(2px); }
-  .lesson-pointer-click { position: fixed; width: 27px; height: 35px; color: #c2469e; transform: translate(-8px,-2px); transform-origin: top center; animation: lesson-pointer-burst .42s steps(4,end) forwards; }
-  .lesson-pointer-click > svg { display: block; width: 100%; height: 100%; }
-  @keyframes lesson-pointer-burst { to { opacity: 0; transform: translate(-8px,-12px) scale(1.15); } }
+  body.site-custom-pointer,body.site-custom-pointer * { cursor: none !important; }
+  .site-pointer-layer { position: fixed; inset: 0; z-index: 230; display: block; overflow: hidden; pointer-events: none; }
+  .site-pointer-dot { position: fixed; top: 0; left: 0; opacity: 0; transition: opacity .12s steps(2,end); }
+  .site-pointer-dot > svg { position: absolute; top: 0; left: 0; width: 24px; height: auto; color: #fff; }
+  .site-pointer-dot.visible { opacity: 1; }
+  .site-pointer-click { position: fixed; width: 0; height: 0; }
+  .site-pointer-click > i { position: absolute; top: -3px; left: -3px; width: 6px; height: 6px; opacity: 0; animation: site-pointer-lick .3s steps(3,end) forwards; }
+  .site-pointer-click > i:nth-child(1) { background: #6650e6; --lick-x: 0; --lick-y: -14px; }
+  .site-pointer-click > i:nth-child(2) { background: #c7ff24; --lick-x: 14px; --lick-y: 0; }
+  .site-pointer-click > i:nth-child(3) { background: #6650e6; --lick-x: 0; --lick-y: 14px; }
+  .site-pointer-click > i:nth-child(4) { background: #c7ff24; --lick-x: -14px; --lick-y: 0; }
+  .site-pointer-click > i:nth-child(5) { width: 4px; height: 4px; top: -2px; left: -2px; background: #0b1130; animation-name: site-pointer-flash; }
+  @keyframes site-pointer-lick { 0% { opacity: 0; transform: translate(0,0) scale(.5); } 35% { opacity: 1; transform: translate(0,0) scale(1); } 100% { opacity: 0; transform: translate(var(--lick-x,0),var(--lick-y,0)) scale(1); } }
+  @keyframes site-pointer-flash { 0% { opacity: 0; } 30% { opacity: 1; } 100% { opacity: 0; } }
 }
 
 @media (max-width:920px) {

@@ -57,9 +57,9 @@ test("server-renders the task-free course pathway and its full shell", async () 
   assert.doesNotMatch(html, /<h1[^>]*>\s*Your AI course pathway/i);
   assert.match(html, /sidebar-toggle/i);
   assert.match(html, /id="course-contents"/i);
-  assert.match(html, /lesson-pointer-layer/i);
+  assert.match(html, /site-pointer-layer/i);
+  assert.match(html, /site-pointer-dot/i);
   assert.match(html, /pixel-cursor/i);
-  assert.match(html, /pixel-pointer/i);
   assert.match(html, /lesson-save-chip/i);
   assert.match(html, /lesson-bottom/i);
   assert.match(html, /Return to course/i);

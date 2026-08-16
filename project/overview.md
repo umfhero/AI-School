@@ -60,7 +60,7 @@ Read more than one document whenever the change crosses boundaries. For example,
 - The orientation pathway has separate desktop and mobile SVGs. Both use a transparent canvas, one pastel yellow focal card, a restrained set of lilac, blue, mint, peach and pink surfaces, and a dedicated animated rail which stays clear of the chapter cards.
 - `LessonDiagram` supports a dark tone and a paper tone. The paper tone has no outer background or violet header shadow, and its optional right-hand label must state useful information such as a chapter count rather than describe the file format or animation.
 - The shared course sidebar has a white heading area, violet progress, lilac active states, ink borders and green completed states. It opens on desktop, starts closed on smaller screens and is the only sidebar allowed inside a lesson.
-- Fine-pointer devices use the shared pixel arrow and pixel hand sprites, including the pressed and click-trace states. Touch devices and reduced-motion users keep the native pointer.
+- The site-wide pixel pointer is mounted in the root layout and covers every page. It uses the shared pixel arrow sprite with an ink outline and hard shadow, never changes on hover, and a click spawns a short stepped burst at the pointer. Touch devices and reduced-motion users keep the native pointer.
 
 ## Canonical lesson template
 

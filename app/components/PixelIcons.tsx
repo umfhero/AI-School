@@ -126,46 +126,85 @@ export function PixelCheck({ className = "" }: { className?: string }) {
 }
 
 const cursorGlyph = [
-  "10000000",
-  "11000000",
-  "11100000",
-  "11110000",
-  "11111000",
-  "11111100",
-  "11111110",
-  "11110000",
-  "11011000",
-  "10011000",
-  "00001100",
-  "00001100",
+  "1000000000",
+  "1100000000",
+  "1110000000",
+  "1111000000",
+  "1111100000",
+  "1111110000",
+  "1111111000",
+  "1111111100",
+  "1111000000",
+  "1110110000",
+  "1100110000",
+  "1100110000",
 ];
 
 const pointerGlyph = [
-  "000110000",
-  "000110000",
-  "000110000",
-  "000110000",
-  "000111100",
-  "010111110",
-  "110111111",
-  "111111111",
-  "011111111",
-  "001111110",
-  "001111110",
-  "000111100",
+  "0001100000",
+  "0001100000",
+  "0001100000",
+  "0001100000",
+  "0001100000",
+  "0001111000",
+  "1101111100",
+  "1111111110",
+  "0111111111",
+  "0011111111",
+  "0011111110",
+  "0001111100",
+  "0000111000",
 ];
 
-function PixelPointerSprite({ className, glyph }: { className?: string; glyph: string[] }) {
-  const pixels = (prefix: string) => glyph.flatMap((row, y) => [...row].flatMap((pixel, x) => pixel === "1" ? <rect key={`${prefix}-${x}-${y}`} x={x} y={y} width="1" height="1" /> : []));
-  return <svg className={`pixel-icon ${className ?? ""}`.trim()} viewBox={`0 0 ${glyph[0].length + 1} ${glyph.length + 1}`} aria-hidden="true" focusable="false" shapeRendering="crispEdges"><g fill="#0b1130" transform="translate(1 1)">{pixels("shadow")}</g><g fill="currentColor">{pixels("face")}</g></svg>;
+function dilate(glyph: string[]): string[] {
+  const width = glyph[0].length;
+  const height = glyph.length;
+  const solid = (x: number, y: number) => x >= 0 && y >= 0 && x < width && y < height && glyph[y][x] === "1";
+  return glyph.map((row, y) => [...row].map((_, x) => {
+    for (let dy = -1; dy <= 1; dy += 1) {
+      for (let dx = -1; dx <= 1; dx += 1) {
+        if (solid(x + dx, y + dy)) return "1";
+      }
+    }
+    return "0";
+  }).join(""));
+}
+
+const cursorSilhouette = dilate(cursorGlyph);
+const pointerSilhouette = dilate(pointerGlyph);
+
+type PixelPointerSpriteProps = {
+  className?: string;
+  glyph: string[];
+  silhouette: string[];
+  hotspotX?: number;
+};
+
+function PixelPointerSprite({ className, glyph, silhouette, hotspotX = 0 }: PixelPointerSpriteProps) {
+  const rects = (source: string[], prefix: string) => source.flatMap((row, y) => [...row].flatMap((pixel, x) => pixel === "1" ? <rect key={`${prefix}-${x}-${y}`} x={x} y={y} width="1" height="1" /> : []));
+  const edge = silhouette.map((row, y) => [...row].map((pixel, x) => pixel === "1" && glyph[y][x] !== "1" ? "1" : "0").join(""));
+  return (
+    <svg
+      className={`pixel-icon ${className ?? ""}`.trim()}
+      viewBox={`0 0 ${glyph[0].length + 2} ${glyph.length + 2}`}
+      style={hotspotX ? { left: `${-hotspotX * 2}px` } : undefined}
+      aria-hidden="true"
+      focusable="false"
+      shapeRendering="crispEdges"
+    >
+      <g fill="#0b1130" transform="translate(1 1)">{rects(silhouette, "shadow")}</g>
+      <g fill="#0b1130">{rects(edge, "edge")}</g>
+      <g fill="currentColor">{rects(glyph, "face")}</g>
+    </svg>
+  );
 }
 
 export function PixelCursor({ className = "" }: { className?: string }) {
-  return <PixelPointerSprite className={`pixel-cursor ${className}`.trim()} glyph={cursorGlyph} />;
+  return <PixelPointerSprite className={`pixel-cursor ${className}`.trim()} glyph={cursorGlyph} silhouette={cursorSilhouette} />;
 }
 
 export function PixelPointer({ className = "" }: { className?: string }) {
-  return <PixelPointerSprite className={`pixel-pointer ${className}`.trim()} glyph={pointerGlyph} />;
+  return <PixelPointerSprite className={`pixel-pointer ${className}`.trim()} glyph={pointerGlyph} silhouette={pointerSilhouette} hotspotX={3.5} />;
 }
 
 export function PixelMascot({ className = "" }: { className?: string }) {

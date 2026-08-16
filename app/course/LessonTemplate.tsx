@@ -9,7 +9,6 @@ import LessonSaveState from "../components/LessonSaveState";
 import LessonXpCelebration from "../components/LessonXpCelebration";
 import { PixelArrow, PixelCheck, PixelSpark } from "../components/PixelIcons";
 import { courseChapters } from "./courseData";
-import LessonPointerEffects from "./LessonPointerEffects";
 
 type StoredLessonProgress = {
   completedTasks?: string[];
@@ -163,12 +162,11 @@ export default function LessonTemplate({
 
   return <LessonTaskContext.Provider value={{ completeTask, completedTaskIds }}>
     <main className="lesson-page">
-      <LessonPointerEffects />
       <LessonXpCelebration trigger={celebrationKey} nextLessonHref="/" />
       <header className="lesson-header">
         <div className="lesson-header-left">
           <button className="sidebar-toggle" type="button" onClick={() => setSidebarOpen((open) => !open)} aria-label={sidebarOpen ? "Hide contents" : "Show contents"} aria-expanded={sidebarOpen} aria-controls="course-contents"><span aria-hidden="true">{sidebarOpen ? "×" : "☰"}</span><b aria-hidden="true">{sidebarOpen ? "Hide contents" : "Show contents"}</b></button>
-          <a className="lesson-brand" href="/profile#courses" aria-label="Return to your AI school course overview"><PixelSpark className="lesson-brand-star" /><b>AI school</b></a>
+          <a className="lesson-brand" href="/" aria-label="Return to the AI school home page"><PixelSpark className="lesson-brand-star" /><b>AI school</b></a>
         </div>
         <div className="lesson-crumb"><span>Chapter {String(chapterNumber).padStart(2, "0")}</span><span>/</span><b>{lessonTitle}</b></div>
         <div className="lesson-account"><div className="lesson-progress"><span><i style={{ width: lessonComplete ? "100%" : "4%" }} /></span><b>{lessonComplete ? "Complete" : "Read to complete"}</b></div><LessonSaveState signedIn={signedIn} status={progressStatus} /><ExperienceBadge compact /><AuthButton returnTo={currentPath} compact /></div>
